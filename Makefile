@@ -21,8 +21,8 @@ run: all
 	./$(EXEC_NAME)
 
 format:
-	astyle -RA2fpHUxLyxj "*.cpp" "*.h"
-	rm -R *.orig
+	astyle -RA2fpHUxC90xLyj "*.cpp" "*.h"
+	rm -Rf src/*.orig
 
 clean:
 	rm -f $(OBJECTS) $(EXEC_NAME)
