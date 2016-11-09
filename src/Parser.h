@@ -6,12 +6,12 @@
 
 class Shape;
 
-class Parser{
-	private:
-		std::string _path;
-	public:
-		Parser(std::string filePath) : _path(filePath) {}
-		void fillShapes(std::vector<Shape>&);
+class Parser {
+private:
+    std::string _path;
+public:
+    Parser(std::string filePath) : _path(filePath) {}
+    void fillShapes(std::vector<Shape>&);
 };
 
 #endif

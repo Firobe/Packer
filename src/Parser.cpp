@@ -7,5 +7,5 @@ using namespace std;
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-void Parser::fillShapes(vector<Shape>& shapes){
+void Parser::fillShapes(vector<Shape>& shapes) {
 }

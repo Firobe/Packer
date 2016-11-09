@@ -6,16 +6,16 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-	//Sample use case
-	
-	vector<Shape> shapes;
+    //Sample use case
 
-	Parser parser("monFichier.svg");
-	parser.fillShapes(shapes);
+    vector<Shape> shapes;
 
-	IdentitySolver solver(shapes);
-	solver.solve();
+    Parser parser("monFichier.svg");
+    parser.fillShapes(shapes);
 
-	cout << "Identity ouput : " << solver.outputSVG() << endl;	
+    IdentitySolver solver(shapes);
+    solver.solve();
+
+    cout << "Identity ouput : " << solver.outputSVG() << endl;
     return EXIT_SUCCESS;
 }

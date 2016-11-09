@@ -7,11 +7,11 @@
 
 class Solver {
 protected:
-	std::vector<Shape>& _shapes;
+    std::vector<Shape>& _shapes;
 public:
-	Solver(std::vector<Shape>& s) : _shapes(s) {}
-	void solve() = delete;
-	std::string outputSVG();
+    Solver(std::vector<Shape>& s) : _shapes(s) {}
+    void solve() = delete;
+    std::string outputSVG();
 };
 
 #endif

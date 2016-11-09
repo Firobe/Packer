@@ -1,9 +1,9 @@
 COMPILER = c++
-ADD_CFLAGS = -Wall -std=c++11 -O3
+ADD_CFLAGS = -Wall -Wextra -std=c++11 -O3
 LIBS =
 CXXFLAGS =
-SOURCES = $(wildcard src/*.cpp)
 EXEC_NAME = packer
+SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 .PRECIOUS : %.o
 .PHONY : clean
