@@ -1,10 +1,21 @@
 #include <iostream>
 
-#include "Shape.h"
+#include "Parser.h"
+#include "IdentitySolver.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    cout << "Hello world !" << endl;
+	//Sample use case
+	
+	vector<Shape> shapes;
+
+	Parser parser("monFichier.svg");
+	parser.fillShapes(shapes);
+
+	IdentitySolver solver(shapes);
+	solver.solve();
+
+	cout << "Identity ouput : " << solver.outputSVG() << endl;	
     return EXIT_SUCCESS;
 }
