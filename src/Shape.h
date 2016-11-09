@@ -10,7 +10,7 @@ class Shape : public Ring {
 private:
     std::string _tag;
     Point _oldP1, _oldP2;
-    int _indexP1, indexP2;
+    int _indexP1, _indexP2;
 
     void fillShape(vector<Point>&);
 public:

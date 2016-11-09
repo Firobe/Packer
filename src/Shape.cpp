@@ -17,6 +17,10 @@ array<double, 6> Shape::getTransMatrix() const {
 /**
  * Initializes the boost model with a set of points.
  * (should be a closed path)
+ *
+ * Also initializes _oldP1, P2, _indexP1, P2 which should
+ * be two points from the shape as for as possible from each other.
+ * (will be used to compute transformation matrix)
  */
 void Shape::fillShape(vector<Point>& points) {
     ///TODO
