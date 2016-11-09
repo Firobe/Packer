@@ -1,9 +1,7 @@
 COMPILER = c++
 ADD_CFLAGS = -Wall -std=c++11 -O3
 LIBS =
-NO_PKG_LIBS =
-CXXFLAGS = `pkg-config --static --cflags $(LIBS)` $(ADD_CFLAGS)
-LINKS = `pkg-config --static --libs $(LIBS)` $(NO_PKG_LIBS)
+CXXFLAGS =
 SOURCES = $(wildcard src/*.cpp)
 EXEC_NAME = packer
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -12,7 +10,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 .PHONY : run
 
 all: $(OBJECTS)
-	$(COMPILER) -o $(EXEC_NAME) $(OBJECTS) $(LINKS)
+	$(COMPILER) -o $(EXEC_NAME) $(OBJECTS) $(LIBS)
 
 %.o : %.cpp %.h
 	$(COMPILER) -c $(CXXFLAGS) $< -o $@
