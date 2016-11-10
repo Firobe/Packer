@@ -7,6 +7,16 @@
 
 class Shape;
 
+/**
+ * Parser class. Used as a Context for SVG++ (thus
+ * implements several SVG++ methods)
+ *
+ * http://svgpp.org/lesson01.html#id1
+ *
+ * The static method starts the parsing of a file,
+ * filling _shapes, then returns the parsed (and
+ * interpolated) shapes.
+ */
 class Parser {
 private:
     std::vector<Shape> _shapes;
@@ -40,6 +50,11 @@ public:
     void on_exit_element();
 };
 
+/**
+ * This enables the parser to ignore any unknown attribute
+ * or CSS property and thus avoid a fatal error on
+ * files not SVG 1.1 compliant.
+ */
 struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
     template<class XMLAttributesIterator, class AttributeName>
     static bool unknown_attribute(context_type&,

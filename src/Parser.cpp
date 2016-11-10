@@ -12,7 +12,7 @@ using namespace svgpp;
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-vector<Shape> Parser::Parse(string path) {
+vector<Shape> Parser::Parse(string path) { //Returns a copy, can be improved
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -34,10 +34,12 @@ vector<Shape> Parser::Parse(string path) {
  */
 
 void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) {
+    ///TODO
     cout << "Path move" << endl;
 }
 
 void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) {
+    ///TODO
     cout << "Path line" << endl;
 }
 
@@ -46,6 +48,7 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
+    ///TODO
     cout << "Path cubic bezier" << endl;
 }
 
@@ -53,6 +56,7 @@ void Parser::path_quadratic_bezier_to(
     double x1, double y1,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
+    ///TODO
     cout << "Path quadratic bezier" << endl;
 }
 
@@ -61,21 +65,26 @@ void Parser::path_elliptical_arc_to(
     bool large_arc_flag, bool sweep_flag,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
+    ///TODO
     cout << "Path elliptical arc" << endl;
 }
 
 void Parser::path_close_subpath() {
-	cout << "Close subpath" << endl;
+    ///TODO
+    cout << "Close subpath" << endl;
 }
 
 void Parser::path_exit() {
+    ///TODO
     cout << "Path exit" << endl;
 }
 
 void Parser::on_enter_element(svgpp::tag::element::any) {
+    ///TODO
     cout << "Element enter" << endl;
 }
 
 void Parser::on_exit_element() {
+    ///TODO
     cout << "Element exit" << endl;
 }

@@ -6,6 +6,17 @@
 #include <array>
 #include "types.h"
 
+/**
+ * Shape class. Designed to be
+ * carried around by the different
+ * modules of the program.
+ *
+ * Inherits a boost Ring and stores two
+ * points at initialization so it can
+ * compute its transformation matrix later.
+ *
+ * Also stores the initial parsed string.
+ */
 class Shape : public Ring {
 private:
     std::string _tag;
