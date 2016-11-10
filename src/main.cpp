@@ -8,10 +8,7 @@ using namespace std;
 int main(int argc, char** argv) {
     //Sample use case
 
-    vector<Shape> shapes;
-
-    Parser parser("monFichier.svg");
-    parser.fillShapes(shapes);
+    vector<Shape> shapes = Parser::Parse("test.svg");
 
     IdentitySolver solver(shapes);
     solver.solve();

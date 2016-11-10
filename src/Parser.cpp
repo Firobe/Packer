@@ -1,7 +1,6 @@
 #include "Parser.h"
 #include "Shape.h"
 
-#include <rapidxml_ns/rapidxml_ns.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <svgpp/policy/xml/rapidxml_ns.hpp>
 
@@ -13,16 +12,70 @@ using namespace svgpp;
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-void Parser::fillShapes(vector<Shape>& shapes) {
+vector<Shape> Parser::Parse(string path) {
     //Opening SVG file
-    file<> svgFile(_path.c_str());
+    file<> svgFile(path.c_str());
     xml_document<> doc;
     doc.parse<0>(svgFile.data());
 
     //Parse the XML
-    xml_node<>* root_node = doc.first_node();
-    Context context;
-    /*document_traversal <processed_elements<tag::element::path>,
+    XMLElement rootNode = doc.first_node();
+    Parser context;
+    document_traversal <error_policy<IgnoreError>,
+                       processed_elements<ProcessedElements>,
                        processed_attributes<traits::shapes_attributes_by_element>
-                       >::load_document(root_node, context);*/
-    }
+                       >::load_document(rootNode, context);
+    return context.getShapes();
+}
+
+/**
+ * The following methods should fill _shapes with correct interpolated points,
+ * accordingly to the SVG specification
+ */
+
+void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) {
+    cout << "Path move" << endl;
+}
+
+void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) {
+    cout << "Path line" << endl;
+}
+
+void Parser::path_cubic_bezier_to(
+    double x1, double y1,
+    double x2, double y2,
+    double x, double y,
+    svgpp::tag::coordinate::absolute) {
+    cout << "Path cubic bezier" << endl;
+}
+
+void Parser::path_quadratic_bezier_to(
+    double x1, double y1,
+    double x, double y,
+    svgpp::tag::coordinate::absolute) {
+    cout << "Path quadratic bezier" << endl;
+}
+
+void Parser::path_elliptical_arc_to(
+    double rx, double ry, double x_axis_rotation,
+    bool large_arc_flag, bool sweep_flag,
+    double x, double y,
+    svgpp::tag::coordinate::absolute) {
+    cout << "Path elliptical arc" << endl;
+}
+
+void Parser::path_close_subpath() {
+	cout << "Close subpath" << endl;
+}
+
+void Parser::path_exit() {
+    cout << "Path exit" << endl;
+}
+
+void Parser::on_enter_element(svgpp::tag::element::any) {
+    cout << "Element enter" << endl;
+}
+
+void Parser::on_exit_element() {
+    cout << "Element exit" << endl;
+}
