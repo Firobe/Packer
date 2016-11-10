@@ -12,7 +12,7 @@ using namespace std;
  */
 array<double, 6> Shape::getTransMatrix() const {
     ///TODO
-	return array<double, 6> {0, 0, 0, 0, 0, 0};
+    return array<double, 6> {0, 0, 0, 0, 0, 0};
 }
 
 /**
