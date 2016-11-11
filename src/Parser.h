@@ -1,0 +1,75 @@
+#ifndef PARSER__H
+#define PARSER__H
+
+#include <string>
+#include <vector>
+#include "types.h"
+
+class Shape;
+
+/**
+ * Parser class. Used as a Context for SVG++ (thus
+ * implements several SVG++ methods)
+ *
+ * http://svgpp.org/lesson01.html#id1
+ *
+ * The static method starts the parsing of a file,
+ * filling _shapes, then returns the parsed (and
+ * interpolated) shapes.
+ */
+class Parser {
+private:
+    std::vector<Shape> _shapes;
+public:
+    static std::vector<Shape> Parse(std::string);
+    std::vector<Shape> getShapes() {
+        return _shapes;
+    }
+
+    ///SVG++ Methods
+    void path_move_to(double x, double y, svgpp::tag::coordinate::absolute);
+    void path_line_to(double x, double y, svgpp::tag::coordinate::absolute);
+    void path_cubic_bezier_to(
+        double x1, double y1,
+        double x2, double y2,
+        double x, double y,
+        svgpp::tag::coordinate::absolute);
+    void path_quadratic_bezier_to(
+        double x1, double y1,
+        double x, double y,
+        svgpp::tag::coordinate::absolute);
+    void path_elliptical_arc_to(
+        double rx, double ry, double x_axis_rotation,
+        bool large_arc_flag, bool sweep_flag,
+        double x, double y,
+        svgpp::tag::coordinate::absolute);
+    void path_close_subpath();
+    void path_exit();
+
+    void on_enter_element(svgpp::tag::element::any);
+    void on_exit_element();
+};
+
+/**
+ * This enables the parser to ignore any unknown attribute
+ * or CSS property and thus avoid a fatal error on
+ * files not SVG 1.1 compliant.
+ */
+struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
+    template<class XMLAttributesIterator, class AttributeName>
+    static bool unknown_attribute(context_type&,
+                                  XMLAttributesIterator const& attribute,
+                                  AttributeName const& name,
+                                  svgpp::tag::source::css) {
+        return true;
+    }
+    template<class XMLAttributesIterator, class AttributeName>
+    static bool unknown_attribute(context_type&,
+                                  XMLAttributesIterator const& attribute,
+                                  AttributeName const& name,
+                                  auto namespace_id, ///THIS WILL ONLY COMPILE WITH -std=c++14
+                                  svgpp::tag::source::attribute) {
+        return true;
+    }
+};
+#endif

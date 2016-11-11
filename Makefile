@@ -1,18 +1,15 @@
 COMPILER = c++
-ADD_CFLAGS = -Wall -std=c++11 -O3
+CXXFLAGS = -Wall -Wfatal-errors -std=c++14 -isystem third_party
 LIBS =
-NO_PKG_LIBS =
-CXXFLAGS = `pkg-config --static --cflags $(LIBS)` $(ADD_CFLAGS)
-LINKS = `pkg-config --static --libs $(LIBS)` $(NO_PKG_LIBS)
-SOURCES = $(wildcard src/*.cpp)
 EXEC_NAME = packer
+SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 .PRECIOUS : %.o
 .PHONY : clean
 .PHONY : run
 
 all: $(OBJECTS)
-	$(COMPILER) -o $(EXEC_NAME) $(OBJECTS) $(LINKS)
+	$(COMPILER) -o $(EXEC_NAME) $(OBJECTS) $(LIBS)
 
 %.o : %.cpp %.h
 	$(COMPILER) -c $(CXXFLAGS) $< -o $@
