@@ -79,8 +79,7 @@ void Parser::path_cubic_bezier_to(
  * subpath.
  */
 void Parser::path_close_subpath() {
-    ///TODO
-    //This should only call path_line_to with the correct point
+    //Nothing to do as the initial point should already be added
     cout << "Close subpath" << endl;
 }
 
