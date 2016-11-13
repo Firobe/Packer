@@ -18,7 +18,7 @@ run: all
 	./$(EXEC_NAME)
 
 format:
-	astyle -RA2fpHUxC90xLyjk1W1 "*.cpp" "*.h"
+	astyle -RA2fpHUxC90xLyjk1W1 "src/*.cpp" "src/*.h"
 	rm -Rf src/*.orig
 
 clean:

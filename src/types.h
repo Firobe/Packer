@@ -22,7 +22,14 @@ using ProcessedElements =
     svgpp::tag::element::svg,
     svgpp::tag::element::g,
     // SVG Shape Elements
-    svgpp::tag::element::path
+    svgpp::tag::element::path,
+    svgpp::tag::element::rect,
+    svgpp::tag::element::ellipse,
+    svgpp::tag::element::line,
+    svgpp::tag::element::polygon,
+    svgpp::tag::element::polyline,
+    svgpp::tag::element::circle
+    //Text and other things not handled
     >::type;
 
 #endif
