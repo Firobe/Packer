@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 
 #include "Parser.h"
 #include "IdentitySolver.h"
@@ -11,6 +12,8 @@ int main(int argc, char** argv) {
         cout << "Usage : ./parser input.svg > output.svg" << endl;
         return EXIT_FAILURE;
     }
+
+    srand(time(0));
 
     vector<Shape> shapes = Parser::Parse(argv[1]);
 

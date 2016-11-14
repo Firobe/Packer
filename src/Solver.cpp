@@ -1,6 +1,7 @@
 #include "Solver.h"
 
 #include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -22,7 +23,8 @@ string Solver::debugOutputSVG() {
     }
 
     for (Shape& s : _shapes) {
-        mapper.map(s.getRing(), "");
+        mapper.map(s.getRing(), "fill:rgb(" + to_string(rand() % 256) + "," +
+                   to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
     }
 
     return ret.str() + "</svg>";
