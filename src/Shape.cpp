@@ -1,5 +1,5 @@
 #include "Shape.h"
-
+;
 using namespace std;
 
 /**
@@ -24,5 +24,7 @@ array<double, 6> Shape::getTransMatrix() const {
  * (will be used to compute transformation matrix)
  */
 void Shape::fillShape(vector<Point>& points) {
-    ///TODO
+	for(Point& p : points)
+		bg::append(_ring, p);
+	///TODO points
 }

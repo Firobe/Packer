@@ -40,8 +40,8 @@ vector<Shape> Parser::Parse(string path) { //Returns a copy, can be improved
  * Establish a new current point.
  */
 void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) {
-    ///TODO
     ///This should only store the point as an initial subpath point
+	_points.emplace_back(x, y);
     cout << "Path move to " << x << "," << y << endl;
 }
 
@@ -50,8 +50,8 @@ void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) 
  * is the new current point.
  */
 void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) {
-    ///TODO
     //This should only store the point as a new shape point.
+	_points.emplace_back(x, y);
     cout << "Path line to " << x << "," << y << endl;
 }
 
@@ -87,9 +87,9 @@ void Parser::path_close_subpath() {
  * Actions taken at the end of a path.
  */
 void Parser::path_exit() {
-    ///TODO
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
+	_shapes.emplace_back("TODO", _points);
     cout << "Path exit" << endl;
 }
 
@@ -105,8 +105,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  * Beginning of a new shape (or unknown element)
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
-    ///TODO
     //This should clear any accumulated points.
+	_points.clear();
     cout << "Element enter" << endl;
 }
 

@@ -13,6 +13,6 @@ int main(int argc, char** argv) {
     IdentitySolver solver(shapes);
     solver.solve();
 
-    cout << "Identity ouput : " << solver.outputSVG() << endl;
+    cout << "Identity ouput : " << solver.debugOutputSVG() << endl;
     return EXIT_SUCCESS;
 }

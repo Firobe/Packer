@@ -20,6 +20,7 @@ class Shape;
 class Parser {
 private:
     std::vector<Shape> _shapes;
+	std::vector<Point> _points;
 public:
     static std::vector<Shape> Parse(std::string);
     std::vector<Shape> getShapes() {

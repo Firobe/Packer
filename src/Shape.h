@@ -5,6 +5,7 @@
 #include <boost/geometry.hpp>
 #include <array>
 #include "types.h"
+#include <boost/geometry/geometries/register/ring.hpp>
 
 /**
  * Shape class. Designed to be
@@ -17,21 +18,23 @@
  *
  * Also stores the initial parsed string.
  */
-class Shape : public Ring {
+class Shape {
 private:
     std::string _tag;
+	Ring _ring;
     Point _oldP1, _oldP2;
     int _indexP1, _indexP2;
 
-    void fillShape(vector<Point>&);
+    void fillShape(std::vector<Point>&);
 public:
-    Shape(std::string s, vector<Point>& p) : _tag(s) {
+    Shape(std::string s, std::vector<Point>& p) : _tag(s) {
         fillShape(p);
     }
     std::string getTag() const {
         return _tag;
     }
     std::array<double, 6> getTransMatrix() const;
+	Ring& getRing(){ return _ring; }
 };
 
 #endif
