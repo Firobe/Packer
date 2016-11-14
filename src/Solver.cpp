@@ -1,6 +1,6 @@
 #include "Solver.h"
 
-#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -14,11 +14,11 @@ string Solver::outputSVG() {
 }
 
 string Solver::debugOutputSVG(){
-	ofstream svg("outpute.svg");
-	bg::svg_mapper<Point> mapper(svg, 400, 400);
+	stringstream ret;
+	bg::svg_mapper<Point> mapper(ret, 400, 400);
 	for(Shape& s : _shapes)
 		mapper.add(s.getRing());
 	for(Shape& s : _shapes)
 		mapper.map(s.getRing(), "");
-	return "";
+	return ret.str() + "</svg>";
 }

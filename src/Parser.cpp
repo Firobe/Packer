@@ -42,7 +42,7 @@ vector<Shape> Parser::Parse(string path) { //Returns a copy, can be improved
 void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) {
     ///This should only store the point as an initial subpath point
 	_points.emplace_back(x, y);
-    cout << "Path move to " << x << "," << y << endl;
+    cerr << "Path move to " << x << "," << y << endl;
 }
 
 /**
@@ -52,7 +52,7 @@ void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) 
 void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) {
     //This should only store the point as a new shape point.
 	_points.emplace_back(x, y);
-    cout << "Path line to " << x << "," << y << endl;
+    cerr << "Path line to " << x << "," << y << endl;
 }
 
 /**
@@ -69,7 +69,7 @@ void Parser::path_cubic_bezier_to(
     ///TODO
     //This should interpolate the curve with a given precision
     //and add the interpolated points to the shape
-    cout << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
+    cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
          x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
 
@@ -80,7 +80,7 @@ void Parser::path_cubic_bezier_to(
  */
 void Parser::path_close_subpath() {
     //Nothing to do as the initial point should already be added
-    cout << "Close subpath" << endl;
+    cerr << "Close subpath" << endl;
 }
 
 /**
@@ -90,7 +90,7 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
 	_shapes.emplace_back("TODO", _points);
-    cout << "Path exit" << endl;
+    cerr << "Path exit" << endl;
 }
 
 /**
@@ -98,7 +98,7 @@ void Parser::path_exit() {
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
     //Nothing to do
-    cout << "Element enter (group)" << endl;
+    cerr << "Element enter (group)" << endl;
 }
 
 /**
@@ -107,7 +107,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
 void Parser::on_enter_element(svgpp::tag::element::any) {
     //This should clear any accumulated points.
 	_points.clear();
-    cout << "Element enter" << endl;
+    cerr << "Element enter" << endl;
 }
 
 /**
@@ -115,5 +115,5 @@ void Parser::on_enter_element(svgpp::tag::element::any) {
  */
 void Parser::on_exit_element() {
     ///Nothing to do if there is only one path by element
-    cout << "Element exit" << endl;
+    cerr << "Element exit" << endl;
 }

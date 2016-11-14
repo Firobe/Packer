@@ -15,7 +15,7 @@ all: $(OBJECTS)
 	$(COMPILER) -c $(CXXFLAGS) $< -o $@
 
 run: all
-	./$(EXEC_NAME)
+	./$(EXEC_NAME) test.svg
 
 format:
 	astyle -RA2fpHUxC90xLyjk1W1 "src/*.cpp" "src/*.h"
