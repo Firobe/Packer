@@ -34,6 +34,8 @@ public:
         return _tag;
     }
     std::array<double, 6> getTransMatrix() const;
+	void rotate(double angle);
+	void translate(double x, double y);
 	Ring& getRing(){ return _ring; }
 };
 

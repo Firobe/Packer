@@ -26,6 +26,28 @@ array<double, 6> Shape::getTransMatrix() const {
 void Shape::fillShape(vector<Point>& points) {
 	for(Point& p : points)
 		bg::append(_ring, p);
-	cout << "J'ai créé une shape avec " << points.size() << " points" << endl;
 	///TODO points
+}
+
+/**
+ * Rotates a shape by a fixed number of
+ * degrees (trigonometric).
+ */
+void Shape::rotate(double angle){
+		Ring r;
+		bg::strategy::transform::rotate_transformer<bg::degree, double, 2, 2>
+			rotate(angle);
+		bg::transform(_ring, r, rotate);
+		_ring = r;
+}
+
+/**
+ * Translates a shape by a fixed vector.
+ */
+void Shape::translate(double x, double y){
+		Ring r;
+		bg::strategy::transform::translate_transformer<double, 2, 2>
+			translate(x,y);
+		bg::transform(_ring, r, translate);
+		_ring = r;
 }
