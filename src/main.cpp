@@ -6,8 +6,10 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    //Sample use case
-
+	if(argc <= 1){
+		cout << "Usage : ./parser input.svg > output.svg" << endl;
+		return EXIT_FAILURE;
+	}
     vector<Shape> shapes = Parser::Parse(argv[1]);
 
     IdentitySolver solver(shapes);
