@@ -59,7 +59,7 @@ struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
     static bool unknown_attribute(context_type&,
                                   XMLAttributesIterator const& attribute,
                                   AttributeName const& name,
-                                  auto namespace_id, ///THIS WILL ONLY COMPILE WITH -std=c++14
+								  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id) namespace_id,
                                   svgpp::tag::source::attribute) {
         return true;
     }

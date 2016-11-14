@@ -1,5 +1,5 @@
 COMPILER = c++
-CXXFLAGS = -Wall -Wfatal-errors -std=c++14 -isystem third_party -O3
+CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -O3
 LIBS =
 EXEC_NAME = packer
 SOURCES = $(wildcard src/*.cpp)
