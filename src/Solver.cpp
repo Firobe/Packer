@@ -18,5 +18,7 @@ string Solver::debugOutputSVG(){
 	bg::svg_mapper<Point> mapper(svg, 400, 400);
 	for(Shape& s : _shapes)
 		mapper.add(s.getRing());
+	for(Shape& s : _shapes)
+		mapper.map(s.getRing(), "");
 	return "";
 }

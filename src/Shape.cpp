@@ -26,5 +26,6 @@ array<double, 6> Shape::getTransMatrix() const {
 void Shape::fillShape(vector<Point>& points) {
 	for(Point& p : points)
 		bg::append(_ring, p);
+	cout << "J'ai créé une shape avec " << points.size() << " points" << endl;
 	///TODO points
 }

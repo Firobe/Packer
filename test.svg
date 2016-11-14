@@ -27,14 +27,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="210.90948"
-     inkscape:cy="628.49437"
+     inkscape:cy="868.91068"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1018"
+     inkscape:window-width="1600"
+     inkscape:window-height="800"
      inkscape:window-x="0"
-     inkscape:window-y="34"
+     inkscape:window-y="28"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -59,19 +59,36 @@
        height="98.994949"
        x="31.31473"
        y="193.73254" />
-    <ellipse
-       style="fill:#ffd42a"
-       id="path3334"
-       cx="386.88843"
-       cy="431.11838"
-       rx="92.934036"
-       ry="160.61426" />
-    <ellipse
-       style="fill:#ffd42a"
-       id="path3336"
-       cx="391.43411"
-       cy="731.63879"
-       rx="268.1955"
-       ry="44.95179" />
+    <rect
+       style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect3337"
+       width="583.86816"
+       height="118.18785"
+       x="94.954338"
+       y="32.108131" />
+    <rect
+       style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect3339"
+       width="155.56349"
+       height="97.984795"
+       x="78.791901"
+       y="337.17419" />
+    <path
+       sodipodi:type="star"
+       style="fill:#ffff00;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3341"
+       sodipodi:sides="5"
+       sodipodi:cx="355.5737"
+       sodipodi:cy="249.29092"
+       sodipodi:r1="70.948387"
+       sodipodi:r2="35.474194"
+       sodipodi:arg1="0.48911981"
+       sodipodi:arg2="1.1174383"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 418.20316,282.62596 -47.09223,-1.4444 -27.88717,37.97461 -13.17859,-45.23371 -44.73361,-14.78747 38.94741,-26.51158 0.24028,-47.11377 37.24942,28.84866 44.8821,-14.33044 -15.926,44.34103 z"
+       inkscape:transform-center-x="3.8163396"
+       inkscape:transform-center-y="3.0419827" />
   </g>
 </svg>
