@@ -38,6 +38,7 @@ public:
     void path_exit();
 
     void on_enter_element(svgpp::tag::element::any);
+    void on_enter_element(svgpp::tag::element::g);
     void on_exit_element();
 };
 

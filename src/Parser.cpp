@@ -83,6 +83,9 @@ void Parser::path_close_subpath() {
     cout << "Close subpath" << endl;
 }
 
+/**
+ * Actions taken at the end of a path.
+ */
 void Parser::path_exit() {
     ///TODO
     //This should probably send all the accumulated points to a new Shape
@@ -90,12 +93,26 @@ void Parser::path_exit() {
     cout << "Path exit" << endl;
 }
 
+/**
+ * Beginning of a new group. For now we don't care about them.
+ */
+void Parser::on_enter_element(svgpp::tag::element::g) {
+    //Nothing to do
+    cout << "Element enter (group)" << endl;
+}
+
+/**
+ * Beginning of a new shape (or unknown element)
+ */
 void Parser::on_enter_element(svgpp::tag::element::any) {
     ///TODO
     //This should clear any accumulated points.
     cout << "Element enter" << endl;
 }
 
+/**
+ * End of a group or any other element.
+ */
 void Parser::on_exit_element() {
     ///Nothing to do if there is only one path by element
     cout << "Element exit" << endl;
