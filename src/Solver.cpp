@@ -13,12 +13,17 @@ string Solver::outputSVG() {
     return "";
 }
 
-string Solver::debugOutputSVG(){
-	stringstream ret;
-	bg::svg_mapper<Point> mapper(ret, 400, 400);
-	for(Shape& s : _shapes)
-		mapper.add(s.getRing());
-	for(Shape& s : _shapes)
-		mapper.map(s.getRing(), "");
-	return ret.str() + "</svg>";
+string Solver::debugOutputSVG() {
+    stringstream ret;
+    bg::svg_mapper<Point> mapper(ret, 400, 400);
+
+    for (Shape& s : _shapes) {
+        mapper.add(s.getRing());
+    }
+
+    for (Shape& s : _shapes) {
+        mapper.map(s.getRing(), "");
+    }
+
+    return ret.str() + "</svg>";
 }

@@ -20,7 +20,7 @@ class Shape;
 class Parser {
 private:
     std::vector<Shape> _shapes;
-	std::vector<Point> _points;
+    std::vector<Point> _points;
 public:
     static std::vector<Shape> Parse(std::string);
     std::vector<Shape> getShapes() {
@@ -60,7 +60,7 @@ struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
     static bool unknown_attribute(context_type&,
                                   XMLAttributesIterator const& attribute,
                                   AttributeName const& name,
-								  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id) namespace_id,
+                                  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id) namespace_id,
                                   svgpp::tag::source::attribute) {
         return true;
     }

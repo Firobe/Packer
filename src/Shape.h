@@ -21,7 +21,7 @@
 class Shape {
 private:
     std::string _tag;
-	Ring _ring;
+    Ring _ring;
     Point _oldP1, _oldP2;
     int _indexP1, _indexP2;
 
@@ -34,9 +34,11 @@ public:
         return _tag;
     }
     std::array<double, 6> getTransMatrix() const;
-	void rotate(double angle);
-	void translate(double x, double y);
-	Ring& getRing(){ return _ring; }
+    void rotate(double angle);
+    void translate(double x, double y);
+    Ring& getRing() {
+        return _ring;
+    }
 };
 
 #endif

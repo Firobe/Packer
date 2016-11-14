@@ -5,8 +5,8 @@
 
 class ToInfinityAndBeyondSolver : public Solver {
 public:
- ToInfinityAndBeyondSolver(std::vector<Shape>& v) : Solver(v) {}
-  void solve();
+    ToInfinityAndBeyondSolver(std::vector<Shape>& v) : Solver(v) {}
+    void solve();
 };
 
 #endif

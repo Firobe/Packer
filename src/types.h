@@ -9,8 +9,9 @@
 
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>; //Defines the Point type
-using Ring = bg::model::ring<Point>; //Define the Ring type
+using Ring = bg::model::ring<Point>; //Defines the Ring type
 using XMLElement = rapidxml_ns::xml_node<> const*; //Defines the XMLElement type
+using Box = bg::model::box<Point>; //Defines the Box type
 
 /**
  * Select the tags that will be processed
