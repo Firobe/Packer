@@ -1,7 +1,6 @@
 #ifndef SOLVER__H
 #define SOLVER__H
 
-#include <boost/geometry.hpp>
 #include <string>
 #include "Shape.h"
 

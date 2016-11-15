@@ -1,11 +1,13 @@
 #include "ToInfinityAndBeyondSolver.h"
-#include <vector>
 #include "types.h"
+
+#include <boost/geometry/algorithms/envelope.hpp>
+#include <vector>
+
 
 using namespace std;
 
 void ToInfinityAndBeyondSolver::solve() {
-    //_shapes[pouet] //contient l'ensemble des objets
     vector<Box> boxes(_shapes.size());
     Point previous, reference;
 

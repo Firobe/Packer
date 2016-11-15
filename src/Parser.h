@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 #include "types.h"
+#include <rapidxml_ns/rapidxml_ns.hpp>
+#include <svgpp/svgpp.hpp>
 
+using XMLElement = rapidxml_ns::xml_node<> const*; //Defines the XMLElement type
 class Shape;
 
 /**
@@ -65,5 +68,25 @@ struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
         return true;
     }
 };
+
+/**
+ * Select the tags that will be processed
+ * by our parser
+ */
+using ProcessedElements =
+    boost::mpl::set <
+    // SVG Structural Elements
+    svgpp::tag::element::svg,
+    svgpp::tag::element::g,
+    // SVG Shape Elements
+    svgpp::tag::element::path,
+    svgpp::tag::element::rect,
+    svgpp::tag::element::ellipse,
+    svgpp::tag::element::line,
+    svgpp::tag::element::polygon,
+    svgpp::tag::element::polyline,
+    svgpp::tag::element::circle
+    //Text and other things not handled
+    >::type;
 
 #endif

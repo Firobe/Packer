@@ -2,10 +2,8 @@
 #define SHAPE__H
 
 #include <string>
-#include <boost/geometry.hpp>
 #include <array>
 #include "types.h"
-#include <boost/geometry/geometries/register/ring.hpp>
 
 /**
  * Shape class. Designed to be

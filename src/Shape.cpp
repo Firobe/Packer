@@ -1,5 +1,7 @@
 #include "Shape.h"
-;
+#include <boost/geometry/algorithms/transform.hpp>
+#include <boost/geometry/strategies/transform/matrix_transformers.hpp>
+
 using namespace std;
 
 /**
