@@ -7,6 +7,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
+#define BEZIER_STEP 0.01
 
 /**
  * Fills shapes with the different interpolated
@@ -66,9 +67,14 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
-    ///TODO
-    //This should interpolate the curve with a given precision
-    //and add the interpolated points to the shape
+	Point p0 = _points.back();
+	for(double t = 0 ; t<= 1 ; t += BEZIER_STEP){
+			double nx = p0.x()*(1-t)*(1-t)*(1-t) + 3*x1*t*(1-t)*(1-t) +
+					3*x2*t*t*(1-t) + x * t * t * t;
+			double ny = p0.y()*(1-t)*(1-t)*(1-t) + 3*y1*t*(1-t)*(1-t) +
+					3*y2*t*t*(1-t) + y * t * t * t;
+			_points.emplace_back(nx, ny);
+	}
     cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
          x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
