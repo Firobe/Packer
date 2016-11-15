@@ -1,8 +1,8 @@
-#include "Solver.h"
-
 #include <boost/geometry/io/svg/svg_mapper.hpp>
 #include <sstream>
 #include <string>
+
+#include "Solver.h"
 
 using namespace std;
 

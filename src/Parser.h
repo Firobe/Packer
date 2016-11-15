@@ -3,9 +3,12 @@
 
 #include <string>
 #include <vector>
-#include "types.h"
 #include <rapidxml_ns/rapidxml_ns.hpp>
-#include <svgpp/svgpp.hpp>
+#include <svgpp/definitions.hpp>
+#include <svgpp/policy/error.hpp>
+#include <boost/mpl/set.hpp>
+
+#include "types.h"
 
 using XMLElement = rapidxml_ns::xml_node<> const*; //Defines the XMLElement type
 class Shape;
