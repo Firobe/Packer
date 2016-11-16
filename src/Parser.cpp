@@ -2,8 +2,8 @@
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <svgpp/policy/xml/rapidxml_ns.hpp>
 
-#include "Parser.h"
-#include "Shape.h"
+#include "Parser.hpp"
+#include "Shape.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;

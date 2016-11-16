@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Packer</_name>
+    <id>com.nerdson.packer</id>
+	<dependency type="executable" location="extensions">packer</dependency>
+    <effect>
+		<object-type>all</object-type>
+		<effects-menu>
+			<submenu _name="Packer"/>
+		</effects-menu>
+    </effect>
+    <script>
+        <command reldir="extensions">packer</command>
+    </script>
+</inkscape-extension>
