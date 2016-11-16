@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-using XMLElement = rapidxml_ns::xml_node<> const*; //Defines the XMLElement type
+using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
 class Shape;
 
 /**
