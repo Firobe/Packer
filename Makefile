@@ -24,5 +24,9 @@ format:
 	astyle -RA2fpHUxC90xLyjk1W1 "src/*.cpp" "src/*.hpp"
 	rm -Rf src/*.orig
 
+program_options:
+	cd third_party/boost && sh bootstrap.sh --with-libraries=program_options
+	cd third_party/boost && ./b2
+
 clean:
 	rm -f $(OBJECTS) $(EXEC_NAME) output.svg
