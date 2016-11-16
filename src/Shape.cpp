@@ -1,7 +1,4 @@
-#include <boost/geometry/algorithms/transform.hpp>
-#include <boost/geometry/strategies/transform/matrix_transformers.hpp>
-
-#include "Shape.h"
+#include "Shape.hpp"
 
 using namespace std;
 
@@ -35,24 +32,18 @@ void Shape::fillShape(vector<Point>& points) {
 }
 
 /**
- * Rotates a shape by a fixed number of
- * degrees (trigonometric).
+ * Specialisation for Shape.
  */
-void Shape::rotate(double angle) {
-    Ring r;
-    bg::strategy::transform::rotate_transformer<bg::degree, double, 2, 2>
-    rotate(angle);
-    bg::transform(_ring, r, rotate);
-    _ring = r;
+template <>
+void rotate <Shape> (Shape& object, double angle) {
+    rotate<Ring> (object.getRing(), angle);
 }
 
 /**
- * Translates a shape by a fixed vector.
+ * Specialisation for Shape.
  */
-void Shape::translate(double x, double y) {
-    Ring r;
-    bg::strategy::transform::translate_transformer<double, 2, 2>
-    translate(x, y);
-    bg::transform(_ring, r, translate);
-    _ring = r;
+template <>
+void translate <Shape> (Shape& object, double x, double y) {
+    translate<Ring> (object.getRing(), x, y);
 }
+

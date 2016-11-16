@@ -1,7 +1,7 @@
 #ifndef TOINFINITYANDBEYOND__H
 #define TOINFINITYANDBEYOND__H
 
-#include "Solver.h"
+#include "Solver.hpp"
 
 /**
  * Very basic solver. Uses bounding boxes

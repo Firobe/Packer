@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include "Solver.h"
+#include "Solver.hpp"
 
 using namespace std;
 

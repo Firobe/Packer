@@ -8,7 +8,7 @@
 #include <svgpp/policy/error.hpp>
 #include <boost/mpl/set.hpp>
 
-#include "types.h"
+#include "types.hpp"
 
 using XMLElement = rapidxml_ns::xml_node<> const*; //Defines the XMLElement type
 class Shape;

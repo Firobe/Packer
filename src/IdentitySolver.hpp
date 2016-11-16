@@ -1,7 +1,7 @@
 #ifndef IDENTITY__H
 #define IDENTITY__H
 
-#include "Solver.h"
+#include "Solver.hpp"
 
 /**
  * Identity solver. Do nothing.

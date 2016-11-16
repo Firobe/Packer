@@ -1,9 +1,9 @@
 #include <iostream>
 #include <ctime>
 
-#include "Parser.h"
-#include "IdentitySolver.h"
-#include "ToInfinityAndBeyondSolver.h"
+#include "Parser.hpp"
+#include "IdentitySolver.hpp"
+#include "ToInfinityAndBeyondSolver.hpp"
 
 using namespace std;
 
