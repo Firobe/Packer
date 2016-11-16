@@ -28,5 +28,6 @@ string Solver::debugOutputSVG() {
                    to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
     }
 
+    cerr << "SVG successfully generated" << endl;
     return ret.str() + "</svg>";
 }
