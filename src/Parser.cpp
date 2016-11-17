@@ -1,6 +1,8 @@
 #include <svgpp/svgpp.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <svgpp/policy/xml/rapidxml_ns.hpp>
+#include <algorithm>
+#include <boost/geometry/geometry.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
@@ -14,7 +16,8 @@ using namespace svgpp;
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-vector<Shape> Parser::Parse(string path) { //Returns a copy, can be improved
+vector<Shape> Parser::Parse(string path,
+                            vector<string> ids) { //Returns a copy, can be improved
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -22,7 +25,7 @@ vector<Shape> Parser::Parse(string path) { //Returns a copy, can be improved
 
     //Parse the XML
     XMLElement rootNode = doc.first_node();
-    Parser context;
+    Parser context(ids);
     document_traversal <error_policy<IgnoreError>, //Enables IgnoreError
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
@@ -98,16 +101,34 @@ void Parser::path_close_subpath() {
 void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
-    _shapes.emplace_back("TODO", _points);
-    cerr << "Path exit" << endl;
+    cerr << "Path exit (" << _groupStack << ")\n";
+
+    //Reverse the points if the polygon has the wrong orientation
+    if (bg::area(Ring(_points.begin(), _points.end())) < 0) {
+        reverse(_points.begin(), _points.end());
+    }
+
+    _rings.emplace_back(_points.begin(), _points.end());
+
+    if (_groupStack < 0) {
+        _shapes.emplace_back(_rings);
+        _rings.clear();
+    }
 }
 
 /**
- * Beginning of a new group. For now we don't care about them.
+ * Beginning of a new group.
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
-    //Nothing to do
     cerr << "Element enter (group)" << endl;
+
+    for (auto r : _rings) {
+        vector<Ring> tmp {r};
+        _shapes.emplace_back(tmp);
+    }
+
+    _rings.clear();
+    _groupStack = 0;
 }
 
 /**
@@ -115,14 +136,25 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
     //This should clear any accumulated points.
+    cerr << "Element enter (" << _groupStack << ")\n";
+
+    if (_groupStack >= 0) {
+        _groupStack++;
+    }
+
     _points.clear();
-    cerr << "Element enter" << endl;
 }
 
 /**
  * End of a group or any other element.
  */
 void Parser::on_exit_element() {
-    ///Nothing to do if there is only one path by element
-    cerr << "Element exit" << endl;
+    cerr << "Element exit (" << _groupStack << ")\n";
+
+    if (_groupStack == 0) {
+        _shapes.emplace_back(_rings);
+        _rings.clear();
+    }
+
+    _groupStack--;
 }

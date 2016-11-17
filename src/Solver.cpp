@@ -10,12 +10,13 @@ using namespace std;
  * Returns a string corresponding to the SVG file to ouput.
  * (Theoretically with the packed shapes)
  */
-string Solver::outputSVG() {
+string Solver::outputSVG(bool addto) {
     ///TODO
     return "";
 }
 
-string Solver::debugOutputSVG() {
+string Solver::debugOutputSVG(bool addto) {
+    //Addto osef
     stringstream ret;
     bg::svg_mapper<Point> mapper(ret, 800, 800);
 

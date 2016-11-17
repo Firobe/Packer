@@ -21,8 +21,8 @@ protected:
 public:
     Solver(std::vector<Shape>& s) : _shapes(s) {}
     void solve() = delete;
-    std::string outputSVG();
-    std::string debugOutputSVG();
+    std::string outputSVG(bool);
+    std::string debugOutputSVG(bool);
 };
 
 #endif

@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <boost/geometry/geometry.hpp>
+
 #include "Shape.hpp"
 
 using namespace std;
@@ -23,13 +26,50 @@ array<double, 6> Shape::getTransMatrix() const {
  * be two points from the shape as for as possible from each other.
  * (will be used to compute transformation matrix)
  */
-void Shape::fillShape(vector<Point>& points) {
-	_multiP.resize(1);
-    for (Point& p : points) {
-        bg::append(_multiP[0].outer(), p);
+void Shape::fillShape(vector<Ring>& rings) {
+    cerr << "Received " << rings.size() << " Rings for a Shape" << endl;
+    //Sorting the rings by increasing area
+    sort(rings.begin(), rings.end(), [](Ring & a, Ring & b) {
+        return bg::area(a) < bg::area(b);
+    });
+
+    for (unsigned i = 0 ; i < rings.size() ; i++) {
+        bool covered = false;
+
+        for (unsigned j = rings.size() - 1 ; j > i ; j--) {
+            if (bg::covered_by(rings[i], rings[j])) {
+                covered = true;
+                break;
+            }
+        }
+
+        if (!covered) { //The ring i not covered by anyone
+            cerr << "Ring " << i << " is an outer ring" << endl;
+            _multiP.resize(_multiP.size() + 1);
+            _multiP.back().outer() = rings[i];
+
+            //Discover all the holes of i
+            for (unsigned k = 0 ; k < i ; k++)
+                if (bg::covered_by(rings[k], rings[i])) {
+                    cerr << "-> Ring " << k << " is one if its holes" << endl;
+                    _multiP.back().inners().resize(_multiP.back().inners().size() + 1);
+                    _multiP.back().inners().back() = rings[k];
+                }
+        }
     }
 
-    ///TODO points
+    //Storing points for future transformation reference
+    _indexP1 = 0;
+    _indexP2 = 1;
+    _oldP1 = _multiP[0].outer()[0];
+
+    for (unsigned int i = 2 ; i < _multiP[0].outer().size() ; i++)
+        if (bg::distance(_oldP1, _multiP[0].outer()[i]) >
+                bg::distance(_oldP1, _multiP[0].outer()[_indexP2])) {
+            _indexP2 = i;
+        }
+
+    _oldP2 = _multiP[0].outer()[_indexP2];
 }
 
 /**

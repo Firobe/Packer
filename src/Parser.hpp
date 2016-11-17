@@ -26,9 +26,14 @@ class Shape;
 class Parser {
 private:
     std::vector<Shape> _shapes;
+    std::vector<Ring> _rings;
     std::vector<Point> _points;
+    std::vector<std::string>& _ids;
+    int _groupStack;
 public:
-    static std::vector<Shape> Parse(std::string);
+    static std::vector<Shape> Parse(std::string, std::vector<std::string> = {});
+
+    Parser(std::vector<std::string>& i) : _ids(i), _groupStack(-1) {}
     std::vector<Shape> getShapes() {
         return _shapes;
     }
