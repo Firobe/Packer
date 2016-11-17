@@ -24,8 +24,9 @@ array<double, 6> Shape::getTransMatrix() const {
  * (will be used to compute transformation matrix)
  */
 void Shape::fillShape(vector<Point>& points) {
+	_multiP.resize(1);
     for (Point& p : points) {
-        bg::append(_ring, p);
+        bg::append(_multiP[0].outer(), p);
     }
 
     ///TODO points
@@ -36,7 +37,7 @@ void Shape::fillShape(vector<Point>& points) {
  */
 template <>
 void rotate <Shape> (Shape& object, double angle) {
-    rotate<Ring> (object.getRing(), angle);
+    rotate<MultiPolygon> (object.getMultiP(), angle);
 }
 
 /**
@@ -44,6 +45,6 @@ void rotate <Shape> (Shape& object, double angle) {
  */
 template <>
 void translate <Shape> (Shape& object, double x, double y) {
-    translate<Ring> (object.getRing(), x, y);
+    translate<MultiPolygon> (object.getMultiP(), x, y);
 }
 

@@ -2,7 +2,18 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <_name>Packer</_name>
     <id>com.nerdson.packer</id>
-	<dependency type="executable" location="extensions">packer</dependency>
+    <dependency type="executable" location="extensions">packer</dependency>
+    <param name="tab" type="notebook">
+    <page name = "size" _gui-text="Dimensions Plaque">
+    <param name="length" type="int" min="0" max="9999" gui-text="Longueur plaque : ">
+      
+    </param>
+    <param name="width" type="int" min="0" max="9999" gui-text="Largeur plaque : ">
+    
+    </param>
+    </page>
+    </param>
+
     <effect>
 		<object-type>all</object-type>
 		<effects-menu>

@@ -12,7 +12,7 @@ void ToInfinityAndBeyondSolver::solve() {
 
     //Create the bounding boxes
     for (unsigned i = 0; i < _shapes.size(); i++) {
-        bg::envelope(_shapes[i].getRing(), boxes[i]);
+        bg::envelope(_shapes[i].getMultiP(), boxes[i]);
     }
 
     for (unsigned i = 0; i < _shapes.size(); i++) {

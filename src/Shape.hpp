@@ -14,7 +14,7 @@
  * carried around by the different
  * modules of the program.
  *
- * Inherits a boost Ring and stores two
+ * Inherits a boost MultiP and stores two
  * points at initialization so it can
  * compute its transformation matrix later.
  *
@@ -23,7 +23,7 @@
 class Shape {
 private:
     std::string _tag;
-    Ring _ring;
+    MultiPolygon _multiP;
     Point _oldP1, _oldP2;
     int _indexP1, _indexP2;
 
@@ -36,8 +36,8 @@ public:
         return _tag;
     }
     std::array<double, 6> getTransMatrix() const;
-    Ring& getRing() {
-        return _ring;
+    MultiPolygon& getMultiP() {
+        return _multiP;
     }
 };
 
