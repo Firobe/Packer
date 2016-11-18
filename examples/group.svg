@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="group.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="538.74788"
+     inkscape:cy="507.71413"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     showguides="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:#ffd42a"
+       id="path3336"
+       cx="169.20055"
+       cy="284.1412"
+       rx="98.489876"
+       ry="119.70308" />
+    <path
+       sodipodi:type="star"
+       style="fill:#ff6600"
+       id="path3357"
+       sodipodi:sides="5"
+       sodipodi:cx="144.45181"
+       sodipodi:cy="589.71234"
+       sodipodi:r1="134.57796"
+       sodipodi:r2="67.288979"
+       sodipodi:arg1="0.90777818"
+       sodipodi:arg2="1.5360967"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 227.28433,695.77836 -80.49808,-38.81755 -77.612566,44.30614 12.04241,-88.55351 -66.121236,-60.12258 87.940702,-15.91153 36.74739,-81.46393 42.30793,78.71964 88.83237,9.7751 -61.79296,64.56294 z"
+       inkscape:transform-center-x="1.4427591"
+       inkscape:transform-center-y="-11.471169" />
+    <g
+       id="g3363">
+      <g
+         id="g3465">
+        <ellipse
+           style="fill:#ffd42a"
+           id="path3338"
+           cx="552.04834"
+           cy="422.5321"
+           rx="110.6117"
+           ry="162.12949" />
+        <ellipse
+           style="fill:#ff0000"
+           id="path3340"
+           cx="542.45197"
+           cy="484.15137"
+           rx="74.751289"
+           ry="31.819807" />
+        <ellipse
+           style="fill:#ff0000"
+           id="path3342"
+           cx="545.98743"
+           cy="386.1666"
+           rx="65.154839"
+           ry="42.931484" />
+        <rect
+           y="620.01691"
+           x="465.6803"
+           height="214.15234"
+           width="172.73608"
+           id="rect3449"
+           style="fill:#ffff00" />
+        <rect
+           y="126.05231"
+           x="446.48743"
+           height="103.03556"
+           width="170.71577"
+           id="rect3451"
+           style="fill:#00ffff" />
+        <ellipse
+           ry="44.446712"
+           rx="35.355339"
+           cy="743.25555"
+           cx="555.58392"
+           id="path3459"
+           style="fill:#d40000" />
+        <ellipse
+           ry="11.616755"
+           rx="17.172594"
+           cy="168.9838"
+           cx="503.05597"
+           id="path3461"
+           style="fill:#d40000" />
+        <ellipse
+           ry="18.182745"
+           rx="21.718279"
+           cy="178.58025"
+           cx="572.2514"
+           id="path3463"
+           style="fill:#d40000" />
+      </g>
+    </g>
+  </g>
+</svg>

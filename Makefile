@@ -1,17 +1,18 @@
 COMPILER = c++
-CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -O2
+CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/boost/ -O2
 LIBS = -lboost_program_options
 BOOST_LIBS=program_options,log
 LIBS_DIR = -Lthird_party/boost/stage/lib/
 EXEC_NAME = packer
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
-EXAMPLE_FILE = vertebrae.svg
+EXAMPLE_FILE = group.svg
 .PRECIOUS : %.o
 .PHONY : clean
 .PHONY : run
 
-all: $(OBJECTS)
+all: boost_libs $(OBJECTS)
+	#make boost_libs must have been run once before
 	$(COMPILER) -o $(EXEC_NAME) $(LIBS_DIR) $(OBJECTS) $(LIBS)
 
 %.o : %.cpp %.h
@@ -27,8 +28,27 @@ format:
 	rm -Rf src/*.orig
 
 boost_libs:
-	cd third_party/boost && sh bootstrap.sh --with-libraries=$(BOOST_LIBS)
-	cd third_party/boost && ./b2
+	#Check if required libs are present on the machine
+	#If not, extract boost if not already done
+	#Then build boost if not already done 
+	(P=true; \
+	L=${BOOST_LIBS}; \
+	IFS=','; for w in $$L; do \
+		if [ ! -f "/usr/lib/libboost_$$w.so" ]; then \
+			echo "Not present : /usr/lib/libboost_$$w.so"; \
+			P=false; \
+		fi; \
+	done; \
+	if [ $$P = false ] && [ ! -d "third_party/boost" ]; then \
+		echo "Unpacking boost..."; \
+		cd third_party/ && tar -xf boost.tar.bz2; \
+		mv boost_1_62_0 boost; \
+		cd ..; \
+	fi; \
+	if [ $$P = false ] && [ ! -d "third_party/boost/stage/lib" ]; then \
+		cd third_party/boost && sh bootstrap.sh --with-libraries=$(BOOST_LIBS); \
+		./b2; \
+	fi)
 
 install_plugin: all
 	cp $(EXEC_NAME) ~/.config/inkscape/extensions/
