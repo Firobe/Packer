@@ -1,8 +1,8 @@
 COMPILER = c++
-FORCE_BOOST = true
-CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/boost/ -O2
+FORCE_BOOST = false #If build fails, try to enable this
+CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/ -O2
 LIBS = -lboost_program_options
-BOOST_LIBS=program_options,log
+BOOST_LIBS=program_options
 LIBS_DIR = -Lthird_party/boost/stage/lib/
 EXEC_NAME = packer
 SOURCES = $(wildcard src/*.cpp)
@@ -32,6 +32,7 @@ boost_libs:
 	#Check if required libs are present on the machine
 	#If not, extract boost if not already done
 	#Then build boost if not already done 
+	export P=1
 	(P=true; \
 	L=${BOOST_LIBS}; \
 	IFS=','; for w in $$L; do \
@@ -51,7 +52,7 @@ boost_libs:
 	fi; \
 	if [ $$P = false ] && [ ! -d "third_party/boost/stage/lib" ]; then \
 		cd third_party/boost && sh bootstrap.sh --with-libraries=$(BOOST_LIBS); \
-		./b2; \
+		./b2 link=static; \
 	fi)
 
 install_plugin: all

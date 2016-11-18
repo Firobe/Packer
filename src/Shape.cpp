@@ -6,6 +6,15 @@
 using namespace std;
 
 /**
+ * Defines a comparator for Rings
+ */
+struct {
+	inline bool operator()(const Ring& a, const Ring& b){
+		return bg::area(a) < bg::area(b);
+	}
+} ringLess;
+
+/**
  * Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
  * a c e
  * b d f
@@ -29,9 +38,7 @@ array<double, 6> Shape::getTransMatrix() const {
 void Shape::fillShape(vector<Ring>& rings) {
     cerr << "Received " << rings.size() << " Rings for a Shape" << endl;
     //Sorting the rings by increasing area
-    sort(rings.begin(), rings.end(), [](Ring & a, Ring & b) {
-        return bg::area(a) < bg::area(b);
-    });
+    sort(rings.begin(), rings.end(), ringLess);
 
     for (unsigned i = 0 ; i < rings.size() ; i++) {
         bool covered = false;
