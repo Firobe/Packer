@@ -34,8 +34,8 @@ boost_libs:
 	(P=true; \
 	L=${BOOST_LIBS}; \
 	IFS=','; for w in $$L; do \
-		if [ ! -f "/usr/lib/libboost_$$w.so" ]; then \
-			echo "Not present : /usr/lib/libboost_$$w.so"; \
+		if [ ! $(locate -c "libboost_$$w") = 0 ]; then \
+			echo "Not present : libboost_$$w"; \
 			P=false; \
 		fi; \
 	done; \
