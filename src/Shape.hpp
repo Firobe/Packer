@@ -24,7 +24,6 @@ class Shape {
 private:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
-    int _indexP1, _indexP2;
 
     void fillShape(std::vector<Ring>&);
 public:

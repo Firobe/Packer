@@ -50,6 +50,11 @@ int main(int argc, char** argv) {
     ToInfinityAndBeyondSolver solver(shapes);
     solver.solve();
 
+    for (auto a : shapes[0].getTransMatrix()) {
+        cerr << a << " ";
+    }
+
+    cerr << endl;
     //Producing the output
     cout << solver.debugOutputSVG(vm.count("addto")) << endl;
     return EXIT_SUCCESS;

@@ -10,9 +10,9 @@ using namespace std;
  * Defines a comparator for Rings
  */
 struct {
-	inline bool operator()(const Ring& a, const Ring& b){
-		return bg::area(a) < bg::area(b);
-	}
+    inline bool operator()(const Ring& a, const Ring& b) {
+        return bg::area(a) < bg::area(b);
+    }
 } ringLess;
 
 /**
@@ -24,21 +24,26 @@ struct {
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-  Point newP1 = _multiP[0].outer()[_indexP1];
-  Point newP2 = _multiP[0].outer()[_indexP2];
-  double alpha = atan((newP2.y() - newP1.y())
-			/ (newP2.x() - newP1.x()))
-    - atan((_oldP2.y() - _oldP1.y())
-	   / (_oldP2.x() - _oldP1.x()));
-  array<double, 6> result;
-  double c, s, x1, y1, x2, y2;
-  c = cos(alpha); s = sin(alpha);
-  x1 = _oldP1.x(); y1 = _oldP1.y();
-  x2 = newP1.x(); y2 = newP2.y();
-  result[0] = c; result[1] = -s;
-  result[2] = s; result[3] = c;
-  result[4] = x1 * c + y1 * s + x2;
-  result[5] = x1 * (-s) + y1 * c + y2;
+    Point newP1 = _multiP[0].outer()[0];
+    Point newP2 = _multiP[0].outer()[1];
+    double alpha = atan((newP2.y() - newP1.y())
+                        / (newP2.x() - newP1.x()))
+                   - atan((_oldP2.y() - _oldP1.y())
+                          / (_oldP2.x() - _oldP1.x()));
+    array<double, 6> result;
+    double c, s, x1, y1, x2, y2;
+    c = cos(alpha);
+    s = sin(alpha);
+    x1 = _oldP1.x();
+    y1 = _oldP1.y();
+    x2 = newP1.x();
+    y2 = newP1.y();
+    result[0] = c;
+    result[1] = -s;
+    result[2] = s;
+    result[3] = c;
+    result[4] = -x1 * c - y1 * s + x2;
+    result[5] = x1 * s - y1 * c + y2;
     return result;
 }
 
@@ -81,17 +86,8 @@ void Shape::fillShape(vector<Ring>& rings) {
     }
 
     //Storing points for future transformation reference
-    _indexP1 = 0;
-    _indexP2 = 1;
     _oldP1 = _multiP[0].outer()[0];
-
-    for (unsigned int i = 2 ; i < _multiP[0].outer().size() ; i++)
-        if (bg::distance(_oldP1, _multiP[0].outer()[i]) >
-                bg::distance(_oldP1, _multiP[0].outer()[_indexP2])) {
-            _indexP2 = i;
-        }
-
-    _oldP2 = _multiP[0].outer()[_indexP2];
+    _oldP2 = _multiP[0].outer()[1];
 }
 
 /**
