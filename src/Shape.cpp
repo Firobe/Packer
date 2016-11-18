@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <boost/geometry/geometry.hpp>
+#include <cmath>
 
 #include "Shape.hpp"
 
@@ -23,8 +24,22 @@ struct {
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-    ///TODO
-    return array<double, 6> {0, 0, 0, 0, 0, 0};
+  Point newP1 = _multiP[0].outer()[_indexP1];
+  Point newP2 = _multiP[0].outer()[_indexP2];
+  double alpha = atan((newP2.y() - newP1.y())
+			/ (newP2.x() - newP1.x()))
+    - atan((_oldP2.y() - _oldP1.y())
+	   / (_oldP2.x() - _oldP1.x()));
+  array<double, 6> result;
+  double c, s, x1, y1, x2, y2;
+  c = cos(alpha); s = sin(alpha);
+  x1 = _oldP1.x(); y1 = _oldP1.y();
+  x2 = newP1.x(); y2 = newP2.y();
+  result[0] = c; result[1] = -s;
+  result[2] = s; result[3] = c;
+  result[4] = x1 * c + y1 * s + x2;
+  result[5] = x1 * (-s) + y1 * c + y2;
+    return result;
 }
 
 /**
