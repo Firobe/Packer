@@ -1,4 +1,5 @@
 COMPILER = c++
+FORCE_BOOST = true
 CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/boost/ -O2
 LIBS = -lboost_program_options
 BOOST_LIBS=program_options,log
@@ -39,6 +40,9 @@ boost_libs:
 			P=false; \
 		fi; \
 	done; \
+	if $(FORCE_BOOST); then \
+		P=false; \
+	fi; \
 	if [ $$P = false ] && [ ! -d "third_party/boost" ]; then \
 		echo "Unpacking boost..."; \
 		cd third_party/ && tar -xf boost.tar.bz2; \
