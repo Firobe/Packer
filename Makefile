@@ -13,7 +13,6 @@ EXAMPLE_FILE = group.svg
 .PHONY : run
 
 all: boost_libs $(OBJECTS)
-	#make boost_libs must have been run once before
 	$(COMPILER) -o $(EXEC_NAME) $(LIBS_DIR) $(OBJECTS) $(LIBS)
 
 %.o : %.cpp %.h
@@ -32,7 +31,6 @@ boost_libs:
 	#Check if required libs are present on the machine
 	#If not, extract boost if not already done
 	#Then build boost if not already done 
-	export P=1
 	(P=true; \
 	L=${BOOST_LIBS}; \
 	IFS=','; for w in $$L; do \
