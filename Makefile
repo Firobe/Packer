@@ -55,7 +55,7 @@ boost_libs:
 
 install_plugin: all
 	cp $(EXEC_NAME) ~/.config/inkscape/extensions/
-	cp packer.inx ~/.config/inkscape/extensions/
+	cp extensions/packer-linux.inx ~/.config/inkscape/extensions/packer.inx
 
 clean:
 	rm -f $(OBJECTS) $(EXEC_NAME) output.svg
