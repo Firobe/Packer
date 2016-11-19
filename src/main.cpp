@@ -41,12 +41,14 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    //Parsing input file
+    //Parsing input file, sengind the parser the ids of the shapes we want to keep
     vector<Shape> shapes = vm.count("id") ? Parser::Parse(vm["input-file"].as<string>(),
                            vm["id"].as<vector<string>>()) :
                            Parser::Parse(vm["input-file"].as<string>());
 
     //Packing the shapes
+	//We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
+	//the solver if they are present
     ToInfinityAndBeyondSolver solver(shapes);
     solver.solve();
 
