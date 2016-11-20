@@ -12,7 +12,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_STEP 0.01
+#define BEZIER_STEP 0.01 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -120,10 +120,13 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     cerr << "Element enter (group)" << endl;
 
     for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
+        //Iterate through the parsed rings (in reverse order to match the stack)
         cerr << "Flushing rings..." << endl;
         vector<Ring> tmp {_rings[i]};
 
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
+            //Add the ring to _shapes only if the ID on top of the stack (its own ID)
+            //is in the _ids vector (or if there is no ID specified by the user)
             _shapes.emplace_back(tmp, _idStack.top());
         }
 
@@ -154,6 +157,7 @@ void Parser::on_enter_element(svgpp::tag::element::any) {
 void Parser::on_exit_element() {
     cerr << "Element exit (" << _groupStack << ")\n";
 
+    //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
         for (unsigned i = 0 ; i < _rings.size() ; i++) {
             _idStack.pop();
@@ -162,11 +166,10 @@ void Parser::on_exit_element() {
 
     if (_groupStack <= 0 && !_rings.empty()) {
 
+        //Add the ring to _shapes only if the ID on top of the stack (its own ID)
+        //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             _shapes.emplace_back(_rings, _idStack.top());
-        }
-        else {
-            cerr << "Element ignored : " << _idStack.top() << endl;
         }
 
         _idStack.pop();
@@ -177,25 +180,26 @@ void Parser::on_exit_element() {
 }
 
 /**
- * Parsing the ID attribute.
+ * Parsing a new ID attribute.
  */
 void Parser::set(svgpp::tag::attribute::id,
                  const boost::iterator_range<const char*> pId) {
     stringstream ss;
     ss << pId;
+    //ss.str() now contains the new ID
 
+    /**
+     * If we are parsing the ID of a new group (_groupStack == 0) and that the ID of our current
+     * group is not in the authorized IDs, we propagate that authorization and thus
+     * we replace the old ID by our new ID in the list.
+     */
     if (_groupStack == 0 && !_idStack.empty() && vectorContains(_ids, _idStack.top()) &&
             !vectorContains(_ids, ss.str())) {
         _ids.erase(remove(_ids.begin(), _ids.end(), _idStack.top()), _ids.end());
         _ids.push_back(ss.str());
     }
 
-    for (auto i : _ids) {
-        cerr << i << " ; ";
-    }
-
-    cerr << endl;
-
+    //We add our new ID on the top of the stack
     _idStack.push(ss.str());
 
     cerr << "Current ID : " << _idStack.top() << endl;

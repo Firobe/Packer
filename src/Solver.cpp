@@ -10,28 +10,45 @@ using namespace std;
 using namespace rapidxml_ns;
 using XMLElement = rapidxml_ns::xml_node<>* ;  //Defines the XMLElement type
 
-void printNode(XMLElement node) {
-    cout << "<" << node->name() << endl;
+/**
+ * Writes to ss the content of
+ * a node : the beginning the tag, the name
+ * and each of its attributes
+ */
+void printNode(stringstream& ss, XMLElement node) {
+    ss << "<" << node->name() << endl;
 
     for (xml_attribute<>* attr = node->first_attribute();
             attr; attr = attr->next_attribute()) {
-        cout << attr->name() << "=\"";
-        cout << attr->value() << "\"" << endl;
+        ss << attr->name() << "=\"";
+        ss << attr->value() << "\"" << endl;
     }
 
 }
 
-void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement node) {
+/**
+ * Main output function. Recursive.
+ * Display the node (and adds a transformation matrix if the node
+ * is a shape which was packed by our algorithm).
+ * Then calls itself on the children of the nodes.
+ */
+void Solver::recurOutput(stringstream& ss, xml_document<>& doc, vector<string>& ids,
+                         XMLElement node) {
+    //Get the ID attribute of the node
     xml_attribute<>* id = node->first_attribute("id");
     char* cs = nullptr;
 
+    //Check if that ID exists and is in our packed list
     if (id != nullptr && vectorContains<string>(ids, id->value())) {
+        //Then creates the matrix and add it as an attribute
         cerr << "Displaying ID " << id->value() << endl;
         string s;
         int i;
 
+        //Find to which shape (i) the ID belongs to
         for (i = 0 ; _shapes[i].getID() != id->value() ; i++);
 
+        //Get the matrix and write its SVG string equivalent
         array<double, 6> m = _shapes[i].getTransMatrix();
         s = "matrix(";
 
@@ -39,6 +56,7 @@ void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement no
             s += to_string(m[e]) + (e == 5 ? ")" : ", ");
         }
 
+        //Allocate space and add it as an attribute
         cs = new char[s.size() + 1];
         strcpy(cs, s.c_str());
         cs[s.size()] = '\0';
@@ -49,29 +67,36 @@ void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement no
         cerr << "Ignored ID " << id->value() << endl;
     }
 
-    printNode(node);
+    printNode(ss, node);
 
     if (cs != nullptr) {
         delete[] cs;
     }
 
+    //Get the first child of the node
     XMLElement next = node->first_node();
 
     if (next != nullptr) {
-        cout << ">" << endl;
+        ss << ">" << endl;
 
+        //Check if the tag is of the type <tag>raw text</tag>
         if (node->value_size() == 0)
+
+            //If it isn't, call each of the children
             for (; next != nullptr ; next = next->next_sibling()) {
-                recurOutput(doc, ids, next);
+                recurOutput(ss, doc, ids, next);
             }
         else {
-            cout << node->value() << endl;
+            //If it is, just display the raw text
+            ss << node->value() << endl;
         }
 
-        cout << "</" << node->name() << ">" << endl;
+        //Add the closing tag
+        ss << "</" << node->name() << ">" << endl;
     }
     else {
-        cout << "/>" << endl;
+        //If there is no child, this is a <tag /> type tag.
+        ss << "/>" << endl;
     }
 }
 
@@ -87,12 +112,18 @@ string Solver::outputSVG(string path, bool addto, vector<string> ids) {
 
     //Parse the XML
     XMLElement rootNode = doc.first_node();
-    recurOutput(doc, ids, rootNode);
-    return "";
+    stringstream ss;
+    recurOutput(ss, doc, ids, rootNode);
+    cerr << "SVG successfully generated" << endl;
+    return ss.str();
 }
 
+/**
+ * Output function using the svg output methods of BOOST.
+ * Should be used for debug only.
+ * Outputs what the solver actually sees.
+ */
 string Solver::debugOutputSVG() {
-    //Addto osef
     stringstream ret;
     bg::svg_mapper<Point> mapper(ret, 800, 800);
 

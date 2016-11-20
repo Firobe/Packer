@@ -51,20 +51,10 @@ int main(int argc, char** argv) {
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
                                          toPack);
 
-    cerr << "Number of shapes to pack : " << shapes.size() << endl;
-
     if (!vm.count("id"))
         for (auto && s : shapes) {
             toPack.push_back(s.getID());
         }
-
-    cerr << "Will pack : ";
-
-    for (auto && i : shapes) {
-        cerr << i.getID() << " ";
-    }
-
-    cerr << endl;
 
     //Packing the shapes
     //We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
