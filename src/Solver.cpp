@@ -23,6 +23,7 @@ void printNode(XMLElement node) {
 
 void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement node) {
     xml_attribute<>* id = node->first_attribute("id");
+    char* cs = nullptr;
 
     if (id != nullptr && vectorContains<string>(ids, id->value())) {
         cerr << "Displaying ID " << id->value() << endl;
@@ -38,8 +39,7 @@ void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement no
             s += to_string(m[e]) + (e == 5 ? ")" : ", ");
         }
 
-        //char* cs = new char[s.size() + 1];
-        char cs[1000];
+        cs = new char[s.size() + 1];
         strcpy(cs, s.c_str());
         cs[s.size()] = '\0';
         xml_attribute<>* mat = doc.allocate_attribute("transform", cs);
@@ -50,6 +50,11 @@ void Solver::recurOutput(xml_document<>& doc, vector<string>& ids, XMLElement no
     }
 
     printNode(node);
+
+    if (cs != nullptr) {
+        delete[] cs;
+    }
+
     XMLElement next = node->first_node();
 
     if (next != nullptr) {
