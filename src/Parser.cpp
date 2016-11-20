@@ -202,5 +202,9 @@ void Parser::set(svgpp::tag::attribute::id,
     //We add our new ID on the top of the stack
     _idStack.push(ss.str());
 
+	//Ignoring layers
+	if(_idStack.top().find("layer") != string::npos)
+		_groupStack = -1;
+
     cerr << "Current ID : " << _idStack.top() << endl;
 }
