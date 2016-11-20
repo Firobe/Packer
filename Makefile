@@ -11,6 +11,7 @@ EXAMPLE_FILE = group.svg
 .PRECIOUS : %.o
 .PHONY : clean
 .PHONY : run
+.SILENT : boost_libs
 
 all: boost_libs $(OBJECTS)
 	$(COMPILER) -o $(EXEC_NAME) $(LIBS_DIR) $(OBJECTS) $(LIBS)

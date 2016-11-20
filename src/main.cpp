@@ -41,23 +41,40 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+    vector<string> toPack;
+
+    if (vm.count("id")) {
+        toPack = vm["id"].as<vector<string>>();
+    }
+
     //Parsing input file, sengind the parser the ids of the shapes we want to keep
-    vector<Shape> shapes = vm.count("id") ? Parser::Parse(vm["input-file"].as<string>(),
-                           vm["id"].as<vector<string>>()) :
-                           Parser::Parse(vm["input-file"].as<string>());
+    vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
+                                         toPack);
 
-    //Packing the shapes
-	//We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
-	//the solver if they are present
-    ToInfinityAndBeyondSolver solver(shapes);
-    solver.solve();
+    cerr << "Number of shapes to pack : " << shapes.size() << endl;
 
-    for (auto a : shapes[0].getTransMatrix()) {
-        cerr << a << " ";
+    if (!vm.count("id"))
+        for (auto && s : shapes) {
+            toPack.push_back(s.getID());
+        }
+
+    cerr << "Will pack : ";
+
+    for (auto && i : shapes) {
+        cerr << i.getID() << " ";
     }
 
     cerr << endl;
+
+    //Packing the shapes
+    //We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
+    //the solver if they are present
+    ToInfinityAndBeyondSolver solver(shapes);
+    solver.solve();
+
     //Producing the output
-    cout << solver.debugOutputSVG(vm.count("addto")) << endl;
+    //cout << solver.debugOutputSVG() << endl;
+    cout << solver.outputSVG(vm["input-file"].as<string>(), vm.count("addto"),
+                             toPack) << endl;
     return EXIT_SUCCESS;
 }

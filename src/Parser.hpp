@@ -5,7 +5,9 @@
 #include <vector>
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <svgpp/definitions.hpp>
+#include <svgpp/traits/attribute_groups.hpp>
 #include <svgpp/policy/error.hpp>
+#include <stack>
 #include <boost/mpl/set.hpp>
 
 #include "types.hpp"
@@ -28,10 +30,11 @@ private:
     std::vector<Shape> _shapes;
     std::vector<Ring> _rings;
     std::vector<Point> _points;
+    std::stack<std::string> _idStack;
     std::vector<std::string>& _ids;
     int _groupStack;
 public:
-    static std::vector<Shape> Parse(std::string, std::vector<std::string> = {});
+    static std::vector<Shape> Parse(std::string, std::vector<std::string>&);
 
     Parser(std::vector<std::string>& i) : _ids(i), _groupStack(-1) {}
     std::vector<Shape> getShapes() {
@@ -39,6 +42,8 @@ public:
     }
 
     ///SVG++ Methods
+    //void set(svgpp::tag::attribute::id, std::string pId);
+    void set(svgpp::tag::attribute::id, const boost::iterator_range<const char*> pId);
     void path_move_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_line_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_cubic_bezier_to(
@@ -97,4 +102,9 @@ using ProcessedElements =
     //Text and other things not handled
     >::type;
 
+using ProcessedAttributes =
+    boost::mpl::insert <
+    svgpp::traits::shapes_attributes_by_element,
+    svgpp::tag::attribute::id
+    >::type;
 #endif

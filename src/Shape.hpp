@@ -24,11 +24,15 @@ class Shape {
 private:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
+    std::string _id;
 
     void fillShape(std::vector<Ring>&);
 public:
-    Shape(std::vector<Ring>& r) {
+    Shape(std::vector<Ring>& r, std::string id) : _id(id) {
         fillShape(r);
+    }
+    std::string getID() {
+        return _id;
     }
     std::array<double, 6> getTransMatrix() const;
     MultiPolygon& getMultiP() {

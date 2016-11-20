@@ -1,7 +1,10 @@
 #ifndef SOLVER__H
 #define SOLVER__H
 
+#include <rapidxml_ns/rapidxml_ns.hpp>
 #include <string>
+#include <algorithm>
+
 
 #include "Shape.hpp"
 
@@ -21,8 +24,16 @@ protected:
 public:
     Solver(std::vector<Shape>& s) : _shapes(s) {}
     void solve() = delete;
-    std::string outputSVG(bool);
-    std::string debugOutputSVG(bool);
+    std::string outputSVG(std::string, bool, std::vector<std::string>);
+    std::string debugOutputSVG();
+private:
+    void recurOutput(rapidxml_ns::xml_document<>& doc, std::vector<std::string>& ids,
+                     rapidxml_ns::xml_node<>*   node);
 };
+
+template<typename T>
+bool vectorContains(std::vector<T>& v, T element) {
+    return std::find(v.begin(), v.end(), element) != v.end();
+}
 
 #endif

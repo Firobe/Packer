@@ -3,9 +3,11 @@
 #include <svgpp/policy/xml/rapidxml_ns.hpp>
 #include <algorithm>
 #include <boost/geometry/geometry.hpp>
+#include <sstream>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
+#include "Solver.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
@@ -17,7 +19,7 @@ using namespace svgpp;
  * shapes found in the SVG file.
  */
 vector<Shape> Parser::Parse(string path,
-                            vector<string> ids) { //Returns a copy, can be improved
+                            vector<string>& ids) { //Returns a copy, can be improved
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -30,7 +32,7 @@ vector<Shape> Parser::Parse(string path,
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
                        processed_elements<ProcessedElements>,
-                       processed_attributes<traits::shapes_attributes_by_element> //Transform matrix not handled
+                       processed_attributes<ProcessedAttributes> //Transform matrix not handled
                        >::load_document(rootNode, context);
     return context.getShapes();
 }
@@ -109,11 +111,6 @@ void Parser::path_exit() {
     }
 
     _rings.emplace_back(_points.begin(), _points.end());
-
-    if (_groupStack < 0) {
-        _shapes.emplace_back(_rings);
-        _rings.clear();
-    }
 }
 
 /**
@@ -122,9 +119,15 @@ void Parser::path_exit() {
 void Parser::on_enter_element(svgpp::tag::element::g) {
     cerr << "Element enter (group)" << endl;
 
-    for (auto r : _rings) {
-        vector<Ring> tmp {r};
-        _shapes.emplace_back(tmp);
+    for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
+        cerr << "Flushing rings..." << endl;
+        vector<Ring> tmp {_rings[i]};
+
+        if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
+            _shapes.emplace_back(tmp, _idStack.top());
+        }
+
+        _idStack.pop();
     }
 
     _rings.clear();
@@ -152,9 +155,48 @@ void Parser::on_exit_element() {
     cerr << "Element exit (" << _groupStack << ")\n";
 
     if (_groupStack == 0) {
-        _shapes.emplace_back(_rings);
+        for (unsigned i = 0 ; i < _rings.size() ; i++) {
+            _idStack.pop();
+        }
+    }
+
+    if (_groupStack <= 0 && !_rings.empty()) {
+
+        if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
+            _shapes.emplace_back(_rings, _idStack.top());
+        }
+        else {
+            cerr << "Element ignored : " << _idStack.top() << endl;
+        }
+
+        _idStack.pop();
         _rings.clear();
     }
 
     _groupStack--;
+}
+
+/**
+ * Parsing the ID attribute.
+ */
+void Parser::set(svgpp::tag::attribute::id,
+                 const boost::iterator_range<const char*> pId) {
+    stringstream ss;
+    ss << pId;
+
+    if (_groupStack == 0 && !_idStack.empty() && vectorContains(_ids, _idStack.top()) &&
+            !vectorContains(_ids, ss.str())) {
+        _ids.erase(remove(_ids.begin(), _ids.end(), _idStack.top()), _ids.end());
+        _ids.push_back(ss.str());
+    }
+
+    for (auto i : _ids) {
+        cerr << i << " ; ";
+    }
+
+    cerr << endl;
+
+    _idStack.push(ss.str());
+
+    cerr << "Current ID : " << _idStack.top() << endl;
 }
