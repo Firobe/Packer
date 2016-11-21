@@ -33,7 +33,7 @@ void printNode(stringstream& ss, XMLElement node) {
  * Then calls itself on the children of the nodes.
  */
 void Solver::recurOutput(stringstream& ss, xml_document<>& doc, vector<string>& ids,
-                         XMLElement node) {
+                         XMLElement node, double offset, bool addto) {
     //Get the ID attribute of the node
     xml_attribute<>* id = node->first_attribute("id");
     char* cs = nullptr;
@@ -50,7 +50,12 @@ void Solver::recurOutput(stringstream& ss, xml_document<>& doc, vector<string>& 
 
         //Get the matrix and write its SVG string equivalent
         array<double, 6> m = _shapes[i].getTransMatrix();
-        s = "matrix(";
+	if (addto){
+	  m[5] += offset;
+	  printNode(ss, node);
+	}
+	
+	s = "matrix(";
 
         for (int e = 0 ; e < 6 ; e++) {
             s += to_string(m[e]) + (e == 5 ? ")" : ", ");
@@ -84,7 +89,7 @@ void Solver::recurOutput(stringstream& ss, xml_document<>& doc, vector<string>& 
 
             //If it isn't, call each of the children
             for (; next != nullptr ; next = next->next_sibling()) {
-                recurOutput(ss, doc, ids, next);
+	      recurOutput(ss, doc, ids, next, offset, addto);
             }
         else {
             //If it is, just display the raw text
@@ -109,11 +114,13 @@ string Solver::outputSVG(string path, bool addto, vector<string> ids) {
     file<> svgFile(path.c_str());
     xml_document<> doc;
     doc.parse<0>(svgFile.data());
-
+  
     //Parse the XML
     XMLElement rootNode = doc.first_node();
+    double windowHeight = stod(rootNode->first_attribute("height")->value());
+    cerr << "Windows Height: " << windowHeight << endl;
     stringstream ss;
-    recurOutput(ss, doc, ids, rootNode);
+    recurOutput(ss, doc, ids, rootNode, windowHeight, addto);
     cerr << "SVG successfully generated" << endl;
     return ss.str();
 }

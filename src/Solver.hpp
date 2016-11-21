@@ -30,7 +30,8 @@ public:
 private:
     void recurOutput(std::stringstream&, rapidxml_ns::xml_document<>& doc,
                      std::vector<std::string>& ids,
-                     rapidxml_ns::xml_node<>* node); //See the implementation
+                     rapidxml_ns::xml_node<>* node,
+		     double offset, bool addto); //See the implementation
 };
 
 /**
