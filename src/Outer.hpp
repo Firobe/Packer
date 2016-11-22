@@ -32,8 +32,9 @@ public:
     Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
           std::vector<Shape>&);
     ~Outer();
-    static std::string String(std::string path, bool addto, std::vector<std::string>& tp, double height,
-          std::vector<Shape>&);
+    static std::string String(std::string path, bool addto, std::vector<std::string>& tp,
+                              double height,
+                              std::vector<Shape>&);
 private:
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
     void printNode(rapidxml_ns::xml_node<>*);

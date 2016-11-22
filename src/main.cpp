@@ -18,7 +18,8 @@ int main(int argc, char** argv) {
     desc.add_options()
     ("help", "produce help message")
     ("input-file", po::value<string>()->required(), "input file path")
-    ("dup", po::value<bool>()->required(), "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
+    ("dup", po::value<bool>()->required(),
+     "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
     ("width",  po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
@@ -67,7 +68,8 @@ int main(int argc, char** argv) {
     solver.solve();
 
     //Producing the output
-	cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, docHeight, shapes);
+    cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+                          docHeight, shapes);
 
     return EXIT_SUCCESS;
 }
