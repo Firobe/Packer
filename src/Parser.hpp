@@ -59,10 +59,11 @@ private:
      * < 0 else
      */
     int _groupStack;
+    double& _height;
 public:
-    static std::vector<Shape> Parse(std::string, std::vector<std::string>&);
+    static std::vector<Shape> Parse(std::string, std::vector<std::string>&, double&);
 
-    Parser(std::vector<std::string>& i) : _ids(i), _groupStack(-1) {}
+    Parser(std::vector<std::string>& i, double& h) : _ids(i), _groupStack(-1), _height(h) {}
     std::vector<Shape> getShapes() {
         return _shapes;
     }
@@ -70,6 +71,7 @@ public:
     ///SVG++ Methods
     //void set(svgpp::tag::attribute::id, std::string pId);
     void set(svgpp::tag::attribute::id, const boost::iterator_range<const char*> pId);
+    void set(svgpp::tag::attribute::height, double height);
     void path_move_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_line_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_cubic_bezier_to(
@@ -130,7 +132,9 @@ using ProcessedElements =
 
 using ProcessedAttributes =
     boost::mpl::insert <
+    boost::mpl::insert <
     svgpp::traits::shapes_attributes_by_element,
+    svgpp::tag::attribute::height >::type,
     svgpp::tag::attribute::id
     >::type;
 #endif

@@ -19,7 +19,8 @@ using namespace svgpp;
  * shapes found in the SVG file.
  */
 vector<Shape> Parser::Parse(string path,
-                            vector<string>& ids) { //Returns a copy, can be improved
+                            vector<string>& ids,
+                            double& height) { //Returns a copy, can be improved
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -27,7 +28,7 @@ vector<Shape> Parser::Parse(string path,
 
     //Parse the XML
     XMLElement rootNode = doc.first_node();
-    Parser context(ids);
+    Parser context(ids, height);
     document_traversal <error_policy<IgnoreError>, //Enables IgnoreError
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
@@ -202,9 +203,17 @@ void Parser::set(svgpp::tag::attribute::id,
     //We add our new ID on the top of the stack
     _idStack.push(ss.str());
 
-	//Ignoring layers
-	if(_idStack.top().find("layer") != string::npos)
-		_groupStack = -1;
+    //Ignoring layers
+    if (_idStack.top().find("layer") != string::npos) {
+        _groupStack = -1;
+    }
 
     cerr << "Current ID : " << _idStack.top() << endl;
+}
+
+/**
+ * Parsing the height of the dock.
+ */
+void Parser::set(svgpp::tag::attribute::height, double height) {
+    _height = height;
 }

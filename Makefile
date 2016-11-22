@@ -20,7 +20,7 @@ all: boost_libs $(OBJECTS)
 	$(COMPILER) -c $(CXXFLAGS) $< -o $@
 
 run: all
-	./$(EXEC_NAME) examples/$(EXAMPLE_FILE) > output.svg
+	./$(EXEC_NAME) --dup=false examples/$(EXAMPLE_FILE) > output.svg
 	#Output stored in output.svg
 	firefox output.svg &
 

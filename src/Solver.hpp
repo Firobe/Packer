@@ -25,21 +25,7 @@ protected:
 public:
     Solver(std::vector<Shape>& s) : _shapes(s) {}
     void solve() = delete;
-    std::string outputSVG(std::string, bool, std::vector<std::string>);
     std::string debugOutputSVG();
-private:
-    void recurOutput(std::stringstream&, rapidxml_ns::xml_document<>& doc,
-                     std::vector<std::string>& ids,
-                     rapidxml_ns::xml_node<>* node,
-		     double offset, bool addto); //See the implementation
 };
-
-/**
- * Utilitary function to check if a vector contains an element.
- */
-template<typename T>
-bool vectorContains(std::vector<T>& v, T element) {
-    return std::find(v.begin(), v.end(), element) != v.end();
-}
 
 #endif

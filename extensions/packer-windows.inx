@@ -9,7 +9,7 @@
     </param>
     <param name="height" type="int" min="0" max="9999" gui-text="Hauteur plaque : ">
     </param>
-	<param name="addto" type="boolean" gui-text="Ajouter en bas de la page">
+	<param name="dup" type="boolean" gui-text="Dupliquer en bas de page">
 	</param>
     </page>
     </param>

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ctime>
 
+#include "Outer.hpp"
 #include "Parser.hpp"
 #include "IdentitySolver.hpp"
 #include "ToInfinityAndBeyondSolver.hpp"
@@ -17,27 +18,28 @@ int main(int argc, char** argv) {
     desc.add_options()
     ("help", "produce help message")
     ("input-file", po::value<string>()->required(), "input file path")
+    ("dup", po::value<bool>()->required(), "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
     ("width",  po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
-    ("addto", po::value<bool>(), "adds the packed shapes at the bottom of the original file")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
 
     po::variables_map vm;
     po::positional_options_description p;
     p.add("input-file", -1);
-    po::store(po::command_line_parser(argc, argv).
-              options(desc).positional(p).allow_unregistered().run(), vm);
-
-    if (vm.count("help")) {
-        cout << desc << endl;
-        return EXIT_SUCCESS;
-    }
 
     try {
+        po::store(po::command_line_parser(argc, argv).
+                  options(desc).positional(p).allow_unregistered().run(), vm);
+
+        if (vm.count("help")) {
+            cerr << desc << endl;
+            return EXIT_SUCCESS;
+        }
+
         po::notify(vm);
     }
     catch (exception& e) {
-        cout << "Error : " << e.what() << endl;
+        cerr << "Error : " << e.what() << endl;
         return EXIT_FAILURE;
     }
 
@@ -47,9 +49,11 @@ int main(int argc, char** argv) {
         toPack = vm["id"].as<vector<string>>();
     }
 
+    double docHeight;
     //Parsing input file, sengind the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
-                                         toPack);
+                                         toPack, docHeight);
+    cerr << "Doc height " << docHeight << endl;
 
     if (!vm.count("id"))
         for (auto && s : shapes) {
@@ -63,8 +67,7 @@ int main(int argc, char** argv) {
     solver.solve();
 
     //Producing the output
-    //cout << solver.debugOutputSVG() << endl;
-    cout << solver.outputSVG(vm["input-file"].as<string>(), vm.count("addto"),
-                             toPack) << endl;
+	cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, docHeight, shapes);
+
     return EXIT_SUCCESS;
 }
