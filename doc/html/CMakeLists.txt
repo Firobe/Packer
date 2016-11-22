@@ -1,0 +1,5 @@
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxy-boot.js ${CMAKE_CURRENT_BINARY_DIR}/doxy-boot.js @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bootstrap.min.css ${CMAKE_CURRENT_BINARY_DIR}/bootstrap.min.css @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bootstrap.min.js ${CMAKE_CURRENT_BINARY_DIR}/bootstrap.min.js @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jquery-2.1.4.min.js ${CMAKE_CURRENT_BINARY_DIR}/jquery-2.1.4.min.js @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jquery.powertip.min.js ${CMAKE_CURRENT_BINARY_DIR}/jquery.powertip.min.js @ONLY)

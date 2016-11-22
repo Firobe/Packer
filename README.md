@@ -6,3 +6,8 @@
  * Configure Cmake project : `cmake -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw-w64.cmake -DCMAKE_INSTALL_PREFIX=/usr/x86_64-w64-mingw32/ -Dtarget-os="windows" ..`
  * build it `make`
  * Executable name is `packer.exe`
+
+# Generate documentation
+
+ * Just run the command `make doc` from the build folder
+ * Open the doc/html/index.html to view it

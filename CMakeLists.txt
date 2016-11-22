@@ -55,6 +55,7 @@ else ()
 endif ()
 
 
+add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(test)
 add_executable(packer src/main.cpp)
