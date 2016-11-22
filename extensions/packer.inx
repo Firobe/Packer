@@ -2,14 +2,14 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <_name>Packer</_name>
     <id>com.nerdson.packer</id>
-    <dependency type="executable" location="extensions">packer.exe</dependency>
+    <dependency type="executable" location="extensions">@EXE_NAME_PLUGIN@</dependency>
     <param name="tab" type="notebook">
     <page name = "size" _gui-text="Dimensions Plaque">
     <param name="width" type="int" min="0" max="9999" gui-text="Largeur plaque : ">
     </param>
     <param name="height" type="int" min="0" max="9999" gui-text="Hauteur plaque : ">
     </param>
-	<param name="dup" type="boolean" gui-text="Dupliquer en bas de page">
+	<param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
 	</param>
     </page>
     </param>
@@ -21,6 +21,6 @@
 		</effects-menu>
     </effect>
     <script>
-        <command reldir="extensions">packer.exe</command>
+        <command reldir="extensions">@EXE_NAME_PLUGIN@</command>
     </script>
 </inkscape-extension>

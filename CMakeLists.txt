@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(free_packingPFA)
 set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
+set(EXE_NAME "packer")
 
 enable_testing()
 
@@ -28,7 +29,7 @@ endif ()
 # Check build type to detect wich boost lib should be build
 if (DEFINED target-os AND target-os STREQUAL "windows")
     foreach (BOOST_LIB ${BOOST_LIBS})
-        if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}-mt-sd.a)
+        if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}-mt-s.a)
             message(STATUS "${BOOST_LIB} missing")
             message(STATUS "Building Boost required library...")
             execute_process(COMMAND sh bootstrap.sh --with-libraries=${BOOST_LIB}
@@ -59,12 +60,21 @@ add_subdirectory(test)
 add_executable(packer src/main.cpp)
 target_link_libraries(packer packer_lib)
 if (DEFINED target-os AND target-os STREQUAL "windows")
-    target_link_libraries(packer boost_program_options-mt-sd.a)
     message(STATUS "cross compilation")
+    target_link_libraries(${EXE_NAME} boost_program_options-mt-s.a)
+    set(EXE_NAME_PLUGIN "${EXE_NAME}.exe")
 else ()
-    target_link_libraries(packer boost_program_options)
     message(STATUS "Classic compilation")
+    target_link_libraries(${EXE_NAME} boost_program_options)
+    set(EXE_NAME_PLUGIN "${EXE_NAME}")
+    install(TARGETS ${EXE_NAME} RUNTIME
+            DESTINATION ~/.config/inkscape/extensions/
+            PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
+    install(FILES ${CMAKE_BINARY_DIR}/packer.inx
+            DESTINATION ~/.config/inkscape/extensions/
+            PERMISSIONS OWNER_READ OWNER_WRITE)
 endif ()
+configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
 
 # Use Astar to reformat source files
 add_custom_target(format

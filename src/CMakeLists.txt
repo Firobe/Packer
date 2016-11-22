@@ -3,4 +3,5 @@ add_library(packer_lib STATIC
         Shape.cpp
         Solver.cpp
         ToInfinityAndBeyondSolver.cpp
+        Outer.cpp
         )
