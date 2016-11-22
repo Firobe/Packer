@@ -31,13 +31,16 @@ public:
     Shape(std::vector<Ring>& r, std::string id) : _id(id) {
         fillShape(r);
     }
-    std::string getID() {
+    std::string getID() const {
         return _id;
     }
     std::array<double, 6> getTransMatrix() const;
-    MultiPolygon& getMultiP() {
-        return _multiP;
+    const MultiPolygon& getMultiP() const {
+      return _multiP;
     }
+  MultiPolygon& getMultiP() {
+        return _multiP;
+  }
 };
 
 /**

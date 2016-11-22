@@ -24,15 +24,17 @@ struct {
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-    //Maths. Ask Maxime for an explanation.
     Point newP1 = _multiP[0].outer()[0];
     Point newP2 = _multiP[0].outer()[1];
+    //Computing the angle
     double alpha = atan((newP2.y() - newP1.y())
                         / (newP2.x() - newP1.x()))
                    - atan((_oldP2.y() - _oldP1.y())
                           / (_oldP2.x() - _oldP1.x()));
     array<double, 6> result;
     double c, s, x1, y1, x2, y2;
+    //Resulting matrix corresponding to the following operations:
+    //Translate to origin, rotate of alpha, translate to new position
     c = cos(alpha);
     s = sin(alpha);
     x1 = _oldP1.x();

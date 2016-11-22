@@ -9,7 +9,7 @@
  */
 class IdentitySolver : public Solver {
 public:
-    IdentitySolver(std::vector<Shape>& v) : Solver(v) {}
+  IdentitySolver(std::vector<Shape>& v, double w, double h) : Solver(v,w,h) {}
     void solve() {}
 };
 

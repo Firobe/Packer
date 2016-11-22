@@ -6,6 +6,7 @@
 #include "Parser.hpp"
 #include "IdentitySolver.hpp"
 #include "ToInfinityAndBeyondSolver.hpp"
+#include "TheSkyIsTheLimitSolver.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -64,7 +65,7 @@ int main(int argc, char** argv) {
     //Packing the shapes
     //We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
     //the solver if they are present
-    ToInfinityAndBeyondSolver solver(shapes);
+    TheSkyIsTheLimitSolver solver(shapes,vm["width"].as<double>(),vm["height"].as<double>());
     solver.solve();
 
     //Producing the output
