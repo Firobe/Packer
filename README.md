@@ -11,3 +11,6 @@
 
  * Just run the command `make doc` from the build folder
  * Open the doc/html/index.html to view it
+ 
+ 
+ first fit algorithm

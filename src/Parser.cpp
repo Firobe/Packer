@@ -76,16 +76,17 @@ void Parser::path_cubic_bezier_to(
     svgpp::tag::coordinate::absolute) {
     Point p0 = _points.back();
 
-    for (double t = 0 ; t <= 1 ; t += BEZIER_STEP) {
+    for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
         double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
                     3 * x2 * t * t * (1 - t) + x * t * t * t;
         double ny = p0.y() * (1 - t) * (1 - t) * (1 - t) + 3 * y1 * t * (1 - t) * (1 - t) +
                     3 * y2 * t * t * (1 - t) + y * t * t * t;
+        cerr << nx << "," << ny << endl;
         _points.emplace_back(nx, ny);
     }
 
-    cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
-         x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
+    /*cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
+         x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;*/
 }
 
 /**

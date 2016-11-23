@@ -26,6 +26,9 @@ struct {
 array<double, 6> Shape::getTransMatrix() const {
     Point newP1 = _multiP[0].outer()[0];
     Point newP2 = _multiP[0].outer()[1];
+
+    cerr << newP1.x() << "," << newP1.y() << " : " << _oldP1.x() << "," << _oldP1.y() <<endl;
+    cerr << newP2.x() << "," << newP2.y() << " : " << _oldP2.x() << "," << _oldP2.y() <<endl;
     //Computing the angle
     double alpha = atan((newP2.y() - newP1.y())
                         / (newP2.x() - newP1.x()))
@@ -91,6 +94,9 @@ void Shape::fillShape(vector<Ring>& rings) {
     //Storing points for future transformation reference
     _oldP1 = _multiP[0].outer()[0];
     _oldP2 = _multiP[0].outer()[1];
+
+    /*for (unsigned i = 0 ; i < _multiP[0].outer().size() ; i++)
+        cerr << _multiP[0].outer()[i].x() << "," << _multiP[0].outer()[i].y() << endl;*/
 }
 
 /**
