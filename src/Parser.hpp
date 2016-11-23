@@ -7,10 +7,10 @@
 #include <svgpp/definitions.hpp>
 #include <svgpp/traits/attribute_groups.hpp>
 #include <svgpp/policy/error.hpp>
-#include <stack>
 #include <boost/mpl/set.hpp>
 
 #include "types.hpp"
+#include "Matrix.hpp"
 
 using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
 class Shape;
@@ -60,6 +60,7 @@ private:
      */
     int _groupStack;
     Point& _docDim;
+	MatStack _matStack;
 public:
     static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
 
@@ -70,6 +71,7 @@ public:
 
     ///SVG++ Methods
     //void set(svgpp::tag::attribute::id, std::string pId);
+	void transform_matrix(const boost::array<double, 6>& matrix);
     void set(svgpp::tag::attribute::id, const boost::iterator_range<const char*> pId);
     void set(svgpp::tag::attribute::width, double width);
     void set(svgpp::tag::attribute::height, double height);
@@ -131,13 +133,16 @@ using ProcessedElements =
     //Text and other things not handled
     >::type;
 
+
 using ProcessedAttributes =
+    boost::mpl::insert <
     boost::mpl::insert <
     boost::mpl::insert <
     boost::mpl::insert <
     svgpp::traits::shapes_attributes_by_element,
     svgpp::tag::attribute::height >::type,
     svgpp::tag::attribute::id >::type,
-    svgpp::tag::attribute::width
+    svgpp::tag::attribute::width>::type,
+	svgpp::tag::attribute::transform
     >::type;
 #endif

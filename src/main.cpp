@@ -66,8 +66,6 @@ int main(int argc, char** argv) {
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
 
     //Packing the shapes
-    //We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
-    //the solver if they are present
     TheSkyIsTheLimitSolver solver(shapes, packerDim);
     solver.solve();
 

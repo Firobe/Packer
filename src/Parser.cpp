@@ -226,3 +226,11 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
     cerr << "Parsed " << width << " as doc width" << endl;
     _docDim.set<0>(width);
 }
+
+/**
+ * Parse the current transform matrix.
+ */
+void Parser::transform_matrix(const boost::array<double, 6>& matrix){
+	_matStack.append(Matrix(matrix));
+	cerr << "New transformation state : " << _matStack.top() << endl;
+}
