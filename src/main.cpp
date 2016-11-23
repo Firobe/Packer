@@ -1,10 +1,8 @@
 #include <boost/program_options.hpp>
 #include <iostream>
-#include <ctime>
 
 #include "Outer.hpp"
 #include "Parser.hpp"
-#include "IdentitySolver.hpp"
 #include "ToInfinityAndBeyondSolver.hpp"
 #include "TheSkyIsTheLimitSolver.hpp"
 

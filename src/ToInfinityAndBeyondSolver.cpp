@@ -1,8 +1,6 @@
 #include <boost/geometry/algorithms/envelope.hpp>
-#include <vector>
 
 #include "ToInfinityAndBeyondSolver.hpp"
-#include "types.hpp"
 
 using namespace std;
 
