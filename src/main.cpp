@@ -51,26 +51,31 @@ int main(int argc, char** argv) {
         toPack = vm["id"].as<vector<string>>();
     }
 
-    double docHeight;
+    Point docDim;
     //Parsing input file, sengind the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
-                                         toPack, docHeight);
-    cerr << "Doc height " << docHeight << endl;
+                                         toPack, docDim);
+    cerr << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
     if (!vm.count("id"))
         for (auto && s : shapes) {
             toPack.push_back(s.getID());
         }
 
+    Point packerDim(
+        (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
+        (!vm.count("height") ||
+         vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+
     //Packing the shapes
     //We should send width (vm["width"].as<int>()) and height (vm["height"].as<int>()) to
     //the solver if they are present
-    TheSkyIsTheLimitSolver solver(shapes,vm["width"].as<double>(),vm["height"].as<double>());
+    TheSkyIsTheLimitSolver solver(shapes, packerDim);
     solver.solve();
 
     //Producing the output
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                          docHeight, shapes);
+                          docDim.y(), shapes);
 
     return EXIT_SUCCESS;
 }

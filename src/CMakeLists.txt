@@ -3,5 +3,6 @@ add_library(packer_lib STATIC
         Shape.cpp
         Solver.cpp
         ToInfinityAndBeyondSolver.cpp
+		TheSkyIsTheLimitSolver.cpp
         Outer.cpp
         )

@@ -20,7 +20,7 @@ using namespace svgpp;
  */
 vector<Shape> Parser::Parse(string path,
                             vector<string>& ids,
-                            double& height) { //Returns a copy, can be improved
+                            Point& docDim) { //Returns a copy, can be improved
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -28,7 +28,7 @@ vector<Shape> Parser::Parse(string path,
 
     //Parse the XML
     XMLElement rootNode = doc.first_node();
-    Parser context(ids, height);
+    Parser context(ids, docDim);
     document_traversal <error_policy<IgnoreError>, //Enables IgnoreError
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
@@ -215,5 +215,14 @@ void Parser::set(svgpp::tag::attribute::id,
  * Parsing the height of the dock.
  */
 void Parser::set(svgpp::tag::attribute::height, double height) {
-    _height = height;
+    cerr << "Parsed " << height << " as doc height" << endl;
+    _docDim.set<1>(height);
+}
+
+/**
+ * Parsing the width of the dock.
+ */
+void Parser::set(svgpp::tag::attribute::width, double width) {
+    cerr << "Parsed " << width << " as doc width" << endl;
+    _docDim.set<0>(width);
 }

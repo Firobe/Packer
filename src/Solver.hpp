@@ -21,13 +21,13 @@
  */
 class Solver {
 protected:
-  std::vector<Shape>& _shapes;
-  int _binNumber;
-  double _width, _height;
+    std::vector<Shape>& _shapes;
+    int _binNumber;
+    Point _dimensions;
 public:
-  Solver(std::vector<Shape>& s, double w, double h) : _shapes(s), _binNumber(0), _width(w), _height(h) {}
-  void solve() = delete;
-  std::string debugOutputSVG();
+    Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
+    void solve() = delete;
+    std::string debugOutputSVG();
 };
 
 #endif

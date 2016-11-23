@@ -1,6 +1,6 @@
 COMPILER = c++
 FORCE_BOOST = false #If build fails, try to enable this
-CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/ -O2
+CXXFLAGS = -Wall -Wfatal-errors -std=c++11 -isystem third_party -isystem third_party/boost/ -O0 -g
 LIBS = -lboost_program_options
 BOOST_LIBS=program_options
 LIBS_DIR = -Lthird_party/boost/stage/lib/

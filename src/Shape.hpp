@@ -36,11 +36,11 @@ public:
     }
     std::array<double, 6> getTransMatrix() const;
     const MultiPolygon& getMultiP() const {
-      return _multiP;
-    }
-  MultiPolygon& getMultiP() {
         return _multiP;
-  }
+    }
+    MultiPolygon& getMultiP() {
+        return _multiP;
+    }
 };
 
 /**

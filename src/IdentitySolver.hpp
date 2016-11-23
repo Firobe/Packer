@@ -9,7 +9,7 @@
  */
 class IdentitySolver : public Solver {
 public:
-  IdentitySolver(std::vector<Shape>& v, double w, double h) : Solver(v,w,h) {}
+    IdentitySolver(std::vector<Shape>& v, Point p = Point(0, 0)) : Solver(v, p) {}
     void solve() {}
 };
 

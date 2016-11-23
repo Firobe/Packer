@@ -11,7 +11,7 @@
  */
 class ToInfinityAndBeyondSolver : public Solver {
 public:
-  ToInfinityAndBeyondSolver(std::vector<Shape>& v, double w=0, double h=0) : Solver(v,w,h) {}
+    ToInfinityAndBeyondSolver(std::vector<Shape>& v, Point p = Point(0, 0)) : Solver(v, p) {}
     void solve();
 };
 
