@@ -6,28 +6,7 @@
 
 using namespace std;
 
-/**
- * Defines a comparator for boxes
- */
-struct {
-    inline bool operator()(const Box& a, const Box& b) {
-        return (a.max_corner().y() - a.min_corner().y()) >=
-               (b.max_corner().y() - b.min_corner().y());
-    }
-} boxHeightLess;
 
-/**
- * Defines a comparator for boxes
- */
-struct {
-    inline bool operator()(const Shape& a, const Shape& b) {
-        Box ea;
-        bg::envelope(a.getMultiP(), ea);
-        Box eb;
-        bg::envelope(b.getMultiP(), eb);
-        return boxHeightLess(ea, eb);
-    }
-} shapeHeightLess;
 
 void TheSkyIsTheLimitSolver::solve() {
     vector<Box> boxes(_shapes.size());
