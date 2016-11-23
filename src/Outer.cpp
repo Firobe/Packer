@@ -80,6 +80,16 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
         s += to_string(m[e]) + (e == 5 ? ")" : ", ");
     }
 
+    xml_attribute<>* transAtt = node->first_attribute("transform");
+
+    if (transAtt != nullptr) {
+        s += " ";
+        s += transAtt->value();
+        node->remove_attribute(transAtt);
+    }
+
+    cerr << "Appending " << s << endl;
+
     //Allocate space and add it as an attribute
     cs = new char[s.size() + 1];
     strcpy(cs, s.c_str());

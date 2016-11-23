@@ -110,9 +110,10 @@ void Parser::path_exit() {
     if (bg::area(Ring(_points.begin(), _points.end())) < 0) {
         reverse(_points.begin(), _points.end());
     }
-	
-	for(auto&& p : _points)
-		p = _matStack.top()(p);
+
+    for (auto && p : _points) {
+        p = _matStack.top()(p);
+    }
 
     _rings.emplace_back(_points.begin(), _points.end());
 }
@@ -122,8 +123,8 @@ void Parser::path_exit() {
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
     cerr << "Element enter (group)" << endl;
-	//Pushing identity
-	_matStack.push(_matStack.top());
+    //Pushing identity
+    _matStack.push(_matStack.top());
 
     for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
         //Iterate through the parsed rings (in reverse order to match the stack)
@@ -147,8 +148,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  * Beginning of a new shape (or unknown element)
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
-	//Pushing identity
-	_matStack.push(_matStack.top());
+    //Pushing identity
+    _matStack.push(_matStack.top());
     cerr << "Element enter (" << _groupStack << ")\n";
 
     if (_groupStack >= 0) {
@@ -184,12 +185,13 @@ void Parser::on_exit_element() {
     }
 
     _groupStack--;
-	Matrix tmp = _matStack.top();
-	_matStack.pop();
-	if(tmp != _matStack.top()){
-		cerr << "Popped a real transformation matrix : " << tmp << endl;
-		_matStack.pop();
-	}
+    Matrix tmp = _matStack.top();
+    _matStack.pop();
+
+    if (tmp != _matStack.top()) {
+        cerr << "Popped a real transformation matrix : " << tmp << endl;
+        _matStack.pop();
+    }
 }
 
 /**
@@ -242,8 +244,8 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
 /**
  * Parse the current transform matrix.
  */
-void Parser::transform_matrix(const boost::array<double, 6>& matrix){
-	_matStack.append(Matrix(matrix));
-	cerr << "New transformation state : " << _matStack.top() << " (stack size : ";
-   	cerr << _matStack.size() << ")"	<< endl;
+void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
+    _matStack.append(Matrix(matrix));
+    cerr << "New transformation state : " << _matStack.top() << " (stack size : ";
+    cerr << _matStack.size() << ")"	<< endl;
 }

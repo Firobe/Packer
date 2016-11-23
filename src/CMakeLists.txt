@@ -5,4 +5,5 @@ add_library(packer_lib STATIC
         ToInfinityAndBeyondSolver.cpp
 		TheSkyIsTheLimitSolver.cpp
         Outer.cpp
+		Matrix.cpp
         )
