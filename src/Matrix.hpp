@@ -22,11 +22,17 @@ public:
 		return _mat[idx];
 	}
 	Point operator()(const Point&);
+	bool operator==(const Matrix& r){
+		return _mat == r._mat;
+	}
+	bool operator!=(const Matrix& r){
+		return !operator==(r);
+	}
 };
 
+std::ostream& operator<<(std::ostream& os, const Matrix& m);
 Matrix operator+(Matrix lhs, const Matrix& rhs);
 Matrix operator*(Matrix lhs, const Matrix& rhs);
-std::ostream& operator<<(std::ostream& os, const Matrix& m);
 
 class MatStack : public std::stack<Matrix>{
 public:
