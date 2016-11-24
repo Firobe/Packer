@@ -7,49 +7,39 @@
 
 using namespace std;
 
-
 void ScanlineSolver::solve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
-    // Create the sorted bounding boxes by decreasing height
-    vector<Box> boxes(_shapes.size());
-
+    // Create the sorted bounding _boxes by decreasing height
     for (unsigned i = 0; i < _shapes.size(); i++) {
-        bg::envelope(_shapes[i].getMultiP(), boxes[i]);
+        bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
     }
 
-
-    vector<unsigned> indices(_shapes.size());
-
-    for (unsigned i = 0; i < indices.size(); i++)
-
-    {
-        indices[i] = i;
+    for (unsigned i = 0; i < _shapes.size(); i++){
+        _indices.push_back(i);
     }
 
-
-    ScanlineSolver::solveAux(boxes, indices);
+    ScanlineSolver::solveAux();
 }
 
-
-void ScanlineSolver::solveAux(vector<Box> boxes, vector<unsigned> indices) {
+void ScanlineSolver::solveAux() {
+	cerr << "New recursive call to solveAux" << endl;
     // == Stopping Cases ==
-    if (boxes[0].max_corner().y() - boxes[0].min_corner().y() > _dimensions.y()) {
+    if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
         // STOP, remaining pieces are too tall to fit in any way
         throw invalid_argument("Shape height higher than bin height");
     }
 
-    for (auto && i : indices) {
-        //  for(unsigned i=0; i<boxes.size(); i++){
-        if (boxes[i].max_corner().x() - boxes[i].min_corner().x() > _dimensions.x()) {
+    for (auto && i : _indices) {
+        //  for(unsigned i=0; i<_boxes.size(); i++){
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
             throw invalid_argument("Shape width higher than bin width");
         }
     }
 
     // =============================================================================
-    // We now have a sorted-by-height vector of boxes, with at least one able to fit
+    // We now have a sorted-by-height vector of _boxes, with at least one able to fit
     // =============================================================================
-
     // Create the dynamic cell matrix
     vector<double> cellW(1);
     vector<double> cellH(1);
@@ -65,12 +55,12 @@ void ScanlineSolver::solveAux(vector<Box> boxes, vector<unsigned> indices) {
     double lastH = 0, lastW = 0;
 
     bool keepLooking;
-    vector<unsigned>::iterator i;
+    list<unsigned>::iterator i = _indices.begin();
 
-    for (i = indices.begin(); i < indices.end(); i++) {
+    for (; i != _indices.end(); i++) {
 
-        shapeWidth = boxes[*i].max_corner().x() - boxes[*i].min_corner().x();
-        shapeHeight = boxes[*i].max_corner().y() - boxes[*i].min_corner().y();
+        shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
+        shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
 
         keepLooking = true;
 
@@ -113,63 +103,30 @@ void ScanlineSolver::solveAux(vector<Box> boxes, vector<unsigned> indices) {
                         }
 
                         // == translation ==
-                        cerr << "getLenFromIndex(cellW, iX)=" << getLenFromIndex(cellW, iX) << endl;
-                        cerr << "getLenFromIndex(cellH, iY)=" << getLenFromIndex(cellH, iY) << endl;
-                        translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - boxes[*i].min_corner().x(),
-                                         getLenFromIndex(cellH, iY) - boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
-                        translate<Box>(boxes[*i], getLenFromIndex(cellW, iX) - boxes[*i].min_corner().x(),
-                                       getLenFromIndex(cellH, iY) - boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
+                        translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
+                                         getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
+                        translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
+                                       getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
 
                         // We're done here, going onto next piece
                         cerr << "Je suis " << *i << " et je vais me supprimer du tableau" << endl;
-                        cerr << "L'indice suivant est " << *(i + 1) << endl;
-                        i = indices.erase(find(indices.begin(), indices.end(), *i)) - 1;
+                        i = _indices.erase(i);
+						i--;
                         keepLooking = false;
                     }
                 }
             }
         }
-
-        printAll(cellIsEmpty, cellW, cellH);
     }
 
-
-    if (indices.size() >
+    if (_indices.size() >
             0) { // recursive call on failed packing (new frame under this one)
         _binNumber++;
-        ScanlineSolver::solveAux(boxes, indices);
+        ScanlineSolver::solveAux();
     }
 }
 
-
-void printAll(vector<vector<bool>> cellIsEmpty, vector<double> cellW,
-              vector<double> cellH) {
-    cerr << "============\nCELL MATRIX";
-
-    for (auto && x : cellIsEmpty) {
-        cerr << endl;
-
-        for (auto && y : x) {
-            cerr << y << " ; ";
-        }
-    }
-
-    cerr << endl << "CellW" << endl;
-
-    for (auto && x : cellW) {
-        cerr << x << " ; ";
-    }
-
-    cerr << endl << "CellH" << endl;
-
-    for (auto && x : cellH) {
-        cerr << x << " ; ";
-    }
-
-    cerr << endl;
-}
-
-int getLastX(vector<double> cellW, unsigned iX, double shapeW, double& plastW) {
+int getLastX(vector<double>& cellW, unsigned iX, double shapeW, double& plastW) {
     double w = shapeW;
 
     while (cellW[iX] < w) {
@@ -182,12 +139,11 @@ int getLastX(vector<double> cellW, unsigned iX, double shapeW, double& plastW) {
     }
 
     plastW = w; // Last width is keep (to divide the cell)
-
     return iX;
 }
 
 
-int getLastY(vector<double> cellH, unsigned iY, double shapeH, double& plastH) {
+int getLastY(vector<double>& cellH, unsigned iY, double shapeH, double& plastH) {
     double h = shapeH;
 
     while (cellH[iY] < h) {
@@ -200,13 +156,12 @@ int getLastY(vector<double> cellH, unsigned iY, double shapeH, double& plastH) {
     }
 
     plastH = h; // Last height is keep (to divide the cell)
-
     return iY;
 }
 
 
 
-bool allCellsEmpty(vector<vector<bool>> cellIsEmpty, unsigned iX, int lastX, unsigned iY,
+bool allCellsEmpty(vector<vector<bool>>& cellIsEmpty, unsigned iX, int lastX, unsigned iY,
                    int lastY) {
     for (int x = iX; x <= lastX; x++) {
         for (int y = iY; y <= lastY; y++) {
@@ -215,17 +170,15 @@ bool allCellsEmpty(vector<vector<bool>> cellIsEmpty, unsigned iX, int lastX, uns
             }
         }
     }
-
     return true;
 }
 
-double getLenFromIndex(vector<double> lengthVector, unsigned index) {
+double getLenFromIndex(vector<double>& lengthVector, unsigned index) {
     double length = 0;
 
     for (unsigned i = 0; i < index; i++) {
         length += lengthVector[i];
     }
-
     return length;
 }
 

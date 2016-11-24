@@ -98,16 +98,16 @@ public:
 struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
     template<class XMLAttributesIterator, class AttributeName>
     static bool unknown_attribute(context_type&,
-                                  XMLAttributesIterator const& attribute,
-                                  AttributeName const& name,
+                                  XMLAttributesIterator const&,
+                                  AttributeName const&,
                                   svgpp::tag::source::css) {
         return true;
     }
     template<class XMLAttributesIterator, class AttributeName>
     static bool unknown_attribute(context_type&,
-                                  XMLAttributesIterator const& attribute,
-                                  AttributeName const& name,
-                                  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id) namespace_id,
+                                  XMLAttributesIterator const&,
+                                  AttributeName const&,
+                                  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id),
                                   svgpp::tag::source::attribute) {
         return true;
     }
