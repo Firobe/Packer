@@ -3,7 +3,7 @@
 
 #include "Outer.hpp"
 #include "Parser.hpp"
-#include "ScanlineSolver.hpp"
+//#include "ScanlineSolver.hpp"
 #include "TheSkyIsTheLimitSolver.cpp"
 
 namespace po = boost::program_options;
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
 
     //Packing the shapes
-    ScanlineSolver solver(shapes, packerDim);
+    TheSkyIsTheLimitSolver solver(shapes, packerDim);
     solver.solve();
 
     //Producing the output

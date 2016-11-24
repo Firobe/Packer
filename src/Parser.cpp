@@ -112,9 +112,7 @@ void Parser::path_exit() {
         reverse(_points.begin(), _points.end());
     }
 
-    for (auto && p : _points) {
-        p = _matStack.top()(p);
-    }
+    
 
     _rings.emplace_back(_points.begin(), _points.end());
 }
@@ -130,6 +128,9 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         cerr << "Flushing rings..." << endl;
+		for (auto && p : _rings[i]) {
+      	  p = _matStack.top()(p);
+    	}
         vector<Ring> tmp {_rings[i]};
 
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
@@ -178,6 +179,10 @@ void Parser::on_exit_element() {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
+
+			for(auto&& points : _rings)
+				for(auto&& p : points)
+					p = _matStack.top()(p);
             _shapes.emplace_back(_rings, _idStack.top());
         }
 
