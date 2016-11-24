@@ -81,12 +81,11 @@ void Parser::path_cubic_bezier_to(
                     3 * x2 * t * t * (1 - t) + x * t * t * t;
         double ny = p0.y() * (1 - t) * (1 - t) * (1 - t) + 3 * y1 * t * (1 - t) * (1 - t) +
                     3 * y2 * t * t * (1 - t) + y * t * t * t;
-        cerr << nx << "," << ny << endl;
         _points.emplace_back(nx, ny);
     }
 
-    /*cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
-         x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;*/
+    cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
+         x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
 
 /**
@@ -112,7 +111,7 @@ void Parser::path_exit() {
         reverse(_points.begin(), _points.end());
     }
 
-    
+
 
     _rings.emplace_back(_points.begin(), _points.end());
 }
@@ -128,9 +127,11 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         cerr << "Flushing rings..." << endl;
-		for (auto && p : _rings[i]) {
-      	  p = _matStack.top()(p);
-    	}
+
+        for (auto && p : _rings[i]) {
+            p = _matStack.top()(p);
+        }
+
         vector<Ring> tmp {_rings[i]};
 
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
@@ -180,9 +181,11 @@ void Parser::on_exit_element() {
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
 
-			for(auto&& points : _rings)
-				for(auto&& p : points)
-					p = _matStack.top()(p);
+            for (auto && points : _rings)
+                for (auto && p : points) {
+                    p = _matStack.top()(p);
+                }
+
             _shapes.emplace_back(_rings, _idStack.top());
         }
 

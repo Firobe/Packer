@@ -38,6 +38,7 @@ struct {
     inline bool operator()(const Box& a, const Box& b) {
         return (a.max_corner().y() - a.min_corner().y()) >=
                (b.max_corner().y() - b.min_corner().y());
+
     }
 } boxHeightLess;
 

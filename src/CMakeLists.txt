@@ -6,4 +6,5 @@ add_library(packer_lib STATIC
 		TheSkyIsTheLimitSolver.cpp
         Outer.cpp
 		Matrix.cpp
+		ScanlineSolver.cpp
         )
