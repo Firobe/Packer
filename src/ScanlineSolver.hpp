@@ -7,12 +7,12 @@
 
 class ScanlineSolver : public Solver {
 private:
-	std::vector<Box> _boxes;
-	std::list<unsigned> _indices;
+    std::vector<Box> _boxes;
+    std::list<unsigned> _indices;
     void solveAux();
 public:
     ScanlineSolver(std::vector<Shape>& v, Point p) : Solver(v, p),
-   		_boxes(v.size()) {}
+        _boxes(v.size()) {}
     void solve();
 };
 

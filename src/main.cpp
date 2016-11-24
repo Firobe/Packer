@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     //Producing the output
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                           docDim.y(), shapes);
-	delete solver;
+    delete solver;
 
     return EXIT_SUCCESS;
 }

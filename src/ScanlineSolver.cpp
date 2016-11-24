@@ -15,7 +15,7 @@ void ScanlineSolver::solve() {
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
     }
 
-    for (unsigned i = 0; i < _shapes.size(); i++){
+    for (unsigned i = 0; i < _shapes.size(); i++) {
         _indices.push_back(i);
     }
 
@@ -23,7 +23,6 @@ void ScanlineSolver::solve() {
 }
 
 void ScanlineSolver::solveAux() {
-	cerr << "New recursive call to solveAux" << endl;
     // == Stopping Cases ==
     if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
         // STOP, remaining pieces are too tall to fit in any way
@@ -58,7 +57,7 @@ void ScanlineSolver::solveAux() {
     list<unsigned>::iterator i = _indices.begin();
 
     for (; i != _indices.end(); i++) {
-
+        cerr << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
 
@@ -109,9 +108,8 @@ void ScanlineSolver::solveAux() {
                                        getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
 
                         // We're done here, going onto next piece
-                        cerr << "Je suis " << *i << " et je vais me supprimer du tableau" << endl;
                         i = _indices.erase(i);
-						i--;
+                        i--;
                         keepLooking = false;
                     }
                 }
@@ -170,6 +168,7 @@ bool allCellsEmpty(vector<vector<bool>>& cellIsEmpty, unsigned iX, int lastX, un
             }
         }
     }
+
     return true;
 }
 
@@ -179,6 +178,7 @@ double getLenFromIndex(vector<double>& lengthVector, unsigned index) {
     for (unsigned i = 0; i < index; i++) {
         length += lengthVector[i];
     }
+
     return length;
 }
 

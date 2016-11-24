@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Outer.hpp"
+#include "Matrix.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
@@ -30,14 +31,20 @@ Outer::~Outer() {
  * a node : the beginning the tag, the name
  * and each of its attributes
  */
-void Outer::printNode(XMLElement node) {
+void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     _outStream << "<" << node->name() << endl;
     cerr << "Printing " << node->name() << endl;
 
     for (xml_attribute<>* attr = node->first_attribute();
             attr; attr = attr->next_attribute()) {
         _outStream << attr->name() << "=\"";
-        _outStream << attr->value() << "\"" << endl;
+
+        if (strcmp(attr->name(), "id") == 0) {
+            _outStream << attr->value() << forceNoMatrix << "\"" << endl;
+        }
+        else {
+            _outStream << attr->value() << "\"" << endl;
+        }
     }
 }
 
@@ -60,7 +67,6 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
     }
 
     cerr << "Adding matrix for " << id->value() << endl;
-    string s;
     int i;
 
     //Then creates the matrix and add it as an attribute
@@ -74,26 +80,22 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
         m[5] += _height;
     }
 
-    s = "matrix(";
-
-    for (int e = 0 ; e < 6 ; e++) {
-        s += to_string(m[e]) + (e == 5 ? ")" : ", ");
-    }
-
+    stringstream s;
+    s << Matrix(m);
     xml_attribute<>* transAtt = node->first_attribute("transform");
 
     if (transAtt != nullptr) {
-        s += " ";
-        s += transAtt->value();
+        s << " ";
+        s << transAtt->value();
         node->remove_attribute(transAtt);
     }
 
-    cerr << "Appending " << s << endl;
+    cerr << "Appending " << s.str() << endl;
 
     //Allocate space and add it as an attribute
-    cs = new char[s.size() + 1];
-    strcpy(cs, s.c_str());
-    cs[s.size()] = '\0';
+    cs = new char[s.str().size() + 1];
+    strcpy(cs, s.str().c_str());
+    cs[s.str().size()] = '\0';
     xml_attribute<>* mat = _doc.allocate_attribute("transform", cs);
     node->prepend_attribute(mat);
     return true;
@@ -112,7 +114,7 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
     //Get the ID attribute of the node
     char* cs = nullptr;
     bool packed = appendMatrix(node, cs, forceNoMatrix);
-    printNode(node);
+    printNode(node, forceNoMatrix);
     delete[] cs;
 
     //Get the first child of the node

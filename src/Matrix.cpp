@@ -29,7 +29,7 @@ Point Matrix::operator()(const Point& p) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix& m) {
-    os << "Matrix(" << m[0];
+    os << "matrix(" << m[0];
 
     for (int i = 1 ; i < 6 ; i++) {
         os << ", " << m[i];

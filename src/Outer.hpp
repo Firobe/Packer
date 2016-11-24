@@ -37,7 +37,7 @@ public:
                               std::vector<Shape>&);
 private:
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
-    void printNode(rapidxml_ns::xml_node<>*);
+    void printNode(rapidxml_ns::xml_node<>*, bool);
     NodeType identNode(rapidxml_ns::xml_node<>*);
     bool appendMatrix(rapidxml_ns::xml_node<>*, char*, bool);
 };
