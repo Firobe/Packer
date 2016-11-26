@@ -22,7 +22,6 @@ int main(int argc, char** argv) {
     ("width",  po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
-
     po::variables_map vm;
     po::positional_options_description p;
     p.add("input-file", -1);
@@ -64,15 +63,12 @@ int main(int argc, char** argv) {
         (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
-
     //Packing the shapes
     ScanlineSolver* solver = new ScanlineSolver(shapes, packerDim);
     solver->solve();
-
     //Producing the output
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                           docDim.y(), shapes);
     delete solver;
-
     return EXIT_SUCCESS;
 }

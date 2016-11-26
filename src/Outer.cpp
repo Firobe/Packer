@@ -91,7 +91,6 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
     }
 
     cerr << "Appending " << s.str() << endl;
-
     //Allocate space and add it as an attribute
     cs = new char[s.str().size() + 1];
     strcpy(cs, s.str().c_str());
@@ -151,7 +150,7 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
  * Check the children of a node : if it has a child (and check
  * if that child is a value).
  */
-NodeType Outer::identNode(XMLElement node) {
+NodeType Outer::identNode(XMLElement node) const {
     XMLElement next = node->first_node();
 
     if (next != nullptr) {

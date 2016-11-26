@@ -11,7 +11,7 @@ Matrix operator+(Matrix lhs, const Matrix& rhs) {
     return lhs;
 }
 
-Matrix operator*(Matrix lhs, const Matrix& rhs) {
+Matrix operator*(const Matrix& lhs, const Matrix& rhs) {
     Matrix ret(0, 0, 0, 0, 0, 0);
     ret[0] = MAT_SUPERTERM(0, 0, 2, 1);
     ret[1] = MAT_SUPERTERM(1, 0, 3, 1);
@@ -22,7 +22,7 @@ Matrix operator*(Matrix lhs, const Matrix& rhs) {
     return ret;
 }
 
-Point Matrix::operator()(const Point& p) {
+Point Matrix::operator()(const Point& p) const {
     return Point(
                _mat[0] * p.x() + _mat[2] * p.y() + _mat[4],
                _mat[1] * p.x() + _mat[3] * p.y() + _mat[5]);

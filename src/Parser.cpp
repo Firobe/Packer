@@ -25,7 +25,6 @@ vector<Shape> Parser::Parse(string path,
     file<> svgFile(path.c_str());
     xml_document<> doc;
     doc.parse<0>(svgFile.data());
-
     //Parse the XML
     XMLElement rootNode = doc.first_node();
     Parser context(ids, docDim);
@@ -93,7 +92,7 @@ void Parser::path_cubic_bezier_to(
  * drawn from the current point to the initial point of the current
  * subpath.
  */
-void Parser::path_close_subpath() {
+void Parser::path_close_subpath() const {
     //Nothing to do as the initial point should already be added
     cerr << "Close subpath" << endl;
 }
@@ -110,8 +109,6 @@ void Parser::path_exit() {
     if (bg::area(Ring(_points.begin(), _points.end())) < 0) {
         reverse(_points.begin(), _points.end());
     }
-
-
 
     _rings.emplace_back(_points.begin(), _points.end());
 }
@@ -176,11 +173,9 @@ void Parser::on_exit_element() {
     }
 
     if (_groupStack <= 0 && !_rings.empty()) {
-
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
-
             for (auto && points : _rings)
                 for (auto && p : points) {
                     p = _matStack.top()(p);

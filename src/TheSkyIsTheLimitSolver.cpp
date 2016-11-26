@@ -12,7 +12,6 @@ void TheSkyIsTheLimitSolver::solve() {
     vector<Box> boxes(_shapes.size());
     Point cursor;
     double currX = 0, currY = 0, offset;
-
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     //Create the bounding boxes
@@ -40,7 +39,6 @@ void TheSkyIsTheLimitSolver::solve() {
                        currY - boxes[i].min_corner().y());
         currX += boxes[i].max_corner().x() - boxes[i].min_corner().x();
     }
-
 }
 
 

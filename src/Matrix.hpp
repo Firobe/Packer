@@ -26,18 +26,18 @@ public:
     const double& operator[](std::size_t idx) const {
         return _mat[idx];
     }
-    Point operator()(const Point&);
-    bool operator==(const Matrix& r) {
+    Point operator()(const Point&) const;
+    bool operator==(const Matrix& r) const {
         return _mat == r._mat;
     }
-    bool operator!=(const Matrix& r) {
+    bool operator!=(const Matrix& r) const {
         return !operator==(r);
     }
 };
 
 std::ostream& operator<<(std::ostream& os, const Matrix& m);
 Matrix operator+(Matrix lhs, const Matrix& rhs);
-Matrix operator*(Matrix lhs, const Matrix& rhs);
+Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
 class MatStack : public std::stack<Matrix> {
 public:

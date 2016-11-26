@@ -19,6 +19,5 @@ void ToInfinityAndBeyondSolver::solve() {
         translate<Shape>(_shapes[i], previous.x() - reference.x(), -reference.y());
         translate<Box>(boxes[i], previous.x() - reference.x(), -reference.y());
     }
-
 }
 

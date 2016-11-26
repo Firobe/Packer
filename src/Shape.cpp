@@ -9,11 +9,9 @@ using namespace std;
 /**
  * Defines a comparator for Rings
  */
-struct {
-    inline bool operator()(const Ring& a, const Ring& b) {
-        return bg::area(a) < bg::area(b);
-    }
-} ringLess;
+inline bool ringLess(const Ring& a, const Ring& b) {
+    return bg::area(a) < bg::area(b);
+}
 
 /**
  * Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
@@ -91,7 +89,6 @@ void Shape::fillShape(vector<Ring>& rings) {
     //Storing points for future transformation reference
     _oldP1 = _multiP[0].outer()[0];
     _oldP2 = _multiP[0].outer()[1];
-
     /*for (unsigned i = 0 ; i < _multiP[0].outer().size() ; i++)
         cerr << _multiP[0].outer()[i].x() << "," << _multiP[0].outer()[i].y() << endl;*/
 }

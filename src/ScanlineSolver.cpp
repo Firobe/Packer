@@ -26,13 +26,12 @@ void ScanlineSolver::solveAux() {
     // == Stopping Cases ==
     if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
         // STOP, remaining pieces are too tall to fit in any way
-        throw invalid_argument("Shape height higher than bin height");
+        throw invalid_argument("Shape height greater than bin height");
     }
 
     for (auto && i : _indices) {
-        //  for(unsigned i=0; i<_boxes.size(); i++){
         if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
-            throw invalid_argument("Shape width higher than bin width");
+            throw invalid_argument("Shape width greater than bin width");
         }
     }
 
@@ -42,34 +41,29 @@ void ScanlineSolver::solveAux() {
     // Create the dynamic cell matrix
     vector<double> cellW(1);
     vector<double> cellH(1);
-    vector<vector<bool>> cellIsEmpty(1, vector<bool>(1, true));
+    vector<vector<bool>> cellIsEmpty(1, vector<bool>(1, true)); //2-dim boolean matrix
     vector<bool> newCellLine(1); // to divide and add a cell row
     cellW[0] = _dimensions.x();
     cellH[0] = _dimensions.y();
-
     double shapeWidth;
     double shapeHeight;
-
     int lastX, lastY;
     double lastH = 0, lastW = 0;
-
     bool keepLooking;
     list<unsigned>::iterator i = _indices.begin();
 
-    for (; i != _indices.end(); i++) {
+    for (; i != _indices.end(); i++) { //Iterates on yet-to-be-processed shapes
         cerr << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
-
         keepLooking = true;
 
         for (unsigned iX = 0; iX < cellW.size() && keepLooking; iX++) {
             for (unsigned iY = 0; iY < cellH.size() &&
                     keepLooking; iY++) { // scan column by column, top to bottom and left to right
-
                 if (cellIsEmpty[iX][iY]) { // First test is to see if the top-left cell is empty
-                    lastX = getLastX(cellW, iX, shapeWidth, lastW);
-                    lastY = getLastY(cellH, iY, shapeHeight, lastH);
+                    lastX = getLast(cellW, iX, shapeWidth, lastW);
+                    lastY = getLast(cellH, iY, shapeHeight, lastH);
 
                     if (lastX == -1 || lastY == -1) { // piece goes off the frame
                         continue;
@@ -106,10 +100,8 @@ void ScanlineSolver::solveAux() {
                                          getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
                         translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
                                        getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
-
                         // We're done here, going onto next piece
-                        i = _indices.erase(i);
-                        i--;
+                        i = --_indices.erase(i);
                         keepLooking = false;
                     }
                 }
@@ -124,43 +116,24 @@ void ScanlineSolver::solveAux() {
     }
 }
 
-int getLastX(vector<double>& cellW, unsigned iX, double shapeW, double& plastW) {
-    double w = shapeW;
+int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double shape,
+                            double& plast) const {
+    while (cells[i] < shape) {
+        shape -= cells[i];
+        i++;
 
-    while (cellW[iX] < w) {
-        w -= cellW[iX];
-        iX++;
-
-        if (iX >= cellW.size()) { // piece goes off the frame
+        if (i >= cells.size()) { // piece goes off the frame
             return -1;
         }
     }
 
-    plastW = w; // Last width is keep (to divide the cell)
-    return iX;
+    plast = shape; // Last width/height is kept (to divide the cell)
+    return i;
 }
 
-
-int getLastY(vector<double>& cellH, unsigned iY, double shapeH, double& plastH) {
-    double h = shapeH;
-
-    while (cellH[iY] < h) {
-        h -= cellH[iY];
-        iY++;
-
-        if (iY >= cellH.size()) { // piece goes off the frame
-            return -1;
-        }
-    }
-
-    plastH = h; // Last height is keep (to divide the cell)
-    return iY;
-}
-
-
-
-bool allCellsEmpty(vector<vector<bool>>& cellIsEmpty, unsigned iX, int lastX, unsigned iY,
-                   int lastY) {
+bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
+                                   int lastX, unsigned iY,
+                                   int lastY) const {
     for (int x = iX; x <= lastX; x++) {
         for (int y = iY; y <= lastY; y++) {
             if (cellIsEmpty[x][y] == false) {
@@ -172,7 +145,8 @@ bool allCellsEmpty(vector<vector<bool>>& cellIsEmpty, unsigned iX, int lastX, un
     return true;
 }
 
-double getLenFromIndex(vector<double>& lengthVector, unsigned index) {
+double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,
+                                       unsigned index) const {
     double length = 0;
 
     for (unsigned i = 0; i < index; i++) {
@@ -181,5 +155,3 @@ double getLenFromIndex(vector<double>& lengthVector, unsigned index) {
 
     return length;
 }
-
-

@@ -7,9 +7,7 @@
 #include <algorithm>
 #include <sstream>
 
-
 #include "Shape.hpp"
-
 
 /**
  * Solver class. An abstract class
