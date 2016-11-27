@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void ToInfinityAndBeyondSolver::solve() {
+void ToInfinityAndBeyondSolver::solveBin() {
     vector<Box> boxes(_shapes.size());
     Point previous, reference;
 
@@ -19,5 +19,7 @@ void ToInfinityAndBeyondSolver::solve() {
         translate<Shape>(_shapes[i], previous.x() - reference.x(), -reference.y());
         translate<Box>(boxes[i], previous.x() - reference.x(), -reference.y());
     }
+
+    _indices.clear();
 }
 

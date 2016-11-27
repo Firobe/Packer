@@ -11,7 +11,7 @@ using namespace std;
  * Should be used for debug only.
  * Outputs what the solver actually sees.
  */
-string Solver::debugOutputSVG() {
+string Solver::debugOutputSVG() const {
     stringstream ret;
     bg::svg_mapper<Point> mapper(ret, 800, 800);
 
@@ -27,3 +27,22 @@ string Solver::debugOutputSVG() {
     cerr << "SVG successfully generated" << endl;
     return ret.str() + "</svg>";
 }
+
+void Solver::solve() {
+    _indices.clear();
+
+    for (unsigned i = 0; i < _shapes.size(); i++) {
+        _indices.push_back(i);
+    }
+
+    preSolve();
+
+    while (!_indices.empty()) {
+        cerr << _indices.size() << " shapes left..." << endl;
+        solveBin();
+        _binNumber++;
+    }
+
+    cerr << "Successfully packed in " << _binNumber << " bins !" << endl;
+}
+

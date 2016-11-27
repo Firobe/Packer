@@ -5,6 +5,7 @@
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <string>
 #include <algorithm>
+#include <list>
 #include <sstream>
 
 #include "Shape.hpp"
@@ -23,10 +24,18 @@ protected:
     std::vector<Shape>& _shapes;
     int _binNumber;
     Point _dimensions;
+    std::list<unsigned> _indices;
+    void markPacked(std::list<unsigned>::iterator& i) {
+        i = --_indices.erase(i);
+    }
+    virtual void preSolve() {}
+    virtual void solveBin() {
+        _indices.clear();
+    }
 public:
     Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
-    void solve() = delete;
-    std::string debugOutputSVG();
+    void solve();
+    std::string debugOutputSVG() const;
 };
 
 /**

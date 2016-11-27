@@ -7,22 +7,16 @@
 
 using namespace std;
 
-void ScanlineSolver::solve() {
+void ScanlineSolver::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
     for (unsigned i = 0; i < _shapes.size(); i++) {
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
     }
-
-    for (unsigned i = 0; i < _shapes.size(); i++) {
-        _indices.push_back(i);
-    }
-
-    ScanlineSolver::solveAux();
 }
 
-void ScanlineSolver::solveAux() {
+void ScanlineSolver::solveBin() {
     // == Stopping Cases ==
     if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
         // STOP, remaining pieces are too tall to fit in any way
@@ -50,9 +44,9 @@ void ScanlineSolver::solveAux() {
     int lastX, lastY;
     double lastH = 0, lastW = 0;
     bool keepLooking;
-    list<unsigned>::iterator i = _indices.begin();
 
-    for (; i != _indices.end(); i++) { //Iterates on yet-to-be-processed shapes
+    for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end();
+            i++) { //Iterates on yet-to-be-processed shapes
         cerr << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
@@ -101,18 +95,12 @@ void ScanlineSolver::solveAux() {
                         translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
                                        getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber);
                         // We're done here, going onto next piece
-                        i = --_indices.erase(i);
+                        markPacked(i);
                         keepLooking = false;
                     }
                 }
             }
         }
-    }
-
-    if (_indices.size() >
-            0) { // recursive call on failed packing (new frame under this one)
-        _binNumber++;
-        ScanlineSolver::solveAux();
     }
 }
 

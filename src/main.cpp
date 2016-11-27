@@ -5,6 +5,7 @@
 #include "Parser.hpp"
 #include "ScanlineSolver.hpp"
 #include "TheSkyIsTheLimitSolver.cpp"
+#include "ToInfinityAndBeyondSolver.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -64,11 +65,10 @@ int main(int argc, char** argv) {
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
     //Packing the shapes
-    ScanlineSolver* solver = new ScanlineSolver(shapes, packerDim);
-    solver->solve();
+    ScanlineSolver solver(shapes, packerDim);
+    solver.solve();
     //Producing the output
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                           docDim.y(), shapes);
-    delete solver;
     return EXIT_SUCCESS;
 }
