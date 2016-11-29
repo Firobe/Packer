@@ -10,6 +10,8 @@
 
 #include "Shape.hpp"
 
+#define SPACE_COEF (1.2)
+
 /**
  * Solver class. An abstract class
  * as a base for solver algorithms.
