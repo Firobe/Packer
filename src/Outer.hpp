@@ -8,34 +8,32 @@
 
 #include "Shape.hpp"
 
+// Node from svg tree
 enum NodeType { hasChild, hasValue, noChild };
 
 /**
- * Solver class. An abstract class
- * as a base for solver algorithms.
- *
- * An inherited algorithm only has to
- * implement the solve() method, which
- * should modify _shapes and nothing
- * else.
+ *Output class
+ *Writes the resulting SVG file
+ *on the standard output, to be written directly
+ *in an SVG file, or transfered to the inkscape plugin
  */
 class Outer {
 protected:
-    std::vector<Shape>& _shapes;
-    std::stringstream _outStream;
-    rapidxml_ns::xml_document<> _doc;
-    std::vector<std::string>& _ids;
-    bool _addTo;
-    rapidxml_ns::file<> _svgFile;
-    double _height;
+  std::vector<Shape>& _shapes;
+  std::stringstream _outStream;
+  rapidxml_ns::xml_document<> _doc; //SVG file to parse.
+  std::vector<std::string>& _ids; //IDs of packed shapes.
+  bool _addTo; //Are we duplicating or not
+  rapidxml_ns::file<> _svgFile; //SVG file used to build _doc
+  double _height; 
 public:
-    Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
-          std::vector<Shape>&);
-    ~Outer();
     static std::string String(std::string path, bool addto, std::vector<std::string>& tp,
                               double height,
                               std::vector<Shape>&);
 private:
+  Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
+          std::vector<Shape>&);
+    ~Outer();
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
     void printNode(rapidxml_ns::xml_node<>*, bool);
     NodeType identNode(rapidxml_ns::xml_node<>*) const;

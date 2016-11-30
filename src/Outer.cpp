@@ -23,7 +23,8 @@ Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp, double 
 }
 
 Outer::~Outer() {
-    //Exists for the sake of _svgFile
+  //Exists for the sake of _svgFile
+  //Needed for attributes destructors to be called automatically
 }
 
 /**
@@ -35,11 +36,13 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     _outStream << "<" << node->name() << endl;
     cerr << "Printing " << node->name() << endl;
 
+    // For each attribute to write within the node
     for (xml_attribute<>* attr = node->first_attribute();
             attr; attr = attr->next_attribute()) {
         _outStream << attr->name() << "=\"";
-
+	
         if (strcmp(attr->name(), "id") == 0) {
+	  //adding bool "forceNoMatrix" (0/1) to avoid duplication of attribute identifiers
             _outStream << attr->value() << forceNoMatrix << "\"" << endl;
         }
         else {
@@ -51,17 +54,18 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
 /**
  * Appends the correct transformation matrix
  * to the attributes of a node.
- * Returns true if it shoud append the matrix
+ * Returns true if it should append the matrix
  * Does not effectively append it if forceNoMatrix == true
  */
 bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
     //Check if that ID exists and is in our packed list
     xml_attribute<>* id = node->first_attribute("id");
 
+    // Case id error/not found
     if (id == nullptr || !vectorContains<string>(_ids, id->value())) {
         return false;
     }
-
+    // used for duplication
     if (forceNoMatrix) {
         return true;
     }
@@ -80,11 +84,14 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
         m[5] += _height;
     }
 
+    // string equivalent of the matrix
     stringstream s;
     s << Matrix(m);
-    xml_attribute<>* transAtt = node->first_attribute("transform");
+    // transform attribute
+    xml_attribute<>* transAtt = node->first_attribute("transform"); 
 
     if (transAtt != nullptr) {
+      // old transform matrices found : add them with the new one
         s << " ";
         s << transAtt->value();
         node->remove_attribute(transAtt);
@@ -107,22 +114,22 @@ bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
  * Then calls itself on the children of the nodes.
  *
  * By default, forceNoMatrix == addTo. If it's true, it potentially
- * duplicate a shape by calling itself again with forceNoMatrix = false
+ * duplicates a shape by calling itself again with forceNoMatrix = false
  */
 void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
     //Get the ID attribute of the node
-    char* cs = nullptr;
+  char* cs = nullptr; 
     bool packed = appendMatrix(node, cs, forceNoMatrix);
     printNode(node, forceNoMatrix);
     delete[] cs;
 
     //Get the first child of the node
     switch (identNode(node)) {
-    case noChild:
+    case noChild: // no node within
         _outStream << "/>" << endl;
         break;
 
-    case hasChild: {
+    case hasChild: { // node(s) within
         _outStream << ">" << endl;
         //Call each of the children
         XMLElement next = node->first_node();
@@ -134,8 +141,8 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
         _outStream << "</" << node->name() << ">" << endl;
         break;
     }
-
-    case hasValue:
+      
+    case hasValue: // has node within : only a value
         _outStream << ">" << node->value() << "</" << node->name() << ">" << endl;
         break;
     }
