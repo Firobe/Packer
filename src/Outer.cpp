@@ -57,7 +57,7 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
  * Returns true if it should append the matrix
  * Does not effectively append it if forceNoMatrix == true
  */
-bool Outer::appendMatrix(XMLElement node, char* cs, bool forceNoMatrix) {
+bool Outer::appendMatrix(XMLElement node, char* &cs, bool forceNoMatrix) {
     //Check if that ID exists and is in our packed list
     xml_attribute<>* id = node->first_attribute("id");
 

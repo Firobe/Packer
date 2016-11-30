@@ -37,7 +37,7 @@ private:
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
     void printNode(rapidxml_ns::xml_node<>*, bool);
     NodeType identNode(rapidxml_ns::xml_node<>*) const;
-    bool appendMatrix(rapidxml_ns::xml_node<>*, char*, bool);
+    bool appendMatrix(rapidxml_ns::xml_node<>*, char*&, bool);
 };
 
 #endif
