@@ -7,14 +7,27 @@
 
 #include "types.hpp"
 
+/**
+ * A SVG Matrix. In the form of :
+ * a c e
+ * b d f
+ * 0 0 1
+ *
+ * Overloads [], (), <<, + and * operators.
+ * To apply a matrix to a vector : mat(vect);
+ */
 class Matrix {
 private:
     std::array<double, 6> _mat;
 public:
+	//Constructors :
+	//Matrix(a, b, c, d, e, f)
     Matrix(double a, double b, double c, double d,
            double e, double f) : _mat( {
         a, b, c, d, e, f
     }) {}
+
+	//Matrix(T) when T supports [] operator
     template<typename T>
     Matrix(T m) :
         _mat( {
@@ -39,6 +52,13 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m);
 Matrix operator+(Matrix lhs, const Matrix& rhs);
 Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
+/**
+ * A Matrix stack. Mainly used in the parser.
+ * Inherits standard stack.
+ * Usage :
+ * push, pop, top
+ * append : push a matrix multiplied by the top of the stack
+ */
 class MatStack : public std::stack<Matrix> {
 public:
     MatStack() {

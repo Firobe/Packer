@@ -23,11 +23,12 @@ int main(int argc, char** argv) {
     ("width",  po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
-    po::variables_map vm;
-    po::positional_options_description p;
+    po::variables_map vm; //Parameters container
+    po::positional_options_description p; //Used to indicate input file without --input-file
     p.add("input-file", -1);
 
     try {
+		//Effectively parse the command line
         po::store(po::command_line_parser(argc, argv).
                   options(desc).positional(p).allow_unregistered().run(), vm);
 
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
             return EXIT_SUCCESS;
         }
 
+		//Check parsing errors (required parameters, ...)
         po::notify(vm);
     }
     catch (exception& e) {
@@ -43,31 +45,37 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+	//Will contain the IDs the solver will pack
     vector<string> toPack;
 
+	//If the user selected some shapes, add them to toPack
     if (vm.count("id")) {
         toPack = vm["id"].as<vector<string>>();
     }
 
-    Point docDim;
-    //Parsing input file, sengind the parser the ids of the shapes we want to keep
+    Point docDim; //Container for the document dimensions
+    //Parsing input file, sending to the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
                                          toPack, docDim);
     cerr << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
+	//If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))
         for (auto && s : shapes) {
             toPack.push_back(s.getID());
         }
 
+	//If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
         (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+
     //Packing the shapes
     ScanlineSolver solver(shapes, packerDim);
     solver.solve();
-    //Producing the output
+
+    //Producing the output (sending input file and the option to duplicate
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                           docDim.y(), shapes);
     return EXIT_SUCCESS;
