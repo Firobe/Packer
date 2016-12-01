@@ -1,6 +1,7 @@
-#include <boost/geometry/algorithms/envelope.hpp>
-#include <vector>
 #include <stdexcept>
+#include <vector>
+
+#include <boost/geometry/algorithms/envelope.hpp>
 
 #include "ScanlineSolver.hpp"
 #include "types.hpp"

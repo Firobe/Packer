@@ -1,5 +1,6 @@
-#include <boost/program_options.hpp>
 #include <iostream>
+
+#include <boost/program_options.hpp>
 
 #include "Outer.hpp"
 #include "Parser.hpp"

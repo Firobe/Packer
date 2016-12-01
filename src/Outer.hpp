@@ -1,10 +1,11 @@
 #ifndef OUTER__H
 #define OUTER__H
 
+#include <sstream>
+#include <string>
+
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
-#include <string>
-#include <sstream>
 
 #include "Shape.hpp"
 

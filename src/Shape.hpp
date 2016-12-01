@@ -1,5 +1,6 @@
 #ifndef SHAPE__H
 #define SHAPE__H
+
 #include <string>
 #include <array>
 

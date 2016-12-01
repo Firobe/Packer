@@ -1,8 +1,8 @@
-#include <boost/geometry/io/svg/svg_mapper.hpp>
-#include <rapidxml_ns/rapidxml_ns_print.hpp>
-#include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <sstream>
 #include <string>
+
+#include <rapidxml_ns/rapidxml_ns_print.hpp>
+#include <rapidxml_ns/rapidxml_ns_utils.hpp>
 
 #include "Outer.hpp"
 #include "Matrix.hpp"

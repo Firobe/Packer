@@ -1,13 +1,17 @@
+#include <algorithm>
+#include <sstream>
+
 #include <svgpp/svgpp.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <svgpp/policy/xml/rapidxml_ns.hpp>
-#include <algorithm>
-#include <boost/geometry/geometry.hpp>
-#include <sstream>
+
+#include <boost/geometry/algorithms/area.hpp>
+#include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Solver.hpp"
+#include "types.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;

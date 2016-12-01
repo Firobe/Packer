@@ -1,5 +1,6 @@
-#include <boost/geometry/algorithms/envelope.hpp>
 #include <vector>
+
+#include <boost/geometry/algorithms/envelope.hpp>
 
 #include "TheSkyIsTheLimitSolver.hpp"
 #include "types.hpp"

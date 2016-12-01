@@ -1,6 +1,11 @@
 #include <algorithm>
-#include <boost/geometry/geometry.hpp>
 #include <cmath>
+
+#include <boost/geometry/algorithms/area.hpp>
+#include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
+#include <boost/geometry/algorithms/covered_by.hpp>
+#include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
+#include <boost/geometry/strategies/agnostic/relate.hpp>
 
 #include "Shape.hpp"
 

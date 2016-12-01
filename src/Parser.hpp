@@ -3,10 +3,12 @@
 
 #include <string>
 #include <vector>
+
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <svgpp/definitions.hpp>
 #include <svgpp/traits/attribute_groups.hpp>
 #include <svgpp/policy/error.hpp>
+
 #include <boost/mpl/set.hpp>
 
 #include "types.hpp"

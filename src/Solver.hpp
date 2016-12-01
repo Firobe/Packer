@@ -1,12 +1,12 @@
 #ifndef SOLVER__H
 #define SOLVER__H
 
-#include <boost/geometry/algorithms/envelope.hpp>
-#include <rapidxml_ns/rapidxml_ns.hpp>
 #include <string>
 #include <algorithm>
 #include <list>
 #include <sstream>
+
+#include <boost/geometry/algorithms/envelope.hpp>
 
 #include "Shape.hpp"
 
