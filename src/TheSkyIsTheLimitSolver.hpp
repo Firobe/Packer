@@ -12,8 +12,11 @@
 class TheSkyIsTheLimitSolver : public Solver {
 private:
     std::vector<Box> _boxes;
+
     void preSolve() override;
+
     void solveBin() override;
+
 public:
     TheSkyIsTheLimitSolver(std::vector<Shape>& v, Point p) :
         Solver(v, p),

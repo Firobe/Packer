@@ -61,10 +61,10 @@ void Shape::fillShape(vector<Ring>& rings) {
     //Sorting the rings by increasing area
     sort(rings.begin(), rings.end(), ringLess);
 
-    for (unsigned i = 0 ; i < rings.size() ; i++) {
+    for (unsigned i = 0; i < rings.size(); i++) {
         bool covered = false;
 
-        for (unsigned j = rings.size() - 1 ; j > i ; j--) {
+        for (unsigned j = rings.size() - 1; j > i; j--) {
             if (bg::covered_by(rings[i], rings[j])) {
                 covered = true;
                 break;
@@ -79,7 +79,7 @@ void Shape::fillShape(vector<Ring>& rings) {
             _multiP.back().outer() = rings[i];
 
             //Discover all the holes of i
-            for (unsigned k = 0 ; k < i ; k++)
+            for (unsigned k = 0; k < i; k++)
                 if (bg::covered_by(rings[k], rings[i])) {
                     cerr << "-> Ring " << k << " is one if its holes" << endl;
                     //Add an inner ring to our polygon
@@ -98,16 +98,16 @@ void Shape::fillShape(vector<Ring>& rings) {
 /**
  * Specialisation for Shape.
  */
-template <>
-void rotate <Shape> (Shape& object, double angle) {
-    rotate<MultiPolygon> (object.getMultiP(), angle);
+template<>
+void rotate<Shape>(Shape& object, double angle) {
+    rotate<MultiPolygon>(object.getMultiP(), angle);
 }
 
 /**
  * Specialisation for Shape.
  */
-template <>
-void translate <Shape> (Shape& object, double x, double y) {
-    translate<MultiPolygon> (object.getMultiP(), x, y);
+template<>
+void translate<Shape>(Shape& object, double x, double y) {
+    translate<MultiPolygon>(object.getMultiP(), x, y);
 }
 

@@ -13,7 +13,7 @@ using namespace std;
  */
 string Solver::debugOutputSVG() const {
     stringstream ret;
-    bg::svg_mapper<Point> mapper(ret, 800, 800);
+    bg::svg_mapper <Point> mapper(ret, 800, 800);
 
     for (Shape& s : _shapes) {
         mapper.add(s.getMultiP());

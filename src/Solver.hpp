@@ -33,13 +33,18 @@ protected:
     void markPacked(std::list<unsigned>::iterator& i) {
         i = --_indices.erase(i);
     }
+
     virtual void preSolve() {}
+
     virtual void solveBin() {
         _indices.clear();
     }
+
 public:
     Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
+
     void solve();
+
     /**
      * Outputs a SVG of what the
      * solver sees

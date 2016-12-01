@@ -9,7 +9,9 @@
 #include "Shape.hpp"
 
 // Node from svg tree
-enum NodeType { hasChild, hasValue, noChild };
+enum NodeType {
+    hasChild, hasValue, noChild
+};
 
 /**
  *Output class
@@ -30,13 +32,19 @@ public:
     static std::string String(std::string path, bool addto, std::vector<std::string>& tp,
                               double height,
                               std::vector<Shape>&);
+
 private:
     Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
           std::vector<Shape>&);
+
     ~Outer();
+
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
+
     void printNode(rapidxml_ns::xml_node<>*, bool);
+
     NodeType identNode(rapidxml_ns::xml_node<>*) const;
+
     bool appendMatrix(rapidxml_ns::xml_node<>*, char*&, bool);
 };
 

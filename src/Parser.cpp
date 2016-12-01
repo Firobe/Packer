@@ -28,7 +28,7 @@ vector<Shape> Parser::Parse(string path,
     //Parse the XML
     XMLElement rootNode = doc.first_node();
     Parser context(ids, docDim);
-    document_traversal <error_policy<IgnoreError>, //Enables IgnoreError
+    document_traversal<error_policy<IgnoreError>, //Enables IgnoreError
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
                        processed_elements<ProcessedElements>,
@@ -75,7 +75,7 @@ void Parser::path_cubic_bezier_to(
     svgpp::tag::coordinate::absolute) {
     Point p0 = _points.back();
 
-    for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
+    for (double t = BEZIER_STEP; t <= 1; t += BEZIER_STEP) {
         double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
                     3 * x2 * t * t * (1 - t) + x * t * t * t;
         double ny = p0.y() * (1 - t) * (1 - t) * (1 - t) + 3 * y1 * t * (1 - t) * (1 - t) +
@@ -121,7 +121,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     //Pushing identity
     _matStack.push(_matStack.top());
 
-    for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
+    for (int i = _rings.size() - 1; i >= 0; i--) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         cerr << "Flushing rings..." << endl;
 
@@ -167,7 +167,7 @@ void Parser::on_exit_element() {
 
     //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
-        for (unsigned i = 0 ; i < _rings.size() ; i++) {
+        for (unsigned i = 0; i < _rings.size(); i++) {
             _idStack.pop();
         }
     }
@@ -251,5 +251,5 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
     _matStack.append(Matrix(matrix));
     cerr << "New transformation state : " << _matStack.top() << " (stack size : ";
-    cerr << _matStack.size() << ")"	<< endl;
+    cerr << _matStack.size() << ")" << endl;
 }

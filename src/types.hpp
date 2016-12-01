@@ -28,7 +28,7 @@ bool vectorContains(std::vector<T>& v, T element) {
  * Rotates a boost primitive by a fixed number of
  * degrees (trigonometric).
  */
-template <typename T>
+template<typename T>
 void rotate(T& object, double angle) {
     T r;
     //Creates a rotation of <angle> degrees
@@ -42,7 +42,7 @@ void rotate(T& object, double angle) {
 /**
  * Translates a boost primitive by a fixed vector.
  */
-template <typename T>
+template<typename T>
 void translate(T& object, double x, double y) {
     T r;
     bg::strategy::transform::translate_transformer<double, 2, 2>

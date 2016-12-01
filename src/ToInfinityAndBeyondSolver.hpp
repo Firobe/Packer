@@ -12,6 +12,7 @@
 class ToInfinityAndBeyondSolver : public Solver {
 private:
     void solveBin() override;
+
 public:
     ToInfinityAndBeyondSolver(std::vector<Shape>& v, Point p = Point(0, 0)) : Solver(v, p) {}
 };

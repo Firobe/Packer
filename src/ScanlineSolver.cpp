@@ -45,7 +45,7 @@ void ScanlineSolver::solveBin() {
     double lastH = 0, lastW = 0;
     bool keepLooking;
 
-    for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end();
+    for (list<unsigned>::iterator i = _indices.begin(); i != _indices.end();
             i++) { //Iterates on yet-to-be-processed shapes
         cerr << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
@@ -91,10 +91,12 @@ void ScanlineSolver::solveBin() {
 
                         // == translation ==
                         translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                         getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                         getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() +
+                                         _dimensions.y() * _binNumber *
                                          SPACE_COEF);
                         translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                       getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                       getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() +
+                                       _dimensions.y() * _binNumber *
                                        SPACE_COEF);
                         // We're done here, going onto next piece
                         markPacked(i);

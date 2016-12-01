@@ -76,7 +76,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
 
     //Then creates the matrix and add it as an attribute
     //Find to which shape (i) the ID belongs to
-    for (i = 0 ; _shapes[i].getID() != id->value() ; i++);
+    for (i = 0; _shapes[i].getID() != id->value(); i++);
 
     //Get the matrix and write its SVG string equivalent
     array<double, 6> m = _shapes[i].getTransMatrix();
@@ -135,7 +135,7 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
         //Call each of the children
         XMLElement next = node->first_node();
 
-        for (; next != nullptr ; next = next->next_sibling()) {
+        for (; next != nullptr; next = next->next_sibling()) {
             recurOutput(next, _addTo);
         }
 

@@ -33,23 +33,30 @@ public:
         _mat({
         m[0], m[1], m[2], m[3], m[4], m[5]
     }) {}
+
     double& operator[](std::size_t idx) {
         return _mat[idx];
     }
+
     const double& operator[](std::size_t idx) const {
         return _mat[idx];
     }
+
     Point operator()(const Point&) const;
+
     bool operator==(const Matrix& r) const {
         return _mat == r._mat;
     }
+
     bool operator!=(const Matrix& r) const {
         return !operator==(r);
     }
 };
 
 std::ostream& operator<<(std::ostream& os, const Matrix& m);
+
 Matrix operator+(Matrix lhs, const Matrix& rhs);
+
 Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
 /**
@@ -64,6 +71,7 @@ public:
     MatStack() {
         emplace(1, 0, 0, 1, 0, 0);
     }
+
     void append(const Matrix& m) {
         push(top() * m);
     }

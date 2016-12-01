@@ -1,5 +1,6 @@
 #ifndef SHAPE__H
 #define SHAPE__H
+
 #include <string>
 #include <array>
 
@@ -22,26 +23,31 @@ private:
     Point _oldP1, _oldP2;
     std::string _id;
 
-    void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
+    void fillShape(std::vector<Ring>&);  //Initializes a Shape from an array of rings
 public:
     Shape(std::vector<Ring>& r, std::string id) : _id(id) {
         fillShape(r);
     }
+
     std::string getID() const {
         return _id;
     }
+
     std::array<double, 6> getTransMatrix() const;
+
     const MultiPolygon& getMultiP() const {
         return _multiP;
     }
+
     MultiPolygon& getMultiP() {
         return _multiP;
     }
 };
 
-template <>
-void rotate <Shape> (Shape& object, double angle);
-template <>
-void translate <Shape> (Shape& object, double x, double y);
+template<>
+void rotate<Shape>(Shape& object, double angle);
+
+template<>
+void translate<Shape>(Shape& object, double x, double y);
 
 #endif

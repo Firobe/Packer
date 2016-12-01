@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     ("input-file", po::value<string>()->required(), "input file path")
     ("dup", po::value<bool>()->required(),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width",  po::value<int>(), "width of the packing space (px)")
+    ("width", po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
     po::variables_map vm; //Parameters container
