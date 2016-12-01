@@ -34,11 +34,11 @@ void Solver::solve() {
     for (unsigned i = 0; i < _shapes.size(); i++) {
         _indices.push_back(i);
     }
-	//_indices is now initialized to {1, 2, ... _shapes.size() - 1 }
 
+    //_indices is now initialized to {1, 2, ... _shapes.size() - 1 }
     preSolve();
 
-	//While there are shapes left, fill bins individually
+    //While there are shapes left, fill bins individually
     while (!_indices.empty()) {
         cerr << _indices.size() << " shapes left..." << endl;
         solveBin();

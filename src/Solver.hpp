@@ -16,7 +16,7 @@
  * Solver class. A class
  * as a base for solver algorithms.
  * Do not move the shapes.
- * 
+ *
  * An inherited class can redefine :
  * 	preSolve : operations to be performed before solving (sorting, ...)
  * 	solveBin : move the shapes to pack a single bin. Is called repeatedly until there is no shape to be packed.
@@ -27,9 +27,9 @@ protected:
     int _binNumber; //Current number of bins
     Point _dimensions; //Document dimensions
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
-	/**
-	 * Removes the current element in _indices and returns updated iterator
-	 */
+    /**
+     * Removes the current element in _indices and returns updated iterator
+     */
     void markPacked(std::list<unsigned>::iterator& i) {
         i = --_indices.erase(i);
     }
@@ -40,10 +40,10 @@ protected:
 public:
     Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
     void solve();
-	/**
-	 * Outputs a SVG of what the
-	 * solver sees
-	 */
+    /**
+     * Outputs a SVG of what the
+     * solver sees
+     */
     std::string debugOutputSVG() const;
 };
 

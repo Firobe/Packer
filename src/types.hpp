@@ -31,11 +31,11 @@ bool vectorContains(std::vector<T>& v, T element) {
 template <typename T>
 void rotate(T& object, double angle) {
     T r;
-	//Creates a rotation of <angle> degrees
+    //Creates a rotation of <angle> degrees
     bg::strategy::transform::rotate_transformer<bg::degree, double, 2, 2> rotate(angle);
-	//Applies that rotation to object and stores result in r
+    //Applies that rotation to object and stores result in r
     bg::transform(object, r, rotate);
-	//Replaces object with r
+    //Replaces object with r
     object = r;
 }
 

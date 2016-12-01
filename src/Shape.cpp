@@ -73,18 +73,18 @@ void Shape::fillShape(vector<Ring>& rings) {
 
         if (!covered) { //The ring i not covered by anyone
             cerr << "Ring " << i << " is an outer ring" << endl;
-			//Add a new polygon to the MultiPolygon
+            //Add a new polygon to the MultiPolygon
             _multiP.resize(_multiP.size() + 1);
-			//The ring is the outer ring of the new polygon
+            //The ring is the outer ring of the new polygon
             _multiP.back().outer() = rings[i];
 
             //Discover all the holes of i
             for (unsigned k = 0 ; k < i ; k++)
                 if (bg::covered_by(rings[k], rings[i])) {
                     cerr << "-> Ring " << k << " is one if its holes" << endl;
-					//Add an inner ring to our polygon
+                    //Add an inner ring to our polygon
                     _multiP.back().inners().resize(_multiP.back().inners().size() + 1);
-					//k is that inner ring
+                    //k is that inner ring
                     _multiP.back().inners().back() = rings[k];
                 }
         }

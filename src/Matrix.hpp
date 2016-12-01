@@ -20,17 +20,17 @@ class Matrix {
 private:
     std::array<double, 6> _mat;
 public:
-	//Constructors :
-	//Matrix(a, b, c, d, e, f)
+    //Constructors :
+    //Matrix(a, b, c, d, e, f)
     Matrix(double a, double b, double c, double d,
-           double e, double f) : _mat( {
+           double e, double f) : _mat({
         a, b, c, d, e, f
     }) {}
 
-	//Matrix(T) when T supports [] operator
+    //Matrix(T) when T supports [] operator
     template<typename T>
     Matrix(T m) :
-        _mat( {
+        _mat({
         m[0], m[1], m[2], m[3], m[4], m[5]
     }) {}
     double& operator[](std::size_t idx) {

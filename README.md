@@ -1,4 +1,6 @@
-# Build an executable for Windows (x86_64 processors instruction set) : debian instructions
+# Windows instructions
+
+#### Build an executable for Windows (x86_64 processors instruction set) : on a debian system
 
  * Require package `mingw-w64`
  * Create build directory `mkdir build-win`
@@ -7,10 +9,18 @@
  * build it `make`
  * Executable name is `packer.exe`
 
+#### Installation : on a Windows system
+
+ * Copy files `packer.exe` and `packer.in` to your Inkscape's extension folder.
+ * It's usually located in `C:\users\:user_name:\appData\Roaming\Inkscape\extensions`.
+ * `:user_name:` is the  name of your current windows session.
+
 # Generate documentation
 
+ * Doxygen is required
  * Just run the command `make doc` from the build folder
  * Open the doc/html/index.html to view it
  
  
- first fit algorithm
+ * Open Mp
+ * RabbitMQ

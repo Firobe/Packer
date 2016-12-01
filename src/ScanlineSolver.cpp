@@ -91,9 +91,11 @@ void ScanlineSolver::solveBin() {
 
                         // == translation ==
                         translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                         getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber * SPACE_COEF);
+                                         getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                         SPACE_COEF);
                         translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                       getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber * SPACE_COEF);
+                                       getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                       SPACE_COEF);
                         // We're done here, going onto next piece
                         markPacked(i);
                         keepLooking = false;

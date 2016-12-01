@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     p.add("input-file", -1);
 
     try {
-		//Effectively parse the command line
+        //Effectively parse the command line
         po::store(po::command_line_parser(argc, argv).
                   options(desc).positional(p).allow_unregistered().run(), vm);
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
             return EXIT_SUCCESS;
         }
 
-		//Check parsing errors (required parameters, ...)
+        //Check parsing errors (required parameters, ...)
         po::notify(vm);
     }
     catch (exception& e) {
@@ -45,10 +45,10 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-	//Will contain the IDs the solver will pack
+    //Will contain the IDs the solver will pack
     vector<string> toPack;
 
-	//If the user selected some shapes, add them to toPack
+    //If the user selected some shapes, add them to toPack
     if (vm.count("id")) {
         toPack = vm["id"].as<vector<string>>();
     }
@@ -59,22 +59,20 @@ int main(int argc, char** argv) {
                                          toPack, docDim);
     cerr << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
-	//If nothing was selected, fill toPack with every parsed ID
+    //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))
         for (auto && s : shapes) {
             toPack.push_back(s.getID());
         }
 
-	//If the user did not specify width, take document width for packing (idem for height)
+    //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
         (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
-
     //Packing the shapes
     ScanlineSolver solver(shapes, packerDim);
     solver.solve();
-
     //Producing the output (sending input file and the option to duplicate
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                           docDim.y(), shapes);
