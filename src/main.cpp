@@ -23,7 +23,8 @@ int main(int argc, char** argv) {
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
     ("width",  po::value<int>(), "width of the packing space (px)")
     ("height", po::value<int>(), "height of the packing space (px)")
-    ("id", po::value<vector<string>>(), "ID of a specific element to be packed");
+    ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
+    ("buffer", po::value<int>(), "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
     po::positional_options_description p; //Used to indicate input file without --input-file
     p.add("input-file", -1);
@@ -66,6 +67,14 @@ int main(int argc, char** argv) {
             toPack.push_back(s.getID());
         }
 
+    //If there is a buffer distance specified
+    if (vm.count("buffer") && vm["buffer"].as<int>() > 0) {
+      for (auto && s : shapes) {
+	s.bufferize(vm["buffer"].as<int>());
+      }
+    }
+
+
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
         (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
@@ -74,8 +83,9 @@ int main(int argc, char** argv) {
     //Packing the shapes
     ScanlineSolver solver(shapes, packerDim);
     solver.solve();
+    //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                          docDim.y(), shapes);
+     docDim.y(), shapes);
     return EXIT_SUCCESS;
 }

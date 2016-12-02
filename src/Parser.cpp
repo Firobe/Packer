@@ -96,9 +96,10 @@ void Parser::path_cubic_bezier_to(
  * drawn from the current point to the initial point of the current
  * subpath.
  */
-void Parser::path_close_subpath() const {
+void Parser::path_close_subpath() {
     //Nothing to do as the initial point should already be added
-    cerr << "Close subpath" << endl;
+  _points.push_back(_points.front());
+  cerr << "Close subpath" << endl;
 }
 
 /**

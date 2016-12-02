@@ -9,8 +9,10 @@
     </param>
     <param name="height" type="int" min="0" max="9999" gui-text="Hauteur plaque : ">
     </param>
-	<param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
-	</param>
+    <param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
+    </param>
+    <param name="buffer" type="int" min="0" max="9999" gui-text="Distance minimale entre les objets (px): ">
+    </param>
     </page>
     </param>
 

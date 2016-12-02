@@ -84,7 +84,7 @@ public:
         double x2, double y2,
         double x, double y,
         svgpp::tag::coordinate::absolute);
-    void path_close_subpath() const;
+    void path_close_subpath();
     void path_exit();
 
     void on_enter_element(svgpp::tag::element::any);
