@@ -24,7 +24,7 @@ private:
     std::string _id;
 
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
-  void setOld();
+    void setOld();
 public:
     Shape(std::vector<Ring>& r, std::string id) : _id(id) {
         fillShape(r);
@@ -39,7 +39,7 @@ public:
     MultiPolygon& getMultiP() {
         return _multiP;
     }
-  void bufferize(int buffer);
+    void bufferize(int buffer);
 };
 
 template <>

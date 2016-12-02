@@ -69,11 +69,10 @@ int main(int argc, char** argv) {
 
     //If there is a buffer distance specified
     if (vm.count("buffer") && vm["buffer"].as<int>() > 0) {
-      for (auto && s : shapes) {
-	s.bufferize(vm["buffer"].as<int>());
-      }
+        for (auto && s : shapes) {
+            s.bufferize(vm["buffer"].as<int>());
+        }
     }
-
 
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
@@ -86,6 +85,6 @@ int main(int argc, char** argv) {
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-     docDim.y(), shapes);
+                          docDim.y(), shapes);
     return EXIT_SUCCESS;
 }

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-#include <boost/geometry/algorithms/buffer.hpp> 
+#include <boost/geometry/algorithms/buffer.hpp>
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 #include <boost/geometry/algorithms/covered_by.hpp>
@@ -98,28 +98,27 @@ void Shape::fillShape(vector<Ring>& rings) {
         }
     }
 
+    setOld();
 }
 
 void Shape::bufferize(int buffer) {
-  // Declare strategies
-  const int points_per_circle = 36;
-  bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
-  bg::strategy::buffer::join_round join_strategy(points_per_circle);
-  bg::strategy::buffer::end_round end_strategy(points_per_circle);
-  bg::strategy::buffer::point_circle circle_strategy(points_per_circle);
-  bg::strategy::buffer::side_straight side_strategy;
-
-  MultiPolygon result;
-
-  // Create the buffer of a multi polygon
-  bg::buffer(_multiP, result,
-			  distance_strategy, side_strategy,
-			  join_strategy, end_strategy, circle_strategy);
-  _multiP = result;
-  setOld();
+    // Declare strategies
+    const int points_per_circle = 36;
+    bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
+    bg::strategy::buffer::join_round join_strategy(points_per_circle);
+    bg::strategy::buffer::end_round end_strategy(points_per_circle);
+    bg::strategy::buffer::point_circle circle_strategy(points_per_circle);
+    bg::strategy::buffer::side_straight side_strategy;
+    MultiPolygon result;
+    // Create the buffer of a multi polygon
+    bg::buffer(_multiP, result,
+               distance_strategy, side_strategy,
+               join_strategy, end_strategy, circle_strategy);
+    _multiP = result;
+    setOld();
 }
 
-void Shape::setOld(){
+void Shape::setOld() {
     //Storing points for future transformation reference
     _oldP1 = _multiP[0].outer()[0];
     _oldP2 = _multiP[0].outer()[1];

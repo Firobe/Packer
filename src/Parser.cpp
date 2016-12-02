@@ -98,8 +98,8 @@ void Parser::path_cubic_bezier_to(
  */
 void Parser::path_close_subpath() {
     //Nothing to do as the initial point should already be added
-  _points.push_back(_points.front());
-  cerr << "Close subpath" << endl;
+    _points.push_back(_points.front());
+    cerr << "Close subpath" << endl;
 }
 
 /**
