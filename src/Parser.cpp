@@ -7,6 +7,7 @@
 
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
+#include <boost/geometry/algorithms/correct.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
@@ -98,7 +99,6 @@ void Parser::path_cubic_bezier_to(
  */
 void Parser::path_close_subpath() {
     //Nothing to do as the initial point should already be added
-    _points.push_back(_points.front());
     cerr << "Close subpath" << endl;
 }
 
@@ -109,13 +109,10 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     cerr << "Path exit (" << _groupStack << ")\n";
-
-    //Reverse the points if the polygon has the wrong orientation
-    if (bg::area(Ring(_points.begin(), _points.end())) < 0) {
-        reverse(_points.begin(), _points.end());
-    }
-
     _rings.emplace_back(_points.begin(), _points.end());
+    //Reverse the points if the ring has the wrong orientation and
+    //close the ring if it isn't.
+    bg::correct(_rings.back());
 }
 
 /**
