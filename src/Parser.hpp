@@ -135,16 +135,27 @@ using ProcessedElements =
     //Text and other things not handled
     >::type;
 
-
-using ProcessedAttributes =
-    boost::mpl::insert <
-    boost::mpl::insert <
-    boost::mpl::insert <
-    boost::mpl::insert <
-    svgpp::traits::shapes_attributes_by_element,
-    svgpp::tag::attribute::height >::type,
-    svgpp::tag::attribute::id >::type,
-    svgpp::tag::attribute::width >::type,
+/**
+ * Select the additionnal attributes that will
+ * be processed by our parser
+ */
+using CustomAttributes =
+	boost::mpl::set<
+    svgpp::tag::attribute::height,
+    svgpp::tag::attribute::id,
+    svgpp::tag::attribute::width,
     svgpp::tag::attribute::transform
     >::type;
+
+/**
+ * Merge default processed attributes and custom
+ * ones, using beautiful functional meta-programming.
+ */
+using ProcessedAttributes =
+	boost::mpl::fold<
+	CustomAttributes,
+    svgpp::traits::shapes_attributes_by_element,
+	boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
+	>::type;
+
 #endif
