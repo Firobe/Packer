@@ -9,7 +9,6 @@
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
 
-
 #include "Shape.hpp"
 
 using namespace std;
@@ -30,8 +29,8 @@ inline bool ringLess(const Ring& a, const Ring& b) {
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-    Point newP1 = _multiP[0].outer()[0];
-    Point newP2 = _multiP[0].outer()[1];
+    Point newP1 = _multiP[0].outer()[_indexP1];
+    Point newP2 = _multiP[0].outer()[_indexP2];
     //Computing the angle
     double alpha = atan((newP2.y() - newP1.y())
                         / (newP2.x() - newP1.x()))
@@ -101,9 +100,13 @@ void Shape::fillShape(vector<Ring>& rings) {
     setOld();
 }
 
+/**
+ * Change shapes by adding a buffer
+ * (of <buffer> px) around each of them.
+ */
 void Shape::bufferize(int buffer) {
     // Declare strategies
-    const int points_per_circle = 36;
+    const int points_per_circle = BUFFER_POINTS_PER_CIRCLE;
     bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
     bg::strategy::buffer::join_round join_strategy(points_per_circle);
     bg::strategy::buffer::end_round end_strategy(points_per_circle);
@@ -118,10 +121,23 @@ void Shape::bufferize(int buffer) {
     setOld();
 }
 
+/**
+ * Store points for future transformation reference.
+ * Find two points that maximize distance between them.
+ * The first point is currently always at index 0.
+ */
 void Shape::setOld() {
-    //Storing points for future transformation reference
-    _oldP1 = _multiP[0].outer()[0];
-    _oldP2 = _multiP[0].outer()[1];
+    _indexP1 = 0;
+    _indexP2 = 0;
+
+    for (unsigned i = 1 ; i < _multiP[0].outer().size() ; i++)
+        if (bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[i]) >
+                bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2])) {
+            _indexP2 = i;
+        }
+
+    _oldP1 = _multiP[0].outer()[_indexP1];
+    _oldP2 = _multiP[0].outer()[_indexP2];
 }
 
 /**

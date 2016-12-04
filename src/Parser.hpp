@@ -140,7 +140,7 @@ using ProcessedElements =
  * be processed by our parser
  */
 using CustomAttributes =
-	boost::mpl::set<
+    boost::mpl::set <
     svgpp::tag::attribute::height,
     svgpp::tag::attribute::id,
     svgpp::tag::attribute::width,
@@ -152,10 +152,10 @@ using CustomAttributes =
  * ones, using beautiful functional meta-programming.
  */
 using ProcessedAttributes =
-	boost::mpl::fold<
-	CustomAttributes,
+    boost::mpl::fold <
+    CustomAttributes,
     svgpp::traits::shapes_attributes_by_element,
-	boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
-	>::type;
+    boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
+    >::type;
 
 #endif

@@ -6,6 +6,8 @@
 
 #include "types.hpp"
 
+#define BUFFER_POINTS_PER_CIRCLE 50
+
 /**
  * Shape class. Designed to be
  * carried around by the different
@@ -21,6 +23,7 @@ class Shape {
 private:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
+    unsigned _indexP1, _indexP2;
     std::string _id;
 
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
