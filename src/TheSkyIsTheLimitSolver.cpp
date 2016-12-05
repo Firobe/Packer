@@ -3,7 +3,7 @@
 #include <boost/geometry/algorithms/envelope.hpp>
 
 #include "TheSkyIsTheLimitSolver.hpp"
-#include "types.hpp"
+#include "common.hpp"
 
 using namespace std;
 

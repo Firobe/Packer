@@ -99,7 +99,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
         node->remove_attribute(transAtt);
     }
 
-    LOG(debug) << "Appending " << s.str() << endl;
+    LOG(trace) << "Appending " << s.str() << endl;
     //Allocate space and add it as an attribute
     cs = new char[s.str().size() + 1];
     strcpy(cs, s.str().c_str());

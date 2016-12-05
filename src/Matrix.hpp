@@ -6,7 +6,7 @@
 
 #include <boost/array.hpp>
 
-#include "types.hpp"
+#include "common.hpp"
 
 /**
  * A SVG Matrix. In the form of :

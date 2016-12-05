@@ -84,6 +84,8 @@ int main(int argc, char** argv) {
     //Packing the shapes
     ScanlineSolver solver(shapes, packerDim);
     solver.solve();
+    //Evaluating the quality
+    LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
     cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,

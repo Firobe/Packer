@@ -4,7 +4,7 @@
 #include <string>
 #include <array>
 
-#include "types.hpp"
+#include "common.hpp"
 
 #define BUFFER_POINTS_PER_CIRCLE 50
 

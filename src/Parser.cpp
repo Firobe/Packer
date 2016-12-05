@@ -13,7 +13,7 @@
 #include "Shape.hpp"
 #include "Solver.hpp"
 #include "Log.hpp"
-#include "types.hpp"
+#include "common.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;

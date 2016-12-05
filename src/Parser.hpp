@@ -11,7 +11,7 @@
 
 #include <boost/mpl/set.hpp>
 
-#include "types.hpp"
+#include "common.hpp"
 #include "Matrix.hpp"
 
 using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
