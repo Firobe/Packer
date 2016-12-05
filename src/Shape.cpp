@@ -10,6 +10,7 @@
 #include <boost/geometry/strategies/agnostic/relate.hpp>
 
 #include "Shape.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
@@ -64,7 +65,7 @@ array<double, 6> Shape::getTransMatrix() const {
  * (will be used to compute transformation matrix)
  */
 void Shape::fillShape(vector<Ring>& rings) {
-    cerr << "Received " << rings.size() << " Rings for a Shape" << endl;
+    LOG(debug) << "Received " << rings.size() << " Rings for a Shape" << endl;
     //Sorting the rings by increasing area
     sort(rings.begin(), rings.end(), ringLess);
 
@@ -79,7 +80,7 @@ void Shape::fillShape(vector<Ring>& rings) {
         }
 
         if (!covered) { //The ring i not covered by anyone
-            cerr << "Ring " << i << " is an outer ring" << endl;
+            LOG(debug) << "Ring " << i << " is an outer ring" << endl;
             //Add a new polygon to the MultiPolygon
             _multiP.resize(_multiP.size() + 1);
             //The ring is the outer ring of the new polygon
@@ -88,7 +89,7 @@ void Shape::fillShape(vector<Ring>& rings) {
             //Discover all the holes of i
             for (unsigned k = 0 ; k < i ; k++)
                 if (bg::covered_by(rings[k], rings[i])) {
-                    cerr << "-> Ring " << k << " is one if its holes" << endl;
+                    LOG(debug) << "-> Ring " << k << " is one if its holes" << endl;
                     //Add an inner ring to our polygon
                     _multiP.back().inners().resize(_multiP.back().inners().size() + 1);
                     //k is that inner ring

@@ -4,6 +4,7 @@
 #include <boost/geometry/algorithms/envelope.hpp>
 
 #include "ScanlineSolver.hpp"
+#include "Log.hpp"
 #include "types.hpp"
 
 using namespace std;
@@ -48,7 +49,7 @@ void ScanlineSolver::solveBin() {
 
     for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end();
             i++) { //Iterates on yet-to-be-processed shapes
-        cerr << ".";
+        LOG(debug) << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
         keepLooking = true;

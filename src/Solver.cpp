@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Solver.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
@@ -24,11 +25,12 @@ string Solver::debugOutputSVG() const {
                    to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
     }
 
-    cerr << "SVG successfully generated" << endl;
+    LOG(info) << "Debug SVG generated" << endl;
     return ret.str() + "</svg>";
 }
 
 void Solver::solve() {
+	LOG(info) << "Packing shapes...";
     _indices.clear();
 
     for (unsigned i = 0; i < _shapes.size(); i++) {
@@ -40,11 +42,13 @@ void Solver::solve() {
 
     //While there are shapes left, fill bins individually
     while (!_indices.empty()) {
-        cerr << _indices.size() << " shapes left..." << endl;
+        LOG(info) << endl << "Bin " << _binNumber + 1
+			<< " : " << _indices.size() << " shapes left...";
         solveBin();
         _binNumber++;
     }
 
-    cerr << "Successfully packed in " << _binNumber << " bins !" << endl;
+    LOG(info) << endl << "Successfully packed "
+	   << _shapes.size() << " shapes in " << _binNumber << " bins." << endl;
 }
 

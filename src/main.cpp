@@ -2,6 +2,7 @@
 
 #include <boost/program_options.hpp>
 
+#include "Log.hpp"
 #include "Outer.hpp"
 #include "Parser.hpp"
 #include "ScanlineSolver.hpp"
@@ -12,6 +13,7 @@ namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char** argv) {
+	LOG(info) << "SUPER PACKER 2000\n===================" << endl;
     srand(time(0));
     //Parsing command line
     po::options_description
@@ -43,7 +45,7 @@ int main(int argc, char** argv) {
         po::notify(vm);
     }
     catch (exception& e) {
-        cerr << "Error : " << e.what() << endl;
+        LOG(fatal) << "Error : " << e.what() << endl;
         return EXIT_FAILURE;
     }
 
@@ -59,7 +61,7 @@ int main(int argc, char** argv) {
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
                                          toPack, docDim);
-    cerr << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
+    LOG(debug) << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
     //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))

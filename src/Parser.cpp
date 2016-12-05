@@ -12,6 +12,7 @@
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Solver.hpp"
+#include "Log.hpp"
 #include "types.hpp"
 
 using namespace std;
@@ -26,6 +27,7 @@ using namespace svgpp;
 vector<Shape> Parser::Parse(string path,
                             vector<string>& ids,
                             Point& docDim) { //Returns a copy, can be improved
+	LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -39,6 +41,7 @@ vector<Shape> Parser::Parse(string path,
                        processed_elements<ProcessedElements>,
                        processed_attributes<ProcessedAttributes> //Transform matrix not handled
                        >::load_document(rootNode, context);
+	LOG(info) << "File successfully parsed." << endl;
     return context.getShapes();
 }
 
@@ -54,7 +57,7 @@ vector<Shape> Parser::Parse(string path,
 void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) {
     ///This should only store the point as an initial subpath point
     _points.emplace_back(x, y);
-    cerr << "Path move to " << x << "," << y << endl;
+    LOG(trace) << "Path move to " << x << "," << y << endl;
 }
 
 /**
@@ -64,7 +67,7 @@ void Parser::path_move_to(double x, double y, svgpp::tag::coordinate::absolute) 
 void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) {
     //This should only store the point as a new shape point.
     _points.emplace_back(x, y);
-    cerr << "Path line to " << x << "," << y << endl;
+    LOG(trace) << "Path line to " << x << "," << y << endl;
 }
 
 /**
@@ -88,7 +91,7 @@ void Parser::path_cubic_bezier_to(
         _points.emplace_back(nx, ny);
     }
 
-    cerr << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
+    LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
          x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
 
@@ -99,7 +102,7 @@ void Parser::path_cubic_bezier_to(
  */
 void Parser::path_close_subpath() {
     //Nothing to do as the initial point should already be added
-    cerr << "Close subpath" << endl;
+    LOG(trace) << "Close subpath" << endl;
 }
 
 /**
@@ -108,7 +111,7 @@ void Parser::path_close_subpath() {
 void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
-    cerr << "Path exit (" << _groupStack << ")\n";
+    LOG(trace) << "Path exit (" << _groupStack << ")\n";
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and
     //close the ring if it isn't.
@@ -119,13 +122,13 @@ void Parser::path_exit() {
  * Beginning of a new group.
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
-    cerr << "Element enter (group)" << endl;
+    LOG(debug) << "Element enter (group)" << endl;
     //Pushing identity
     _matStack.push(_matStack.top());
 
     for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
         //Iterate through the parsed rings (in reverse order to match the stack)
-        cerr << "Flushing rings..." << endl;
+        LOG(debug) << "Flushing rings..." << endl;
 
         for (auto && p : _rings[i]) {
             p = _matStack.top()(p);
@@ -152,7 +155,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
 void Parser::on_enter_element(svgpp::tag::element::any) {
     //Pushing identity
     _matStack.push(_matStack.top());
-    cerr << "Element enter (" << _groupStack << ")\n";
+    LOG(debug) << "Element enter (" << _groupStack << ")\n";
 
     if (_groupStack >= 0) {
         _groupStack++;
@@ -165,7 +168,7 @@ void Parser::on_enter_element(svgpp::tag::element::any) {
  * End of a group or any other element.
  */
 void Parser::on_exit_element() {
-    cerr << "Element exit (" << _groupStack << ")\n";
+    LOG(debug) << "Element exit (" << _groupStack << ")\n";
 
     //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
@@ -195,7 +198,7 @@ void Parser::on_exit_element() {
     _matStack.pop();
 
     if (tmp != _matStack.top()) {
-        cerr << "Popped a real transformation matrix : " << tmp << endl;
+        LOG(debug) << "Popped a real transformation matrix : " << tmp << endl;
         _matStack.pop();
     }
 }
@@ -228,14 +231,14 @@ void Parser::set(svgpp::tag::attribute::id,
         _groupStack = -1;
     }
 
-    cerr << "Current ID : " << _idStack.top() << endl;
+    LOG(debug) << "Current ID : " << _idStack.top() << endl;
 }
 
 /**
  * Parsing the height of the dock.
  */
 void Parser::set(svgpp::tag::attribute::height, double height) {
-    cerr << "Parsed " << height << " as doc height" << endl;
+    LOG(debug) << "Parsed " << height << " as doc height" << endl;
     _docDim.set<1>(height);
 }
 
@@ -243,7 +246,7 @@ void Parser::set(svgpp::tag::attribute::height, double height) {
  * Parsing the width of the dock.
  */
 void Parser::set(svgpp::tag::attribute::width, double width) {
-    cerr << "Parsed " << width << " as doc width" << endl;
+    LOG(debug) << "Parsed " << width << " as doc width" << endl;
     _docDim.set<0>(width);
 }
 
@@ -252,6 +255,6 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
  */
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
     _matStack.append(Matrix(matrix));
-    cerr << "New transformation state : " << _matStack.top() << " (stack size : ";
-    cerr << _matStack.size() << ")"	<< endl;
+   	LOG(debug) << "New transformation state : " << _matStack.top() << " (stack size : ";
+    LOG(debug) << _matStack.size() << ")"	<< endl;
 }
