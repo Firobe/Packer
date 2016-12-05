@@ -1,5 +1,5 @@
-#ifndef TYPES__H
-#define TYPES__H
+#ifndef COMMON__H
+#define COMMON__H
 
 #include <algorithm>
 #include <vector>
