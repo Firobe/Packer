@@ -59,9 +59,6 @@ void Solver::solve() {
 /**
  * Computes the compression ratio :
  * actual area / minimal area
- *
- * Spacing between bins currently affects
- * this method.
  */
 double Solver::compressionRatio() const {
     //Computing the total enveloppe of shapes
@@ -81,7 +78,9 @@ double Solver::compressionRatio() const {
     [](Box & a, Box & b) {
         return a.max_corner().y() < b.max_corner().y();
     });
-    Point maxCorner((*xIt).max_corner().x(), (*yIt).max_corner().y());
+    //Compensate spacing between bins
+    Point maxCorner((*xIt).max_corner().x(),
+                    (*yIt).max_corner().y() - (_binNumber - 1) * _dimensions.y() * (SPACE_COEF - 1));
     LOG(debug) << "Max point is (" << maxCorner.x() << ", " << maxCorner.y() << ")\n";
     LOG(debug) << "(total area : " << maxCorner.x() * maxCorner.y() << endl;
     //Computing the sum of every shape area
