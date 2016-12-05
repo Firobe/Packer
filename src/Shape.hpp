@@ -6,7 +6,7 @@
 
 #include "common.hpp"
 
-#define BUFFER_POINTS_PER_CIRCLE 50
+#define BUFFER_POINTS_PER_CIRCLE 10
 
 /**
  * Shape class. Designed to be

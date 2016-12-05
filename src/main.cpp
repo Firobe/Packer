@@ -64,13 +64,18 @@ int main(int argc, char** argv) {
     LOG(debug) << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
     //If nothing was selected, fill toPack with every parsed ID
-    if (!vm.count("id"))
-        for (auto && s : shapes) {
-            toPack.push_back(s.getID());
-        }
+    if (!vm.count("id")) {
+        LOG(info) << "Will pack *all* shapes." << endl;
+    }
+
+    for (auto && s : shapes) {
+        toPack.push_back(s.getID());
+    }
 
     //If there is a buffer distance specified
     if (vm.count("buffer") && vm["buffer"].as<int>() > 0) {
+        LOG(info) << "Buffering shapes..." << endl;
+
         for (auto && s : shapes) {
             s.bufferize(vm["buffer"].as<int>());
         }
