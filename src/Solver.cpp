@@ -30,7 +30,7 @@ string Solver::debugOutputSVG() const {
 }
 
 void Solver::solve() {
-	LOG(info) << "Packing shapes...";
+    LOG(info) << "Packing shapes...";
     _indices.clear();
 
     for (unsigned i = 0; i < _shapes.size(); i++) {
@@ -43,12 +43,12 @@ void Solver::solve() {
     //While there are shapes left, fill bins individually
     while (!_indices.empty()) {
         LOG(info) << endl << "Bin " << _binNumber + 1
-			<< " : " << _indices.size() << " shapes left...";
+                  << " : " << _indices.size() << " shapes left...";
         solveBin();
         _binNumber++;
     }
 
     LOG(info) << endl << "Successfully packed "
-	   << _shapes.size() << " shapes in " << _binNumber << " bins." << endl;
+              << _shapes.size() << " shapes in " << _binNumber << " bins." << endl;
 }
 

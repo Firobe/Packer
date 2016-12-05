@@ -13,7 +13,7 @@ namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char** argv) {
-	LOG(info) << "SUPER PACKER 2000\n===================" << endl;
+    LOG(info) << "SUPER PACKER 2000\n===================" << endl;
     srand(time(0));
     //Parsing command line
     po::options_description

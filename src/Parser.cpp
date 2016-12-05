@@ -27,7 +27,7 @@ using namespace svgpp;
 vector<Shape> Parser::Parse(string path,
                             vector<string>& ids,
                             Point& docDim) { //Returns a copy, can be improved
-	LOG(info) << "Parsing SVG file..." << endl;
+    LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file
     file<> svgFile(path.c_str());
     xml_document<> doc;
@@ -41,7 +41,7 @@ vector<Shape> Parser::Parse(string path,
                        processed_elements<ProcessedElements>,
                        processed_attributes<ProcessedAttributes> //Transform matrix not handled
                        >::load_document(rootNode, context);
-	LOG(info) << "File successfully parsed." << endl;
+    LOG(info) << "File successfully parsed." << endl;
     return context.getShapes();
 }
 
@@ -92,7 +92,7 @@ void Parser::path_cubic_bezier_to(
     }
 
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
-         x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
+               x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
 
 /**
@@ -255,6 +255,6 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
  */
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
     _matStack.append(Matrix(matrix));
-   	LOG(debug) << "New transformation state : " << _matStack.top() << " (stack size : ";
+    LOG(debug) << "New transformation state : " << _matStack.top() << " (stack size : ";
     LOG(debug) << _matStack.size() << ")"	<< endl;
 }
