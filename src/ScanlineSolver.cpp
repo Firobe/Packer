@@ -149,7 +149,7 @@ void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> 
 				}
 		}
 
-		LOG(debg) << endl << "CellW" << endl;
+		LOG(debug) << endl << "CellW" << endl;
 
 		for (auto && x : cellW) {
 				LOG(debug) << x << " ; ";
