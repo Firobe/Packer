@@ -1,10 +1,11 @@
-#ifndef TYPES__H
-#define TYPES__H
+#ifndef COMMON__H
+#define COMMON__H
+
+#include <algorithm>
+#include <vector>
 
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
-#include <algorithm>
-#include <vector>
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 

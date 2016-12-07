@@ -1,8 +1,9 @@
 #ifndef SCANLINESOLVER__H
 #define SCANLINESOLVER__H
 
-#include "Solver.hpp"
 #include <vector>
+
+#include "Solver.hpp"
 
 class ScanlineSolver : public Solver {
 private:

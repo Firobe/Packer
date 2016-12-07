@@ -3,13 +3,15 @@
 
 #include <string>
 #include <vector>
+
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <svgpp/definitions.hpp>
 #include <svgpp/traits/attribute_groups.hpp>
 #include <svgpp/policy/error.hpp>
+
 #include <boost/mpl/set.hpp>
 
-#include "types.hpp"
+#include "common.hpp"
 #include "Matrix.hpp"
 
 using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
@@ -65,7 +67,6 @@ public:
     static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
 
     Parser(std::vector<std::string>& i, Point& d) : _ids(i), _groupStack(-1), _docDim(d) {}
-
     std::vector<Shape> getShapes() {
         return _shapes;
     }
@@ -73,31 +74,21 @@ public:
     ///SVG++ Methods
     //void set(svgpp::tag::attribute::id, std::string pId);
     void transform_matrix(const boost::array<double, 6>& matrix);
-
     void set(svgpp::tag::attribute::id, const boost::iterator_range<const char*> pId);
-
     void set(svgpp::tag::attribute::width, double width);
-
     void set(svgpp::tag::attribute::height, double height);
-
     void path_move_to(double x, double y, svgpp::tag::coordinate::absolute);
-
     void path_line_to(double x, double y, svgpp::tag::coordinate::absolute);
-
     void path_cubic_bezier_to(
         double x1, double y1,
         double x2, double y2,
         double x, double y,
         svgpp::tag::coordinate::absolute);
-
-    void path_close_subpath() const;
-
+    void path_close_subpath();
     void path_exit();
 
     void on_enter_element(svgpp::tag::element::any);
-
     void on_enter_element(svgpp::tag::element::g);
-
     void on_exit_element();
 };
 
@@ -114,7 +105,6 @@ struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
                                   svgpp::tag::source::css) {
         return true;
     }
-
     template<class XMLAttributesIterator, class AttributeName>
     static bool unknown_attribute(context_type&,
                                   XMLAttributesIterator const&,
@@ -145,16 +135,27 @@ using ProcessedElements =
     //Text and other things not handled
     >::type;
 
-
-using ProcessedAttributes =
-    boost::mpl::insert <
-    boost::mpl::insert <
-    boost::mpl::insert <
-    boost::mpl::insert <
-    svgpp::traits::shapes_attributes_by_element,
-    svgpp::tag::attribute::height >::type,
-    svgpp::tag::attribute::id >::type,
-    svgpp::tag::attribute::width >::type,
+/**
+ * Select the additionnal attributes that will
+ * be processed by our parser
+ */
+using CustomAttributes =
+    boost::mpl::set <
+    svgpp::tag::attribute::height,
+    svgpp::tag::attribute::id,
+    svgpp::tag::attribute::width,
     svgpp::tag::attribute::transform
     >::type;
+
+/**
+ * Merge default processed attributes and custom
+ * ones, using beautiful functional meta-programming.
+ */
+using ProcessedAttributes =
+    boost::mpl::fold <
+    CustomAttributes,
+    svgpp::traits::shapes_attributes_by_element,
+    boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
+    >::type;
+
 #endif

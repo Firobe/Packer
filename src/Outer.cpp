@@ -1,11 +1,12 @@
-#include <boost/geometry/io/svg/svg_mapper.hpp>
-#include <rapidxml_ns/rapidxml_ns_print.hpp>
-#include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <sstream>
 #include <string>
 
+#include <rapidxml_ns/rapidxml_ns_print.hpp>
+#include <rapidxml_ns/rapidxml_ns_utils.hpp>
+
 #include "Outer.hpp"
 #include "Matrix.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
@@ -34,7 +35,7 @@ Outer::~Outer() {
  */
 void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     _outStream << "<" << node->name() << endl;
-    cerr << "Printing " << node->name() << endl;
+    LOG(trace) << "Printing " << node->name() << endl;
 
     // For each attribute to write within the node
     for (xml_attribute<>* attr = node->first_attribute();
@@ -71,7 +72,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
         return true;
     }
 
-    cerr << "Adding matrix for " << id->value() << endl;
+    LOG(debug) << "Adding matrix for " << id->value() << endl;
     int i;
 
     //Then creates the matrix and add it as an attribute
@@ -98,7 +99,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
         node->remove_attribute(transAtt);
     }
 
-    cerr << "Appending " << s.str() << endl;
+    LOG(trace) << "Appending " << s.str() << endl;
     //Allocate space and add it as an attribute
     cs = new char[s.str().size() + 1];
     strcpy(cs, s.str().c_str());
@@ -183,8 +184,8 @@ string Outer::String(std::string path, bool addto, std::vector<std::string>& tp,
                      std::vector<Shape>& s) {
     Outer outer(path, addto, tp, height, s);
     XMLElement rootNode = outer._doc.first_node();
-    cerr << "Beginning SVG production (addto=" << addto << ")\n";
+    LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
     outer.recurOutput(rootNode, addto);
-    cerr << "SVG successfully generated" << endl;
+    LOG(info) << "SVG successfully generated." << endl;
     return outer._outStream.str();
 }
