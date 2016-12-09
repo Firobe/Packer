@@ -9,6 +9,7 @@
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 
+#define PRECISION 1.0e-2
 
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>; //Defines the Point type
