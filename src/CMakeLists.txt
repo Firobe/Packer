@@ -7,4 +7,5 @@ add_library(packer_lib STATIC
         Outer.cpp
 		Matrix.cpp
 		ScanlineSolver.cpp
+		Splitter.cpp
         )

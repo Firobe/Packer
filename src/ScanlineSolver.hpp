@@ -14,8 +14,8 @@ private:
     int getLast(const std::vector<double>&, unsigned, double, double&) const;
     void preSolve() override;
     void solveBin() override;
-	void printAll(std::vector<std::vector<bool>>& cellIsEmpty, std::vector<double> cellW,
-				std::vector<double>& cellH);
+    void printAll(std::vector<std::vector<bool>>& cellIsEmpty, std::vector<double> cellW,
+                  std::vector<double>& cellH);
 public:
     ScanlineSolver(std::vector<Shape>& v, Point p) : Solver(v, p),
         _boxes(v.size()) {}
