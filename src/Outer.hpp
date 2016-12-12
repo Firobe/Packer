@@ -21,14 +21,13 @@ enum NodeType { hasChild, hasValue, noChild };
 class Outer {
 protected:
     std::vector<Shape>& _shapes;
-    std::stringstream _outStream;
     rapidxml_ns::xml_document<> _doc; //SVG file to parse.
     std::vector<std::string>& _ids; //IDs of packed shapes.
     bool _addTo; //Are we duplicating or not
     rapidxml_ns::file<> _svgFile; //SVG file used to build _doc
     double _height;
 public:
-    static std::string String(std::string path, bool addto, std::vector<std::string>& tp,
+    static void Write(std::string path, bool addto, std::vector<std::string>& tp,
                               double height,
                               std::vector<Shape>&);
 private:

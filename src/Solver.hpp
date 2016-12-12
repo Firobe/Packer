@@ -52,7 +52,7 @@ public:
  * Defines a comparator for boxes
  */
 inline bool boxHeightLess(const Box& a, const Box& b) {
-    return (a.max_corner().y() - a.min_corner().y()) >=
+    return (a.max_corner().y() - a.min_corner().y()) >
            (b.max_corner().y() - b.min_corner().y());
 }
 
