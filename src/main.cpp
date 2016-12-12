@@ -97,6 +97,6 @@ int main(int argc, char** argv) {
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
     Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                          docDim.y(), shapes);
+                 docDim.y(), shapes);
     return EXIT_SUCCESS;
 }

@@ -28,8 +28,8 @@ protected:
     double _height;
 public:
     static void Write(std::string path, bool addto, std::vector<std::string>& tp,
-                              double height,
-                              std::vector<Shape>&);
+                      double height,
+                      std::vector<Shape>&);
 private:
     Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
           std::vector<Shape>&);

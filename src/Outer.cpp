@@ -180,8 +180,8 @@ NodeType Outer::identNode(XMLElement node) const {
  * (Theoretically with the packed shapes)
  */
 void Outer::Write(std::string path, bool addto, std::vector<std::string>& tp,
-                     double height,
-                     std::vector<Shape>& s) {
+                  double height,
+                  std::vector<Shape>& s) {
     Outer outer(path, addto, tp, height, s);
     XMLElement rootNode = outer._doc.first_node();
     LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
