@@ -9,6 +9,9 @@
 #include "TheSkyIsTheLimitSolver.cpp"
 #include "ToInfinityAndBeyondSolver.hpp"
 
+//
+#include "Splitter.hpp"
+
 namespace po = boost::program_options;
 using namespace std;
 
@@ -93,7 +96,7 @@ int main(int argc, char** argv) {
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
-    cout << Outer::String(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                          docDim.y(), shapes);
+    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+                 docDim.y(), shapes);
     return EXIT_SUCCESS;
 }

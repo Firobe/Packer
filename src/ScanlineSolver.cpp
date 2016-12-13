@@ -68,14 +68,15 @@ void ScanlineSolver::solveBin() {
                     if (allCellsEmpty(cellIsEmpty, iX, lastX, iY,
                                       lastY)) { // If all cells are free to store the box
                         // == Division ==
-                        if (lastW != 0) { // If it perfectly fits, no need for division
+                        if (lastW > PRECISION &&
+                                cellW[lastX] - lastW > PRECISION) { // If it perfectly fits, no need for division
                             cellIsEmpty.insert(cellIsEmpty.begin() + lastX + 1,
                                                cellIsEmpty[lastX]); // Column copy (with new column same as old)
                             cellW.insert(cellW.begin() + lastX + 1, cellW[lastX] - lastW);   //
                             cellW[lastX] = lastW;          // Width division between the two daughter cells
                         }
 
-                        if (lastH != 0) {
+                        if (lastH > PRECISION && cellH[lastY] - lastH > PRECISION) {
                             for (unsigned j = 0; j < cellIsEmpty.size(); j++) {
                                 cellIsEmpty[j].insert(cellIsEmpty[j].begin() + lastY + 1, cellIsEmpty[j][lastY]);
                             }
@@ -110,10 +111,10 @@ void ScanlineSolver::solveBin() {
     }
 }
 
-int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double shape,
+int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double length,
                             double& plast) const {
-    while (cells[i] < shape) {
-        shape -= cells[i];
+    while (cells[i] + PRECISION < length) {
+        length -= cells[i];
         i++;
 
         if (i >= cells.size()) { // piece goes off the frame
@@ -121,7 +122,7 @@ int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double shap
         }
     }
 
-    plast = shape; // Last width/height is kept (to divide the cell)
+    plast = length; // Last width/height is kept (to divide the cell)
     return i;
 }
 
@@ -137,6 +138,33 @@ bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsi
     }
 
     return true;
+}
+
+void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
+                              vector<double>& cellH) {
+    LOG(debug) << "============\nCELL MATRIX";
+
+    for (auto && x : cellIsEmpty) {
+        LOG(debug) << endl;
+
+        for (auto && y : x) {
+            LOG(debug) << y;
+        }
+    }
+
+    LOG(debug) << endl << "CellW" << endl;
+
+    for (auto && x : cellW) {
+        LOG(debug) << x << " ; ";
+    }
+
+    LOG(debug) << endl << "CellH" << endl;
+
+    for (auto && x : cellH) {
+        LOG(debug) << x << " ; ";
+    }
+
+    LOG(debug) << endl;
 }
 
 double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,

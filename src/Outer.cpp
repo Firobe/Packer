@@ -34,20 +34,20 @@ Outer::~Outer() {
  * and each of its attributes
  */
 void Outer::printNode(XMLElement node, bool forceNoMatrix) {
-    _outStream << "<" << node->name() << endl;
+    cout << "<" << node->name() << "\n";
     LOG(trace) << "Printing " << node->name() << endl;
 
     // For each attribute to write within the node
     for (xml_attribute<>* attr = node->first_attribute();
             attr; attr = attr->next_attribute()) {
-        _outStream << attr->name() << "=\"";
+        cout << attr->name() << "=\"";
 
         if (strcmp(attr->name(), "id") == 0) {
             //adding bool "forceNoMatrix" (0/1) to avoid duplication of attribute identifiers
-            _outStream << attr->value() << forceNoMatrix << "\"" << endl;
+            cout << attr->value() << forceNoMatrix << "\"\n";
         }
         else {
-            _outStream << attr->value() << "\"" << endl;
+            cout << attr->value() << "\"\n";
         }
     }
 }
@@ -128,11 +128,11 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
     //Get the first child of the node
     switch (identNode(node)) {
     case noChild: // no node within
-        _outStream << "/>" << endl;
+        cout << "/>\n";
         break;
 
     case hasChild: { // node(s) within
-        _outStream << ">" << endl;
+        cout << ">\n";
         //Call each of the children
         XMLElement next = node->first_node();
 
@@ -140,12 +140,12 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
             recurOutput(next, _addTo);
         }
 
-        _outStream << "</" << node->name() << ">" << endl;
+        cout << "</" << node->name() << ">\n";
         break;
     }
 
     case hasValue: // has node within : only a value
-        _outStream << ">" << node->value() << "</" << node->name() << ">" << endl;
+        cout << ">" << node->value() << "</" << node->name() << ">\n";
         break;
     }
 
@@ -179,13 +179,12 @@ NodeType Outer::identNode(XMLElement node) const {
  * Returns a string corresponding to the SVG file to ouput.
  * (Theoretically with the packed shapes)
  */
-string Outer::String(std::string path, bool addto, std::vector<std::string>& tp,
-                     double height,
-                     std::vector<Shape>& s) {
+void Outer::Write(std::string path, bool addto, std::vector<std::string>& tp,
+                  double height,
+                  std::vector<Shape>& s) {
     Outer outer(path, addto, tp, height, s);
     XMLElement rootNode = outer._doc.first_node();
     LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
     outer.recurOutput(rootNode, addto);
     LOG(info) << "SVG successfully generated." << endl;
-    return outer._outStream.str();
 }
