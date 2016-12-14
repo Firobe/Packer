@@ -9,9 +9,6 @@
 #include "TheSkyIsTheLimitSolver.cpp"
 #include "ToInfinityAndBeyondSolver.hpp"
 
-//
-#include "Splitter.hpp"
-
 namespace po = boost::program_options;
 using namespace std;
 

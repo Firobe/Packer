@@ -13,7 +13,7 @@ void ScanlineSolver::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
-    for (unsigned i = 0; i < _shapes.size(); i++) {
+    for (unsigned i = 0; i < _shapes.size(); ++i) {
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
     }
 }
@@ -48,15 +48,15 @@ void ScanlineSolver::solveBin() {
     bool keepLooking;
 
     for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end();
-            i++) { //Iterates on yet-to-be-processed shapes
+            ++i) { //Iterates on yet-to-be-processed shapes
         LOG(debug) << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
         keepLooking = true;
 
-        for (unsigned iX = 0; iX < cellW.size() && keepLooking; iX++) {
+        for (unsigned iX = 0; iX < cellW.size() && keepLooking; ++iX) {
             for (unsigned iY = 0; iY < cellH.size() &&
-                    keepLooking; iY++) { // scan column by column, top to bottom and left to right
+                    keepLooking; ++iY) { // scan column by column, top to bottom and left to right
                 if (cellIsEmpty[iX][iY]) { // First test is to see if the top-left cell is empty
                     lastX = getLast(cellW, iX, shapeWidth, lastW);
                     lastY = getLast(cellH, iY, shapeHeight, lastH);
@@ -86,8 +86,8 @@ void ScanlineSolver::solveBin() {
                         }
 
                         // == Filling cells ==
-                        for (int jx = iX; jx <= lastX; jx++) {
-                            for (int jy = iY; jy <= lastY; jy++) {
+                        for (int jx = iX; jx <= lastX; ++jx) {
+                            for (int jy = iY; jy <= lastY; ++jy) {
                                 cellIsEmpty[jx][jy] = false;
                             }
                         }
@@ -127,8 +127,8 @@ int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double leng
 bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
                                    int lastX, unsigned iY,
                                    int lastY) const {
-    for (int x = iX; x <= lastX; x++) {
-        for (int y = iY; y <= lastY; y++) {
+    for (int x = iX; x <= lastX; ++x) {
+        for (int y = iY; y <= lastY; ++y) {
             if (cellIsEmpty[x][y] == false) {
                 return false;
             }
@@ -169,7 +169,7 @@ double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,
                                        unsigned index) const {
     double length = 0;
 
-    for (unsigned i = 0; i < index; i++) {
+    for (unsigned i = 0; i < index; ++i) {
         length += lengthVector[i];
     }
 

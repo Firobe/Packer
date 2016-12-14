@@ -77,7 +77,8 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
 
     //Then creates the matrix and add it as an attribute
     //Find to which shape (i) the ID belongs to
-    for (i = 0 ; _shapes[i].getID() != id->value() ; i++);
+    //That's pretty risky, should check if i goes out of range
+    for (i = 0 ; _shapes[i].getID() != id->value() ; ++i);
 
     //Get the matrix and write its SVG string equivalent
     array<double, 6> m = _shapes[i].getTransMatrix();

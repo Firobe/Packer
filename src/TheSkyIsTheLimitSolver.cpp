@@ -11,7 +11,7 @@ void TheSkyIsTheLimitSolver::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     //Create the bounding boxes
-    for (unsigned i = 0; i < _shapes.size(); i++) {
+    for (unsigned i = 0; i < _shapes.size(); ++i) {
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
     }
 }
@@ -21,7 +21,7 @@ void TheSkyIsTheLimitSolver::solveBin() {
     double currY = _binNumber * _dimensions.y(), currX = 0, offset;
     offset = _boxes[0].max_corner().y() - _boxes[0].min_corner().y();
 
-    for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end() ; i++) {
+    for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end() ; ++i) {
         if (currX + _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x() > _dimensions.x()) {
             currY += offset;
             currX = 0;

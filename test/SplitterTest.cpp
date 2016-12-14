@@ -3,6 +3,8 @@
 #include "Solver.hpp"
 #include "Splitter.hpp"
 
+using namespace std;
+
 int main(int argc, char** argv) {
     int width = 2000, height = 2000, nbSplit = 50;
     Splitter splitter(width, height);

@@ -69,10 +69,10 @@ void Shape::fillShape(vector<Ring>& rings) {
     //Sorting the rings by increasing area
     sort(rings.begin(), rings.end(), ringLess);
 
-    for (unsigned i = 0 ; i < rings.size() ; i++) {
+    for (unsigned i = 0 ; i < rings.size() ; ++i) {
         bool covered = false;
 
-        for (unsigned j = rings.size() - 1 ; j > i ; j--) {
+        for (unsigned j = rings.size() - 1 ; j > i ; --j) {
             if (bg::covered_by(rings[i], rings[j])) {
                 covered = true;
                 break;
@@ -87,7 +87,7 @@ void Shape::fillShape(vector<Ring>& rings) {
             _multiP.back().outer() = rings[i];
 
             //Discover all the holes of i
-            for (unsigned k = 0 ; k < i ; k++)
+            for (unsigned k = 0 ; k < i ; ++k)
                 if (bg::covered_by(rings[k], rings[i])) {
                     LOG(debug) << "-> Ring " << k << " is one if its holes" << endl;
                     //Add an inner ring to our polygon
@@ -131,7 +131,7 @@ void Shape::setOld() {
     _indexP1 = 0;
     _indexP2 = 0;
 
-    for (unsigned i = 1 ; i < _multiP[0].outer().size() ; i++)
+    for (unsigned i = 1 ; i < _multiP[0].outer().size() ; ++i)
         if (bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[i]) >
                 bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2])) {
             _indexP2 = i;
