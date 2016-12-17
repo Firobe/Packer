@@ -6,6 +6,7 @@
 
 #include "Outer.hpp"
 #include "Matrix.hpp"
+#include "Solver.hpp"
 #include "Log.hpp"
 
 using namespace std;
@@ -242,17 +243,20 @@ void Outer::groupShapes(double binHeight) {
                b.getMultiP()[0].outer()[0].y();
     });
     unsigned i = 0;
+    double curBottom = 0;
 
     //Loop on bins
     while (i < _shapes.size()) {
         cout << "<g>" << endl;
 
         //Loop on elements of a single bin
-        while (i < _shapes.size() and true) {
+        while (i < _shapes.size() and
+                _shapes[i].getMultiP()[0].outer()[0].y() - curBottom < binHeight) {
             cout << _shapes[i].getOut();
             ++i;
         }
 
+        curBottom += binHeight * SPACE_COEF;
         cout << "</g>" << endl;
     }
 }
