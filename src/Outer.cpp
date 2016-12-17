@@ -259,6 +259,9 @@ void Outer::groupShapes(double binHeight) {
         curBottom += binHeight * SPACE_COEF;
         cout << "</g>" << endl;
     }
+
+    //End the document once and for all
+    cout << "</svg>" << endl;
 }
 
 /**
