@@ -47,6 +47,9 @@ public:
     void appendOut(const std::string& s) {
         _out += s;
     }
+    const std::string& getOut() {
+        return _out;
+    }
 };
 
 template <>

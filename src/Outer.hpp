@@ -29,7 +29,7 @@ protected:
     int _currentShape;
 public:
     static void Write(std::string path, bool addto, std::vector<std::string>& tp,
-                      double height,
+                      double height, double binHeight,
                       std::vector<Shape>&);
 private:
     Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
@@ -39,7 +39,8 @@ private:
     void printNode(rapidxml_ns::xml_node<>*, bool);
     NodeType identNode(rapidxml_ns::xml_node<>*) const;
     bool appendMatrix(rapidxml_ns::xml_node<>*, char*&, bool);
-    int getCurrentShape(rapidxml_ns::xml_node<>*);
+    int getCurrentShape(rapidxml_ns::xml_node<>*) const;
+    void groupShapes(double);
 };
 
 #endif
