@@ -1,5 +1,6 @@
 #include <sstream>
 #include <string>
+#include <numeric>
 
 #include <boost/geometry/io/svg/svg_mapper.hpp>
 #include <boost/geometry/algorithms/envelope.hpp>
@@ -34,25 +35,23 @@ string Solver::debugOutputSVG() const {
 }
 
 void Solver::solve() {
-    LOG(info) << "Packing shapes...";
-    _indices.clear();
-
-    for (unsigned i = 0; i < _shapes.size(); i++) {
-        _indices.push_back(i);
-    }
-
+    LOG(info) << "Packing shapes..." << endl;
+    _indices.resize(_shapes.size());
+    iota(_indices.begin(), _indices.end(), 0);
     //_indices is now initialized to {1, 2, ... _shapes.size() - 1 }
+    LOG(info) << "Pre-solving..." << endl;
     preSolve();
+    LOG(info) << "Solving..." << endl;
 
     //While there are shapes left, fill bins individually
     while (!_indices.empty()) {
-        LOG(info) << endl << "Bin " << _binNumber + 1
-                  << " : " << _indices.size() << " shapes left...";
+        LOG(info) << "Bin " << _binNumber + 1
+                  << " : " << _indices.size() << " shapes left..." << endl;
         solveBin();
         _binNumber++;
     }
 
-    LOG(info) << endl << "Successfully packed "
+    LOG(info) << "Successfully packed "
               << _shapes.size() << " shapes in " << _binNumber << " bins." << endl;
 }
 

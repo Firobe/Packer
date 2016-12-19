@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 
 # Define where headers only libs and statics libs are located
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party/boost)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 link_directories(${CMAKE_SOURCE_DIR}/${LIBS_DIR})
 
 # Allow to automaticly unpack and build boost library according to build type

@@ -9,9 +9,6 @@
 #include "TheSkyIsTheLimitSolver.cpp"
 #include "ToInfinityAndBeyondSolver.hpp"
 
-//
-#include "Splitter.hpp"
-
 namespace po = boost::program_options;
 using namespace std;
 
@@ -97,6 +94,6 @@ int main(int argc, char** argv) {
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
     Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                 docDim.y(), shapes);
+                 docDim.y(), packerDim.y(), shapes);
     return EXIT_SUCCESS;
 }

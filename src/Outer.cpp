@@ -6,6 +6,7 @@
 
 #include "Outer.hpp"
 #include "Matrix.hpp"
+#include "Solver.hpp"
 #include "Log.hpp"
 
 using namespace std;
@@ -18,7 +19,8 @@ Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp, double 
     _ids(tp),
     _addTo(addto),
     _svgFile(path.c_str()),
-    _height(height) {
+    _height(height),
+    _currentShape(-1) {
     //Opening SVG file
     _doc.parse<0>(_svgFile.data());
 }
@@ -34,22 +36,53 @@ Outer::~Outer() {
  * and each of its attributes
  */
 void Outer::printNode(XMLElement node, bool forceNoMatrix) {
-    cout << "<" << node->name() << "\n";
+    stringstream tmp;
+    tmp << "<" << node->name() << "\n";
     LOG(trace) << "Printing " << node->name() << endl;
 
     // For each attribute to write within the node
     for (xml_attribute<>* attr = node->first_attribute();
             attr; attr = attr->next_attribute()) {
-        cout << attr->name() << "=\"";
+        tmp << attr->name() << "=\"";
 
         if (strcmp(attr->name(), "id") == 0) {
             //adding bool "forceNoMatrix" (0/1) to avoid duplication of attribute identifiers
-            cout << attr->value() << forceNoMatrix << "\"\n";
+            tmp << attr->value() << forceNoMatrix << "\"\n";
         }
         else {
-            cout << attr->value() << "\"\n";
+            tmp << attr->value() << "\"\n";
         }
     }
+
+    if (_currentShape == -1 || forceNoMatrix) {
+        cout << tmp.str();
+    }
+    else {
+        _shapes[_currentShape].appendOut(tmp.str());
+    }
+}
+
+/**
+ * Returns the index in _shapes
+ * corresponding to the current node
+ * by checking the IDs
+ */
+int Outer::getCurrentShape(XMLElement node) const {
+    //Check if that ID exists and is in our packed list
+    xml_attribute<>* id = node->first_attribute("id");
+
+    // Case id error/not found
+    if (id == nullptr || !vectorContains<string>(_ids, id->value())) {
+        return -1;
+    }
+
+    //Find to which shape (i) the ID belongs to
+    for (unsigned i = 0 ; i < _shapes.size() ; ++i)
+        if (_shapes[i].getID() == id->value()) {
+            return i;
+        }
+
+    return -1;
 }
 
 /**
@@ -59,11 +92,9 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
  * Does not effectively append it if forceNoMatrix == true
  */
 bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
-    //Check if that ID exists and is in our packed list
-    xml_attribute<>* id = node->first_attribute("id");
+    int i = getCurrentShape(node);
 
-    // Case id error/not found
-    if (id == nullptr || !vectorContains<string>(_ids, id->value())) {
+    if (i == -1) {
         return false;
     }
 
@@ -71,13 +102,6 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
     if (forceNoMatrix) {
         return true;
     }
-
-    LOG(debug) << "Adding matrix for " << id->value() << endl;
-    int i;
-
-    //Then creates the matrix and add it as an attribute
-    //Find to which shape (i) the ID belongs to
-    for (i = 0; _shapes[i].getID() != id->value(); i++);
 
     //Get the matrix and write its SVG string equivalent
     array<double, 6> m = _shapes[i].getTransMatrix();
@@ -119,6 +143,14 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
  * duplicates a shape by calling itself again with forceNoMatrix = false
  */
 void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
+    bool computed = (_currentShape == -1);
+    stringstream outStream;
+    LOG(trace) << "Current shape : " << _currentShape << "/" << _shapes.size() << endl;
+
+    if (computed) {
+        _currentShape = getCurrentShape(node);
+    }
+
     //Get the ID attribute of the node
     char* cs = nullptr;
     bool packed = appendMatrix(node, cs, forceNoMatrix);
@@ -128,25 +160,49 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
     //Get the first child of the node
     switch (identNode(node)) {
     case noChild: // no node within
-        cout << "/>\n";
+        outStream << "/>\n";
         break;
 
     case hasChild: { // node(s) within
-        cout << ">\n";
+        if (_currentShape == -1 || forceNoMatrix) {
+            cout << ">\n";
+        }
+        else {
+            _shapes[_currentShape].appendOut(">\n");
+        }
+
         //Call each of the children
         XMLElement next = node->first_node();
 
-        for (; next != nullptr; next = next->next_sibling()) {
-            recurOutput(next, _addTo);
+        for (; next != nullptr ; next = next->next_sibling()) {
+            //Propagate the forceNoMatrix if already packed
+            recurOutput(next, (packed and !forceNoMatrix) ? false : _addTo);
         }
 
-        cout << "</" << node->name() << ">\n";
+        //Do not close the file yet, wait for groupShapes
+        if (strcmp(node->name(), "svg") != 0) {
+            outStream << "</" << node->name() << ">\n";
+        }
+
         break;
     }
 
     case hasValue: // has node within : only a value
-        cout << ">" << node->value() << "</" << node->name() << ">\n";
+        outStream << ">" << node->value() << "</" << node->name() << ">\n";
         break;
+    }
+
+    //Display the cached output in cout or store it in the correct shape
+    if (_currentShape == -1 || forceNoMatrix) {
+        cout << outStream.str();
+    }
+    else {
+        _shapes[_currentShape].appendOut(outStream.str());
+    }
+
+    //If the currentShape was -1, set it back
+    if (computed) {
+        _currentShape = -1;
     }
 
     //Duplicate if needed
@@ -176,15 +232,50 @@ NodeType Outer::identNode(XMLElement node) const {
 }
 
 /**
+ * Now that the shapes are loaded with
+ * their oout string, display them
+ * in group, corresponding to the bins.
+ */
+void Outer::groupShapes(double binHeight) {
+    //Sort shapes by final height of first point
+    sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
+        return a.getMultiP()[0].outer()[0].y() <
+               b.getMultiP()[0].outer()[0].y();
+    });
+    unsigned i = 0;
+    double curBottom = 0;
+
+    //Loop on bins
+    while (i < _shapes.size()) {
+        cout << "<g>" << endl;
+
+        //Loop on elements of a single bin
+        while (i < _shapes.size() and
+                _shapes[i].getMultiP()[0].outer()[0].y() - curBottom < binHeight) {
+            cout << _shapes[i].getOut();
+            ++i;
+        }
+
+        curBottom += binHeight * SPACE_COEF;
+        cout << "</g>" << endl;
+    }
+
+    //End the document once and for all
+    cout << "</svg>" << endl;
+}
+
+/**
  * Returns a string corresponding to the SVG file to ouput.
  * (Theoretically with the packed shapes)
  */
 void Outer::Write(std::string path, bool addto, std::vector<std::string>& tp,
-                  double height,
+                  double height, double binHeight,
                   std::vector<Shape>& s) {
     Outer outer(path, addto, tp, height, s);
     XMLElement rootNode = outer._doc.first_node();
     LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
     outer.recurOutput(rootNode, addto);
+    LOG(info) << "Original file completely parsed..." << endl;
+    outer.groupShapes(binHeight);
     LOG(info) << "SVG successfully generated." << endl;
 }

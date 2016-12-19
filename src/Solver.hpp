@@ -24,7 +24,7 @@
 class Solver {
 protected:
     std::vector<Shape>& _shapes; //Shapes to be packed
-    int _binNumber; //Current number of bins
+    unsigned _binNumber; //Current number of bins
     Point _dimensions; //Document dimensions
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
     /**

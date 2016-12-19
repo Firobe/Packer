@@ -126,7 +126,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     //Pushing identity
     _matStack.push(_matStack.top());
 
-    for (int i = _rings.size() - 1 ; i >= 0 ; i--) {
+    for (int i = _rings.size() - 1 ; i >= 0 ; --i) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         LOG(debug) << "Flushing rings..." << endl;
 
@@ -172,7 +172,7 @@ void Parser::on_exit_element() {
 
     //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
-        for (unsigned i = 0 ; i < _rings.size() ; i++) {
+        for (unsigned i = 0 ; i < _rings.size() ; ++i) {
             _idStack.pop();
         }
     }

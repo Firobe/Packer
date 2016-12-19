@@ -25,11 +25,12 @@ private:
     Point _oldP1, _oldP2;
     unsigned _indexP1, _indexP2;
     std::string _id;
+    std::string _out;
 
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
     void setOld();
 public:
-    Shape(std::vector<Ring>& r, std::string id) : _id(id) {
+    Shape(std::vector<Ring>& r, std::string id) : _id(id), _out() {
         fillShape(r);
     }
     std::string getID() const {
@@ -43,6 +44,12 @@ public:
         return _multiP;
     }
     void bufferize(int buffer);
+    void appendOut(const std::string& s) {
+        _out += s;
+    }
+    const std::string& getOut() {
+        return _out;
+    }
 };
 
 template <>

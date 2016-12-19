@@ -3,6 +3,9 @@
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 
 #include "Splitter.hpp"
+#include "common.hpp"
+
+#define EPSILON 10e-10
 
 using namespace std;
 
@@ -12,6 +15,12 @@ bool sideOfLine(Point a, Point b, Point c) {
 }
 
 Point intersect(Point a, Point b, Point c, Point d) {
+    if (abs(b.x() - a.x()) < EPSILON)
+        return Point(a.x(),
+                     (d.y() - c.y()) * (a.x() - c.x())
+                     / (d.x() - c.x())
+                     + c.y());
+
     //Point d'intersection entre AB et CD
     double rX = ((b.y() - a.y()) * (d.x() - c.x()) * a.x()
                  - (b.x() - a.x()) * (d.x() - c.x()) * a.y()
@@ -28,22 +37,22 @@ Point intersect(Point a, Point b, Point c, Point d) {
 void Splitter::split(Point a, Point b) {
     vector<Ring> result;
 
-    for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
-        bool last = sideOfLine(a, b, _shapes[i][0]);
+    for (auto && shape : _shapes) {
+        bool last = sideOfLine(a, b, shape[0]);
         Ring sup, inf;
 
-        for (unsigned rI = 0 ; rI < _shapes[i].size() ; ++rI) {
+        for (unsigned rI = 0 ; rI < shape.size() ; ++rI) {
             //i : shape
             //rI : point index
-            if (sideOfLine(a, b, _shapes[i][rI]) != last) {
+            if (sideOfLine(a, b, shape[rI]) != last) {
                 Point inter = intersect(a, b,
-                                        _shapes[i][rI - 1], _shapes[i][rI]);
+                                        shape[rI - 1], shape[rI]);
                 bg::append(sup, inter);
                 bg::append(inf, inter);
                 last = !last;
             }
 
-            bg::append(last ? sup : inf, _shapes[i][rI]);
+            bg::append(last ? sup : inf, shape[rI]);
         }
 
         bg::correct(sup);
@@ -63,9 +72,10 @@ void Splitter::split(Point a, Point b) {
 
 vector<Shape> Splitter::getShapes() const {
     vector<Shape> result;
+    result.reserve(_shapes.size());
 
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
-        vector<Ring> tmp{_shapes[i]};
+        vector<Ring> tmp(1, _shapes[i]);
         result.emplace_back(tmp, to_string(i));
     }
 
