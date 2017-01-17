@@ -33,26 +33,31 @@ private:
      * The final vector of shapes that ought to be returned to the main
      */
     std::vector<Shape> _shapes;
+
     /**
      * The rings parsed at a certain moment of the document traversal.
      * Is cleared each time rings are sent into a shape.
      */
     std::vector<Ring> _rings;
+
     /**
      * The points parsed at a certain moment of the document traversal.
      * Is cleared each time points are sent into a ring.
      */
     std::vector<Point> _points;
+
     /**
      * A stack of IDS corresponding to the IDS parsed at a certain moment.
      * Is popped each time we quit an element.
      */
     std::stack<std::string> _idStack;
+
     /**
      * A vector of IDs that are meant to be packed. Used for filtering which shapes
      * are returned to main. May be updated during the process.
      */
     std::vector<std::string>& _ids;
+
     /**
      * Used to known if we are in a group at a certain moment and to identify when
      * closing tags are closing a group.

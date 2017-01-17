@@ -72,6 +72,7 @@ void Shape::fillShape(vector<Ring>& rings) {
     for (unsigned i = 0 ; i < rings.size() ; ++i) {
         bool covered = false;
 
+        //We can search only for rings after i thanks to the ring sorting
         for (unsigned j = rings.size() - 1 ; j > i ; --j) {
             if (bg::covered_by(rings[i], rings[j])) {
                 covered = true;
@@ -87,9 +88,10 @@ void Shape::fillShape(vector<Ring>& rings) {
             _multiP.back().outer() = rings[i];
 
             //Discover all the holes of i
+            //We can search only for rings before i thanks to the ring sorting
             for (unsigned k = 0 ; k < i ; ++k)
                 if (bg::covered_by(rings[k], rings[i])) {
-                    LOG(debug) << "-> Ring " << k << " is one if its holes" << endl;
+                    LOG(debug) << "  -> Ring " << k << " is one if its holes" << endl;
                     //Add an inner ring to our polygon
                     _multiP.back().inners().resize(_multiP.back().inners().size() + 1);
                     //k is that inner ring
@@ -104,6 +106,7 @@ void Shape::fillShape(vector<Ring>& rings) {
 /**
  * Change shapes by adding a buffer
  * (of <buffer> px) around each of them.
+ * _oldP1, P2, indexP1, P2 are also recalculated according to the new multiPolygon
  */
 void Shape::bufferize(int buffer) {
     // Declare strategies
@@ -126,6 +129,7 @@ void Shape::bufferize(int buffer) {
  * Store points for future transformation reference.
  * Find two points that maximize distance between them.
  * The first point is currently always at index 0.
+ * Points are only concidered in the first Polygon of the shape
  */
 void Shape::setOld() {
     _indexP1 = 0;

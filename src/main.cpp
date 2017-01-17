@@ -19,12 +19,12 @@ int main(int argc, char** argv) {
     po::options_description
     desc("Packer usage : ./packer [options] input-file\nAllowed options ");
     desc.add_options()
-    ("help", "produce help message")
-    ("input-file", po::value<string>()->required(), "input file path")
+    ("help,H", "produce help message")
+    ("input-file,I", po::value<string>()->required(), "input file path")
     ("dup", po::value<bool>()->required(),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width", po::value<int>(), "width of the packing space (px)")
-    ("height", po::value<int>(), "height of the packing space (px)")
+    ("width,w", po::value<int>(), "width of the packing space (px)")
+    ("height,h", po::value<int>(), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
     ("buffer", po::value<int>(), "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
@@ -86,14 +86,18 @@ int main(int argc, char** argv) {
         (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+
     //Packing the shapes
     ScanlineSolver solver(shapes, packerDim);
     solver.solve();
+
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //cout << solver.debugOutputSVG();
+
     //Producing the output (sending input file and the option to duplicate
     Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                  docDim.y(), packerDim.y(), shapes);
+
     return EXIT_SUCCESS;
 }

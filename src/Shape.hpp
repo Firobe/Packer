@@ -54,6 +54,7 @@ public:
 
 template <>
 void rotate <Shape> (Shape& object, double angle);
+
 template <>
 void translate <Shape> (Shape& object, double x, double y);
 
