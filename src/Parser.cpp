@@ -11,9 +11,7 @@
 
 #include "Parser.hpp"
 #include "Shape.hpp"
-#include "Solver.hpp"
 #include "Log.hpp"
-#include "common.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
@@ -26,7 +24,7 @@ using namespace svgpp;
  */
 vector<Shape> Parser::Parse(string path,
                             vector<string>& ids,
-                            Point& docDim) { //Returns a copy, can be improved
+                            Point& docDim) { // TODO : Returns a copy, can be improved
     LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file
     file<> svgFile(path.c_str());
@@ -126,6 +124,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
     //Pushing identity
     _matStack.push(_matStack.top());
 
+    //i need to be signed because of the loop test
     for (int i = _rings.size() - 1 ; i >= 0 ; --i) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         LOG(debug) << "Flushing rings..." << endl;

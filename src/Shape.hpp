@@ -13,7 +13,7 @@
  * carried around by the different
  * modules of the program.
  *
- * Inherits a boost MultiP and stores two
+ * contain a boost MultiP and stores two
  * points at initialization so it can
  * compute its transformation matrix later.
  *

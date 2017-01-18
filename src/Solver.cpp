@@ -21,11 +21,11 @@ string Solver::debugOutputSVG() const {
     stringstream ret;
     bg::svg_mapper <Point> mapper(ret, 800, 800);
 
-    for (Shape& s : _shapes) {
+    for (const Shape& s : _shapes) {
         mapper.add(s.getMultiP());
     }
 
-    for (Shape& s : _shapes) {
+    for (const Shape& s : _shapes) {
         mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
                    to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
     }

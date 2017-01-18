@@ -27,13 +27,16 @@ protected:
     unsigned _binNumber; //Current number of bins
     Point _dimensions; //Document dimensions
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
+
     /**
      * Removes the current element in _indices and returns updated iterator
      */
     void markPacked(std::list<unsigned>::iterator& i) {
         i = --_indices.erase(i);
     }
+
     virtual void preSolve() {}
+
     /**
      * Apply a packing algorithm to
      * fill a single bin.
@@ -41,6 +44,7 @@ protected:
     virtual void solveBin() {
         _indices.clear();
     }
+
 public:
     Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
     void solve();
