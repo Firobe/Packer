@@ -15,7 +15,6 @@
 /**
  * Solver class. A class
  * as a base for solver algorithms.
- * Do not move the shapes.
  *
  * An inherited class can redefine :
  * 	preSolve : operations to be performed before solving (sorting, ...)

@@ -5,7 +5,7 @@
 
 #include "Solver.hpp"
 
-class ScanlineSolver : public Solver {
+class Scanline : public Solver {
 private:
     std::vector<Box> _boxes;
     double getLenFromIndex(const std::vector<double>&, unsigned) const;
@@ -17,7 +17,7 @@ private:
     void printAll(std::vector<std::vector<bool>>& cellIsEmpty, std::vector<double> cellW,
                   std::vector<double>& cellH);
 public:
-    ScanlineSolver(std::vector<Shape>& v, Point p) : Solver(v, p),
+    Scanline(std::vector<Shape>& v, Point p) : Solver(v, p),
         _boxes(v.size()) {}
 };
 

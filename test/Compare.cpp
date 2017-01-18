@@ -46,9 +46,9 @@ int main() {
                 shapes, shapes2
             }) {
 		cerr << "-------------------------------------" << endl;
-        testSolver<ScanlineSolver>(s);
-        testSolver<ToInfinityAndBeyondSolver>(s);
-        testSolver<TheSkyIsTheLimitSolver>(s);
+        testSolver<Scanline>(s);
+        testSolver<ToInfinityAndBeyond>(s);
+        testSolver<TheSkyIsTheLimit>(s);
         testSolver<Solver>(s);
         }
     return EXIT_SUCCESS;

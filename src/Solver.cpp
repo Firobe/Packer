@@ -12,28 +12,6 @@
 
 using namespace std;
 
-/**
- * Output function using the svg output methods of BOOST.
- * Should be used for debug only.
- * Outputs what the solver actually sees.
- */
-string Solver::debugOutputSVG() const {
-    stringstream ret;
-    bg::svg_mapper <Point> mapper(ret, 800, 800);
-
-    for (const Shape& s : _shapes) {
-        mapper.add(s.getMultiP());
-    }
-
-    for (const Shape& s : _shapes) {
-        mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
-                   to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
-    }
-
-    LOG(info) << "Debug SVG generated" << endl;
-    return ret.str() + "</svg>";
-}
-
 void Solver::solve() {
     LOG(info) << "Packing shapes..." << endl;
     _indices.resize(_shapes.size());
@@ -69,14 +47,14 @@ double Solver::compressionRatio() const {
 
     //Max x-axis point
     auto xIt = max_element(boxes.begin(), boxes.end(),
-    [](Box & a, Box & b) {
-        return a.max_corner().x() < b.max_corner().x();
-    });
+                           [](Box &a, Box &b) {
+                               return a.max_corner().x() < b.max_corner().x();
+                           });
     //Max y-axis point
     auto yIt = max_element(boxes.begin(), boxes.end(),
-    [](Box & a, Box & b) {
-        return a.max_corner().y() < b.max_corner().y();
-    });
+                           [](Box &a, Box &b) {
+                               return a.max_corner().y() < b.max_corner().y();
+                           });
     //Compensate spacing between bins
     Point maxCorner((*xIt).max_corner().x(),
                     (*yIt).max_corner().y() - (_binNumber - 1) * _dimensions.y() * (SPACE_COEF - 1));
@@ -92,4 +70,26 @@ double Solver::compressionRatio() const {
     LOG(debug) << "Minimal area is " << sum << endl;
     //Computing ratio
     return (maxCorner.x() * maxCorner.y()) / sum;
+}
+
+/**
+ * Output function using the svg output methods of BOOST.
+ * Should be used for debug only.
+ * Outputs what the solver actually sees.
+ */
+string Solver::debugOutputSVG() const {
+    stringstream ret;
+    bg::svg_mapper <Point> mapper(ret, 800, 800);
+
+    for (const Shape &s : _shapes) {
+        mapper.add(s.getMultiP());
+    }
+
+    for (const Shape &s : _shapes) {
+        mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
+                                  to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
+    }
+
+    LOG(info) << "Debug SVG generated" << endl;
+    return ret.str() + "</svg>";
 }

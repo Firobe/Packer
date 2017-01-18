@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void ScanlineSolver::preSolve() {
+void Scanline::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
@@ -18,7 +18,7 @@ void ScanlineSolver::preSolve() {
     }
 }
 
-void ScanlineSolver::solveBin() {
+void Scanline::solveBin() {
     // == Stopping Cases ==
     if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
         // STOP, remaining pieces are too tall to fit in any way
@@ -47,16 +47,17 @@ void ScanlineSolver::solveBin() {
     double lastH = 0, lastW = 0;
     bool keepLooking;
 
-    for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end();
-            ++i) { //Iterates on yet-to-be-processed shapes
+    // Iterates on yet-to-be-processed shapes
+    for (list<unsigned>::iterator i = _indices.begin(); i != _indices.end(); ++i) {
         LOG(debug) << ".";
         shapeWidth = _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
         shapeHeight = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
         keepLooking = true;
 
+        // scan column by column, top to bottom and left to right
         for (unsigned iX = 0; iX < cellW.size() && keepLooking; ++iX) {
-            for (unsigned iY = 0; iY < cellH.size() &&
-                    keepLooking; ++iY) { // scan column by column, top to bottom and left to right
+            for (unsigned iY = 0; iY < cellH.size() && keepLooking; ++iY) {
+
                 if (cellIsEmpty[iX][iY]) { // First test is to see if the top-left cell is empty
                     lastX = getLast(cellW, iX, shapeWidth, lastW);
                     lastY = getLast(cellH, iY, shapeHeight, lastH);
@@ -109,7 +110,7 @@ void ScanlineSolver::solveBin() {
     }
 }
 
-int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double length,
+int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
                             double& plast) const {
     while (cells[i] + PRECISION < length) {
         length -= cells[i];
@@ -124,7 +125,7 @@ int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double leng
     return i;
 }
 
-bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
+bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
                                    int lastX, unsigned iY,
                                    int lastY) const {
     for (int x = iX; x <= lastX; ++x) {
@@ -138,7 +139,7 @@ bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsi
     return true;
 }
 
-void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
+void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
                               vector<double>& cellH) {
     LOG(debug) << "============\nCELL MATRIX";
 
@@ -165,7 +166,7 @@ void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> 
     LOG(debug) << endl;
 }
 
-double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,
+double Scanline::getLenFromIndex(const vector<double>& lengthVector,
                                        unsigned index) const {
     double length = 0;
 
