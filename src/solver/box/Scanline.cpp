@@ -3,7 +3,7 @@
 
 #include <boost/geometry/algorithms/envelope.hpp>
 
-#include "ScanlineSolver.hpp"
+#include "Scanline.hpp"
 #include "Log.hpp"
 #include "common.hpp"
 

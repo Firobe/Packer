@@ -3,9 +3,9 @@
 #include <chrono>
 #include <boost/type_index.hpp>
 
-#include "ScanlineSolver.hpp"
-#include "ToInfinityAndBeyondSolver.hpp"
-#include "TheSkyIsTheLimitSolver.hpp"
+#include "solver/box/Scanline.hpp"
+#include "solver/box/ToInfinityAndBeyond.hpp"
+#include "solver/box/TheSkyIsTheLimit.hpp"
 #include "Splitter.hpp"
 
 #define RANGE 10000

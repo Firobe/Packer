@@ -2,10 +2,10 @@ add_library(packer_lib STATIC
         Parser.cpp
         Shape.cpp
         Solver.cpp
-        ToInfinityAndBeyondSolver.cpp
-		TheSkyIsTheLimitSolver.cpp
+		solver/box/ToInfinityAndBeyond.cpp
+		solver/box/TheSkyIsTheLimit.cpp
         Outer.cpp
 		Matrix.cpp
-		ScanlineSolver.cpp
+		solver/box/Scanline.cpp
 		Splitter.cpp
         )

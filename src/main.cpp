@@ -5,9 +5,9 @@
 #include "Log.hpp"
 #include "Outer.hpp"
 #include "Parser.hpp"
-#include "ScanlineSolver.hpp"
-#include "TheSkyIsTheLimitSolver.cpp"
-#include "ToInfinityAndBeyondSolver.hpp"
+#include "solver/box/Scanline.hpp"
+#include "solver/box/TheSkyIsTheLimit.cpp"
+#include "solver/box/ToInfinityAndBeyond.hpp"
 
 namespace po = boost::program_options;
 using namespace std;

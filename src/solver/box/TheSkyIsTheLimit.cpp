@@ -2,7 +2,7 @@
 
 #include <boost/geometry/algorithms/envelope.hpp>
 
-#include "TheSkyIsTheLimitSolver.hpp"
+#include "TheSkyIsTheLimit.hpp"
 #include "common.hpp"
 
 using namespace std;
