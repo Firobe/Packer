@@ -26,7 +26,7 @@ void testSolver(vector<Shape> shapes) {
     }
 
 int main() {
-    //srand(time(0));
+    srand(time(0));
 
     int splitNb = rand() % 42 + 21;
     Splitter splot(RANGE, RANGE);
@@ -39,8 +39,8 @@ int main() {
         splout.split(Point(r, r), vr ? Point(r, RANGE) : Point(RANGE, r));
         }
 
-    vector<Shape> shapes = splot.getShapes();
-    vector<Shape> shapes2 = splout.getShapes();
+    vector<Shape> shapes = splot.getShapes(); //Rectangles
+    vector<Shape> shapes2 = splout.getShapes(); //Triangles
 
     for (auto && s : {
                 shapes, shapes2
