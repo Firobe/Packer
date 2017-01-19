@@ -6,7 +6,7 @@
 #include "Outer.hpp"
 #include "Parser.hpp"
 #include "solver/box/Scanline.hpp"
-#include "solver/box/TheSkyIsTheLimit.cpp"
+#include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
 
 namespace po = boost::program_options;
