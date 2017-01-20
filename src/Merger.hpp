@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
-#include <sstream>
+#include <vector>
 
 #include <boost/geometry/algorithms/envelope.hpp>
 
@@ -18,9 +18,13 @@ protected:
 public:
   Merger(std::vector<Shape>& s) : _shapes(s) {
     for(Shape s : _shapes) {
-      _shapesInfos.push_back(Shape(s.getOldP1(),s.getOldP2(),s.getIndexP1(),s.getIndexP2(),s.getID()));
-      }
+      _shapesInfos.emplace_back(s.getOldP1(),s.getOldP2(),s.getIndexP1(),s.getIndexP2(),s.getID());
+      _shapesMerged.emplace_back(s.getMultiP().size(),_shapesMerged.size()); //Constructor of vector initialized with size of _shapes and current index(with shapesMerged.size())
+    }
   }
+  void merge(std::vector<std::vector<int> > shapesToMerge);
+
+
 };
 
 #endif
