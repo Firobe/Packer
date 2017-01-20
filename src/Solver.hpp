@@ -28,7 +28,7 @@ protected:
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
 
     /**
-     * Removes the current element in _indices and returns updated iterator
+     * Removes the current element in _indices and sets updated iterator
      */
     void markPacked(std::list<unsigned>::iterator& i) {
         i = --_indices.erase(i);
