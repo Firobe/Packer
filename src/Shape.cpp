@@ -161,3 +161,49 @@ void translate <Shape> (Shape& object, double x, double y) {
     translate<MultiPolygon> (object.getMultiP(), x, y);
 }
 
+
+// Rotation pour boxer à l'aire minimale
+void rotateToBestAngle (Shape& object) {
+	const double ANGLE_MAX = 90.0;
+	const double ANGLE_STEP = 1.0;
+	
+	
+	double bestAngle, currAngle;
+	double bestArea, currArea;
+	Box currBox;
+	
+	bestAngle = 0.0;
+	bg::envelope(object.getMultiP(), currBox);
+	bestArea = (currBox.max_corner().x()-currBox.min_corner().x())*
+			   (currBox.max_corner().y()-currBox.min_corner().y());
+	
+	translate<Shape>(object, -currBox.min_corner().x(), -currBox.min_corner().y());	
+	
+	currAngle = 0.0;
+	while(currAngle <= ANGLE_MAX) {
+		rotate<Shape>(object, ANGLE_STEP);
+		
+		bg::envelope(object.getMultiP(), currBox);
+		currArea = (currBox.max_corner().x()-currBox.min_corner().x())*
+				   (currBox.max_corner().y()-currBox.min_corner().y());
+		
+		if(currArea < bestArea) {
+			bestArea = currArea;
+			bestAngle = currAngle;
+		}
+		
+		currAngle += ANGLE_STEP;
+	}
+	
+	rotate<Shape>(object, bestAngle-currAngle);
+}
+
+
+
+
+
+
+
+
+
+

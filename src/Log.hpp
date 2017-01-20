@@ -5,7 +5,7 @@
 enum LogLevel { trace, debug, info, warning, error, fatal };
 
 ////////////// LOG LEVEL SETTING /////////////////////////
-#define LOG_LEVEL info
+#define LOG_LEVEL debug
 //////////////////////////////////////////////////////////
 
 static std::ostream nullout(nullptr);
