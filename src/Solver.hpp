@@ -10,7 +10,7 @@
 
 #include "Shape.hpp"
 
-#define SPACE_COEF (1.2)
+#define SPACE_COEF (1.2) //Spacing between bins
 
 /**
  * Solver class. A class
