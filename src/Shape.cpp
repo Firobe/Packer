@@ -165,7 +165,7 @@ void translate <Shape> (Shape& object, double x, double y) {
 // Rotation pour boxer à l'aire minimale
 void rotateToBestAngle (Shape& object) {
 	const double ANGLE_MAX = 90.0;
-	const double ANGLE_STEP = 1.0;
+	const double ANGLE_STEP = 0.2;
 	
 	
 	double bestAngle, currAngle;
