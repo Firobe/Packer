@@ -55,6 +55,7 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     }
 
     if (_currentShape == -1 || forceNoMatrix) {
+		//if(strcmp(node->name(), "g") != 0) //Do not add useless groups
         cout << tmp.str();
     }
     else {
@@ -118,8 +119,10 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
 
     if (transAtt != nullptr) {
         // old transform matrices found : add them with the new one
-        s << " ";
-        s << transAtt->value();
+		if(strcmp(node->name(), "g") != 0) { //Only add applied matrices (element ones)
+        	s << " ";
+        	s << transAtt->value();
+		}
         node->remove_attribute(transAtt);
     }
 
