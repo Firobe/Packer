@@ -8,6 +8,7 @@
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 #include <boost/geometry/algorithms/correct.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
@@ -16,7 +17,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_STEP 0.01 //Precision of bezier interpolation
+#define BEZIER_TOLERANCE 0.25 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -69,6 +70,42 @@ void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) 
 }
 
 /**
+ * Computes the middle of the [p1 p2] segment
+ */
+Point middlePoint(Point& p1, Point& p2){
+	Point r(p1);
+	bg::add_point(r, p2);
+	bg::divide_value(r, 2.);
+	return r;
+}
+
+/**
+ * Returns a sufficiently accurate interpolation of a Bezier curve
+ * defined by p1 p4 its anchor points and p2 p3 its control points,
+ * using a recursive algorithm.
+ */
+vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l){
+	//Computing points defining subdivised curves
+	//Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
+	Point p12(middlePoint(p1, p2));
+	Point p23(middlePoint(p2, p3));
+	Point p34(middlePoint(p3, p4));
+	Point p123(middlePoint(p12, p23));
+	Point p234(middlePoint(p23, p34));
+	Point p1234(middlePoint(p123, p234));
+
+	//Estimating the flatness of our current curve
+	Point d(p4);
+	bg::subtract_point(d, p1); //d = p4 - p1
+
+
+	if(l >= 7) //Condition must be worked on
+		return {p4};
+	else return subdivision(p1, p12, p123, p1234, l + 1)
+		+ subdivision(p1234, p234, p34, p4, l + 1);
+}
+
+/**
  * Draws a cubic Bézier curbe from the current point to (x, y)
  * using (x1, y1) as the control point at the beginning of the
  * curbe and (x2, y2) as the control point at the end of the curve.
@@ -79,8 +116,8 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
-    Point p0 = _points.back();
-
+	Point p1(x1, x2), p2(x2, y2), p3(x, y);
+	/*
     for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
         double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
                     3 * x2 * t * t * (1 - t) + x * t * t * t;
@@ -88,6 +125,8 @@ void Parser::path_cubic_bezier_to(
                     3 * y2 * t * t * (1 - t) + y * t * t * t;
         _points.emplace_back(nx, ny);
     }
+	*/
+	_points = _points + subdivision(_points.back(), p1, p2, p3, 1);
 
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
                x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
@@ -110,6 +149,7 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
+	LOG(info) << "I created " << _points.size() << " points !" << endl;
 	_toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and

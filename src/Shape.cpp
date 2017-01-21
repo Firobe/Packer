@@ -21,6 +21,13 @@ inline bool ringLess(const Ring& a, const Ring& b) {
     return bg::area(a) < bg::area(b);
 }
 
+std::ostream& operator<<(std::ostream& os, const Point& p){
+	os << bg::wkt(p);
+	return os;
+}
+
+
+
 /**
  * Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
  * a c e

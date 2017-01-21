@@ -4,10 +4,12 @@
 #include <algorithm>
 #include <vector>
 
+#include <boost/geometry/arithmetic/arithmetic.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
+#include <boost/geometry/io/wkt/write.hpp> 
 
 #define PRECISION 1.0e-2
 
@@ -52,5 +54,23 @@ void translate(T& object, double x, double y) {
     bg::transform(object, r, translate);
     object = r;
 }
+
+/**
+ * Concatenate two vectors
+ */
+template <typename T>
+std::vector<T> operator+(const std::vector<T> &A, const std::vector<T> &B)
+{
+    std::vector<T> AB;
+    AB.reserve( A.size() + B.size() );
+    AB.insert( AB.end(), A.begin(), A.end() );
+    AB.insert( AB.end(), B.begin(), B.end() );
+    return AB;
+}
+
+/**
+ * Stream operator for Boost Geometries
+ */
+std::ostream& operator<<(std::ostream& os, const Point& p);
 
 #endif

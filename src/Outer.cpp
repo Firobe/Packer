@@ -56,7 +56,7 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     }
 
     if (_currentShape == -1 || forceNoMatrix) {
-		if(forceNoMatrix || !_stopPrinting && strcmp(node->name(), "g") != 0)
+		if(forceNoMatrix || (!_stopPrinting && strcmp(node->name(), "g") != 0))
 			//Stop printing upon encountering the first useless group
         	cout << tmp.str();
 		else _stopPrinting = true;
