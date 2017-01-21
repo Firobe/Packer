@@ -121,17 +121,10 @@ void Parser::path_exit() {
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
     LOG(debug) << "Element enter (group)" << endl;
-    //Pushing identity
-    _matStack.push(_matStack.top());
-
     //i need to be signed because of the loop test
     for (int i = _rings.size() - 1 ; i >= 0 ; --i) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         LOG(debug) << "Flushing rings..." << endl;
-
-        for (auto && p : _rings[i]) {
-            p = _matStack.top()(p);
-        }
 
         vector<Ring> tmp {_rings[i]};
 
@@ -152,9 +145,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  * Beginning of a new shape (or unknown element)
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
-    //Pushing identity
-    _matStack.push(_matStack.top());
     LOG(debug) << "Element enter (" << _groupStack << ")\n";
+	_currentMatrix = Matrix(1, 0, 0, 1, 0, 0);
 
     if (_groupStack >= 0) {
         _groupStack++;
@@ -182,7 +174,7 @@ void Parser::on_exit_element() {
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             for (auto && points : _rings)
                 for (auto && p : points) {
-                    p = _matStack.top()(p);
+                    p = _currentMatrix(p);
                 }
 
             _shapes.emplace_back(_rings, _idStack.top());
@@ -193,13 +185,6 @@ void Parser::on_exit_element() {
     }
 
     _groupStack--;
-    Matrix tmp = _matStack.top();
-    _matStack.pop();
-
-    if (tmp != _matStack.top()) {
-        LOG(debug) << "Popped a real transformation matrix : " << tmp << endl;
-        _matStack.pop();
-    }
 }
 
 /**
@@ -253,7 +238,6 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
  * Parse the current transform matrix.
  */
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
-    _matStack.append(Matrix(matrix));
-    LOG(debug) << "New transformation state : " << _matStack.top() << " (stack size : ";
-    LOG(debug) << _matStack.size() << ")"	<< endl;
+    _currentMatrix = Matrix(matrix);
+    LOG(debug) << "New transformation state : " << _currentMatrix << " (stack size : ";
 }
