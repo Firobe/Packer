@@ -67,11 +67,14 @@ private:
      */
     int _groupStack;
     Point& _docDim;
-    MatStack _matStack;
+    Matrix _currentMatrix;
 public:
     static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
 
-    Parser(std::vector<std::string>& i, Point& d) : _ids(i), _groupStack(-1), _docDim(d) {}
+    Parser(std::vector<std::string>& i, Point& d) :
+		_ids(i), _groupStack(-1), _docDim(d),
+		_currentMatrix(1, 0, 0, 1, 0, 0)
+   		{}
     std::vector<Shape> getShapes() {
         return _shapes;
     }

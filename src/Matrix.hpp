@@ -60,22 +60,4 @@ Matrix operator+(Matrix lhs, const Matrix& rhs);
 
 Matrix operator*(const Matrix& lhs, const Matrix& rhs);
 
-/**
- * A Matrix stack. Mainly used in the parser.
- * Inherits standard stack.
- * Usage :
- * push, pop, top
- * append : push a matrix multiplied by the top of the stack
- */
-class MatStack : public std::stack<Matrix> {
-public:
-    MatStack() {
-        emplace(1, 0, 0, 1, 0, 0);
-    }
-
-    void append(const Matrix& m) {
-        push(top() * m);
-    }
-};
-
 #endif
