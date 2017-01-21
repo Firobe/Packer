@@ -68,6 +68,7 @@ private:
     int _groupStack;
     Point& _docDim;
     Matrix _currentMatrix;
+	int _toApply; //Number of recently created rings
 public:
     static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
 

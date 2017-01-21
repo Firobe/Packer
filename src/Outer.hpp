@@ -27,6 +27,7 @@ protected:
     rapidxml_ns::file<> _svgFile; //SVG file used to build _doc
     double _height;
     int _currentShape;
+	bool _stopPrinting;
 public:
     static void Write(std::string path, bool addto, std::vector<std::string>& tp,
                       double height, double binHeight,

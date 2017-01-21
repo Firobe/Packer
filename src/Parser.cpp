@@ -110,6 +110,7 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
+	_toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and
     //close the ring if it isn't.
@@ -168,17 +169,19 @@ void Parser::on_exit_element() {
         }
     }
 
+	//Apply current matrix to recently generated points
+	for (int i = (int)_rings.size() - 1 ; (unsigned)i >= _rings.size() - _toApply && i >= 0; --i)
+		for (auto && p : _rings[i]) {
+			p = _currentMatrix(p);
+	}
+
+	_toApply = 0;
+
     if (_groupStack <= 0 && !_rings.empty()) {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
-        if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
-            for (auto && points : _rings)
-                for (auto && p : points) {
-                    p = _currentMatrix(p);
-                }
-
+        if (_ids.empty() or vectorContains(_ids, _idStack.top()))
             _shapes.emplace_back(_rings, _idStack.top());
-        }
 
         _idStack.pop();
         _rings.clear();
