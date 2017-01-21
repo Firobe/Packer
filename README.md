@@ -40,7 +40,7 @@
  * Run `./packer --help` for a complete list of options.
  * `--width X` and `--height Y` can be used to specify the wanted size of bin (in px).
  * The `--dup [01]` enables the duplication of the original shapes, thus only the duplicates are moved.
- * The default behavior is to pack all shapes. If the user specifies IDs of shapes using `--id ID` (can be used multiple times)`, only those will be packed.
+ * The default behavior is to pack all shapes. If the user specifies IDs of shapes using `--id ID` (can be used multiple times), only those will be packed.
  * For the purpose of laser cutting, the `buffer X` can be used to force a minimal distance (in px) between the packed shapes.
 
 #### Inkscape interface
