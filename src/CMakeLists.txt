@@ -7,5 +7,6 @@ add_library(packer_lib STATIC
         Outer.cpp
 		Matrix.cpp
 		solver/box/Scanline.cpp
+		solver/quadtree/quadTree.cpp
 		Splitter.cpp
         )
