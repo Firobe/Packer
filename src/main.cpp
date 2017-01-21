@@ -21,10 +21,10 @@ int main(int argc, char** argv) {
     desc.add_options()
     ("help,H", "produce help message")
     ("input-file,I", po::value<string>()->required(), "input file path")
-    ("dup", po::value<bool>()->required(),
+    ("dup,D", po::value<bool>()->default_value(false),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width,w", po::value<int>(), "width of the packing space (px)")
-    ("height,h", po::value<int>(), "height of the packing space (px)")
+    ("width,w", po::value<int>()->default_value(0), "width of the packing space (px)")
+    ("height,h", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
     ("buffer", po::value<int>(), "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
@@ -83,9 +83,8 @@ int main(int argc, char** argv) {
 
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
-        (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
-        (!vm.count("height") ||
-         vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+        (vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
+        (vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
 
     //Packing the shapes
     Scanline solver(shapes, packerDim);
