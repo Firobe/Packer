@@ -95,12 +95,12 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l){
 	Point p1234(middlePoint(p123, p234));
 
 	//Estimating the flatness of our current curve
-	Point d(p4);
-	bg::subtract_point(d, p1); //d = p4 - p1
+	//Point d(p4);
+	//bg::subtract_point(d, p1); //d = p4 - p1
 
 
 	if(l >= 7) //Condition must be worked on
-		return {p4};
+		return {p1234};
 	else return subdivision(p1, p12, p123, p1234, l + 1)
 		+ subdivision(p1234, p234, p34, p4, l + 1);
 }
@@ -116,7 +116,7 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
-	Point p1(x1, x2), p2(x2, y2), p3(x, y);
+	Point p1(x1, y1), p2(x2, y2), p3(x, y);
 	/*
     for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
         double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
@@ -126,7 +126,9 @@ void Parser::path_cubic_bezier_to(
         _points.emplace_back(nx, ny);
     }
 	*/
-	_points = _points + subdivision(_points.back(), p1, p2, p3, 1);
+	vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3, 1);
+	_points.reserve(_points.size() + interpolated.size());
+	_points.insert(_points.end(), interpolated.begin(), interpolated.end());
 
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
                x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
