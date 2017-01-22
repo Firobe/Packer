@@ -8,6 +8,7 @@
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "solver/quadtree/quadTree.hpp"
+#include "solver/quadtree/bitmap.hpp"
 
 using namespace std;
 
@@ -25,7 +26,11 @@ int main() {
         cout << bg::num_points(s.getMultiP()) << endl;
     }
 
-	quadTree tree(shapes[0], 1000);
+	for (Shape& s: shapes) {
+		//quadTree(s, 100);
+		bitmap(s, 64, 64);
+	}
+
 
 	return EXIT_SUCCESS;
 }

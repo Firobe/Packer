@@ -12,7 +12,7 @@ int main() {
     try {
         Point docDim;
         vector<string> toPack;
-        vector<Shape> shapes = Parser::Parse(TEST_DIR + "test.svg", toPack, docDim);
+		vector<Shape> shapes = Parser::Parse("test.svg", toPack, docDim);
 
         //Testing base
         ASSERT(docDim.x() == 500, "Bad doc width");
