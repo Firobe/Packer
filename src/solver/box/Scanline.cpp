@@ -57,7 +57,6 @@ void Scanline::solveBin() {
         // scan column by column, top to bottom and left to right
         for (unsigned iX = 0; iX < cellW.size() && keepLooking; ++iX) {
             for (unsigned iY = 0; iY < cellH.size() && keepLooking; ++iY) {
-
                 if (cellIsEmpty[iX][iY]) { // First test is to see if the top-left cell is empty
                     lastX = getLast(cellW, iX, shapeWidth, lastW);
                     lastY = getLast(cellH, iY, shapeHeight, lastH);
@@ -111,7 +110,7 @@ void Scanline::solveBin() {
 }
 
 int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
-                            double& plast) const {
+                      double& plast) const {
     while (cells[i] + PRECISION < length) {
         length -= cells[i];
         i++;
@@ -126,8 +125,8 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
 }
 
 bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
-                                   int lastX, unsigned iY,
-                                   int lastY) const {
+                             int lastX, unsigned iY,
+                             int lastY) const {
     for (int x = iX; x <= lastX; ++x) {
         for (int y = iY; y <= lastY; ++y) {
             if (cellIsEmpty[x][y] == false) {
@@ -140,7 +139,7 @@ bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned i
 }
 
 void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
-                              vector<double>& cellH) {
+                        vector<double>& cellH) {
     LOG(debug) << "============\nCELL MATRIX";
 
     for (auto && x : cellIsEmpty) {
@@ -167,7 +166,7 @@ void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
 }
 
 double Scanline::getLenFromIndex(const vector<double>& lengthVector,
-                                       unsigned index) const {
+                                 unsigned index) const {
     double length = 0;
 
     for (unsigned i = 0; i < index; ++i) {

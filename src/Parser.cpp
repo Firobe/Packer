@@ -17,7 +17,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_TOLERANCE 0.25 //Precision of bezier interpolation
+#define BEZIER_TOLERANCE 0.003 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -72,37 +72,38 @@ void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) 
 /**
  * Computes the middle of the [p1 p2] segment
  */
-Point middlePoint(Point& p1, Point& p2){
-	Point r(p1);
-	bg::add_point(r, p2);
-	bg::divide_value(r, 2.);
-	return r;
+Point middlePoint(Point& p1, Point& p2) {
+    Point r(p1);
+    bg::add_point(r, p2);
+    bg::divide_value(r, 2.);
+    return r;
 }
 
 /**
  * Returns a sufficiently accurate interpolation of a Bezier curve
  * defined by p1 p4 its anchor points and p2 p3 its control points,
- * using a recursive algorithm.
+ * using a recursive algorithm (Casteljau)
  */
-vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l){
-	//Computing points defining subdivised curves
-	//Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
-	Point p12(middlePoint(p1, p2));
-	Point p23(middlePoint(p2, p3));
-	Point p34(middlePoint(p3, p4));
-	Point p123(middlePoint(p12, p23));
-	Point p234(middlePoint(p23, p34));
-	Point p1234(middlePoint(p123, p234));
+vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
+    //Computing points defining subdivised curves
+    //Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
+    Point p12(middlePoint(p1, p2));
+    Point p23(middlePoint(p2, p3));
+    Point p34(middlePoint(p3, p4));
+    Point p123(middlePoint(p12, p23));
+    Point p234(middlePoint(p23, p34));
+    Point p1234(middlePoint(p123, p234));
+    //Estimating the flatness of our current curve
+    bg::model::segment<Point> s14(p1, p4);
+    double distSum = bg::distance(p2, s14) + bg::distance(p3, s14);
+    Point d(p4);
+    bg::subtract_point(d, p1);
 
-	//Estimating the flatness of our current curve
-	//Point d(p4);
-	//bg::subtract_point(d, p1); //d = p4 - p1
-
-
-	if(l >= 7) //Condition must be worked on
-		return {p1234};
-	else return subdivision(p1, p12, p123, p1234, l + 1)
-		+ subdivision(p1234, p234, p34, p4, l + 1);
+    if (distSum * distSum < BEZIER_TOLERANCE * (d.x() * d.x() + d.y() *
+            d.y())) //If our curve is flat enough
+        return {p1234};
+    else return subdivision(p1, p12, p123, p1234)
+                    + subdivision(p1234, p234, p34, p4);
 }
 
 /**
@@ -116,20 +117,10 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
-	Point p1(x1, y1), p2(x2, y2), p3(x, y);
-	/*
-    for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
-        double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
-                    3 * x2 * t * t * (1 - t) + x * t * t * t;
-        double ny = p0.y() * (1 - t) * (1 - t) * (1 - t) + 3 * y1 * t * (1 - t) * (1 - t) +
-                    3 * y2 * t * t * (1 - t) + y * t * t * t;
-        _points.emplace_back(nx, ny);
-    }
-	*/
-	vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3, 1);
-	_points.reserve(_points.size() + interpolated.size());
-	_points.insert(_points.end(), interpolated.begin(), interpolated.end());
-
+    Point p1(x1, y1), p2(x2, y2), p3(x, y);
+    vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3);
+    _points.reserve(_points.size() + interpolated.size());
+    _points.insert(_points.end(), interpolated.begin(), interpolated.end());
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
                x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
@@ -151,8 +142,8 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
-	LOG(info) << "I created " << _points.size() << " points !" << endl;
-	_toApply++;
+    LOG(debug) << "The path contains " << _points.size() << " points\n";
+    _toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and
     //close the ring if it isn't.
@@ -164,11 +155,11 @@ void Parser::path_exit() {
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
     LOG(debug) << "Element enter (group)" << endl;
+
     //i need to be signed because of the loop test
     for (int i = _rings.size() - 1 ; i >= 0 ; --i) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         LOG(debug) << "Flushing rings..." << endl;
-
         vector<Ring> tmp {_rings[i]};
 
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
@@ -189,7 +180,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
     LOG(debug) << "Element enter (" << _groupStack << ")\n";
-	_currentMatrix = Matrix(1, 0, 0, 1, 0, 0);
+    _currentMatrix = Matrix(1, 0, 0, 1, 0, 0);
 
     if (_groupStack >= 0) {
         _groupStack++;
@@ -211,19 +202,21 @@ void Parser::on_exit_element() {
         }
     }
 
-	//Apply current matrix to recently generated points
-	for (int i = (int)_rings.size() - 1 ; (unsigned)i >= _rings.size() - _toApply && i >= 0; --i)
-		for (auto && p : _rings[i]) {
-			p = _currentMatrix(p);
-	}
+    //Apply current matrix to recently generated points
+    for (int i = (int)_rings.size() - 1 ; (unsigned)i >= _rings.size() - _toApply &&
+            i >= 0; --i)
+        for (auto && p : _rings[i]) {
+            p = _currentMatrix(p);
+        }
 
-	_toApply = 0;
+    _toApply = 0;
 
     if (_groupStack <= 0 && !_rings.empty()) {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
-        if (_ids.empty() or vectorContains(_ids, _idStack.top()))
+        if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             _shapes.emplace_back(_rings, _idStack.top());
+        }
 
         _idStack.pop();
         _rings.clear();

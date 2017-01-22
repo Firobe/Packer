@@ -21,9 +21,9 @@ inline bool ringLess(const Ring& a, const Ring& b) {
     return bg::area(a) < bg::area(b);
 }
 
-std::ostream& operator<<(std::ostream& os, const Point& p){
-	os << bg::wkt(p);
-	return os;
+std::ostream& operator<<(std::ostream& os, const Point& p) {
+    os << bg::wkt(p);
+    return os;
 }
 
 

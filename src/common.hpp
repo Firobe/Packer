@@ -9,7 +9,7 @@
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
-#include <boost/geometry/io/wkt/write.hpp> 
+#include <boost/geometry/io/wkt/write.hpp>
 
 #define PRECISION 1.0e-2
 
@@ -59,12 +59,11 @@ void translate(T& object, double x, double y) {
  * Concatenate two vectors
  */
 template <typename T>
-std::vector<T> operator+(const std::vector<T> &A, const std::vector<T> &B)
-{
+std::vector<T> operator+(const std::vector<T>& A, const std::vector<T>& B) {
     std::vector<T> AB;
-    AB.reserve( A.size() + B.size() );
-    AB.insert( AB.end(), A.begin(), A.end() );
-    AB.insert( AB.end(), B.begin(), B.end() );
+    AB.reserve(A.size() + B.size());
+    AB.insert(AB.end(), A.begin(), A.end());
+    AB.insert(AB.end(), B.begin(), B.end());
     return AB;
 }
 

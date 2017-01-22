@@ -21,7 +21,7 @@ Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp, double 
     _svgFile(path.c_str()),
     _height(height),
     _currentShape(-1),
-	_stopPrinting(false) {
+    _stopPrinting(false) {
     //Opening SVG file
     _doc.parse<0>(_svgFile.data());
 }
@@ -56,10 +56,14 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     }
 
     if (_currentShape == -1 || forceNoMatrix) {
-		if(forceNoMatrix || (!_stopPrinting && strcmp(node->name(), "g") != 0))
-			//Stop printing upon encountering the first useless group
-        	cout << tmp.str();
-		else _stopPrinting = true;
+        if (forceNoMatrix || (!_stopPrinting && strcmp(node->name(), "g") != 0))
+            //Stop printing upon encountering the first useless group
+        {
+            cout << tmp.str();
+        }
+        else {
+            _stopPrinting = true;
+        }
     }
     else {
         _shapes[_currentShape].appendOut(tmp.str());
@@ -122,10 +126,11 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
 
     if (transAtt != nullptr) {
         // old transform matrices found : add them with the new one
-		if(strcmp(node->name(), "g") != 0) { //Only add applied matrices (element ones)
-        	s << " ";
-        	s << transAtt->value();
-		}
+        if (strcmp(node->name(), "g") != 0) { //Only add applied matrices (element ones)
+            s << " ";
+            s << transAtt->value();
+        }
+
         node->remove_attribute(transAtt);
     }
 
@@ -171,8 +176,9 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
 
     case hasChild: { // node(s) within
         if (_currentShape == -1 || forceNoMatrix) {
-			if(!_stopPrinting || forceNoMatrix)
-				cout << ">\n";
+            if (!_stopPrinting || forceNoMatrix) {
+                cout << ">\n";
+            }
         }
         else {
             _shapes[_currentShape].appendOut(">\n");
@@ -201,8 +207,9 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
 
     //Display the cached output in cout or store it in the correct shape
     if (_currentShape == -1 || forceNoMatrix) {
-		if(!_stopPrinting || forceNoMatrix)
-			cout << outStream.str();
+        if (!_stopPrinting || forceNoMatrix) {
+            cout << outStream.str();
+        }
     }
     else {
         _shapes[_currentShape].appendOut(outStream.str());

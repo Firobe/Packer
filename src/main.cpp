@@ -85,19 +85,14 @@ int main(int argc, char** argv) {
     Point packerDim(
         (vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
         (vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
-
     //Packing the shapes
     Scanline solver(shapes, packerDim);
     solver.solve();
-
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
-    //cout << solver.debugOutputSVG();
-
     //Producing the output (sending input file and the option to duplicate
-	//cout << solver.debugOutputSVG();
+    //cout << solver.debugOutputSVG();
     Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
                  docDim.y(), packerDim.y(), shapes);
-
     return EXIT_SUCCESS;
 }
