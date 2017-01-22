@@ -18,7 +18,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_TOLERANCE 0.001 //Precision of bezier interpolation
+#define BEZIER_TOLERANCE 0.003 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -100,7 +100,7 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
 	double d = bg::length(s14);
 
     if (distSum * distSum < BEZIER_TOLERANCE * d * d) //If our curve is flat enough
-        return {p1234};
+        return {p23}; //Ensure that there is less deviation (instead of picking p1234)
     else return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
 }
 
@@ -140,7 +140,7 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
-    LOG(debug) << "The path contains " << _points.size() << " points\n";
+    LOG(info) << "The path contains " << _points.size() << " points\n";
     _toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and
