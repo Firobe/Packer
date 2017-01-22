@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     ("width,w", po::value<int>()->default_value(0), "width of the packing space (px)")
     ("height,h", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
-    ("buffer", po::value<int>(), "minimal distance between packed items (px)");
+    ("buffer", po::value<double>()->default_value(0.), "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
     po::positional_options_description p; //Used to indicate input file without --input-file
     p.add("input-file", -1);
@@ -73,13 +73,9 @@ int main(int argc, char** argv) {
     }
 
     //If there is a buffer distance specified
-    if (vm.count("buffer") && vm["buffer"].as<int>() > 0) {
-        LOG(info) << "Buffering shapes..." << endl;
-
-        for (auto && s : shapes) {
-            s.bufferize(vm["buffer"].as<int>());
-        }
-    }
+	LOG(info) << "Buffering shapes..." << endl;
+	for (auto && s : shapes)
+		s.bufferize(vm["buffer"].as<double>());
 
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(

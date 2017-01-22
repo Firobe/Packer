@@ -8,9 +8,11 @@
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
+#include <boost/geometry/algorithms/num_points.hpp> 
 
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Parser.hpp"
 
 using namespace std;
 
@@ -114,20 +116,23 @@ void Shape::fillShape(vector<Ring>& rings) {
  * (of <buffer> px) around each of them.
  * _oldP1, P2, indexP1, P2 are also recalculated according to the new multiPolygon
  */
-void Shape::bufferize(int buffer) {
+void Shape::bufferize(double buffer) {
+	//Buffering at least the interpolation maximal deviation
+	//With this we guarantee that there is NO intersection between shapes (or at least it should)
+	buffer = std::max(BEZIER_TOLERANCE, buffer);
     // Declare strategies
-    const int points_per_circle = BUFFER_POINTS_PER_CIRCLE;
-    bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
-    bg::strategy::buffer::join_round join_strategy(points_per_circle);
-    bg::strategy::buffer::end_round end_strategy(points_per_circle);
-    bg::strategy::buffer::point_circle circle_strategy(points_per_circle);
-    bg::strategy::buffer::side_straight side_strategy;
+    static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
+    static bg::strategy::buffer::join_miter join_strategy(2.); //Points will be located to at most 2 * buffer
+    static bg::strategy::buffer::end_flat end_strategy;
+    static bg::strategy::buffer::point_square circle_strategy;
+    static bg::strategy::buffer::side_straight side_strategy;
     MultiPolygon result;
     // Create the buffer of a multi polygon
     bg::buffer(_multiP, result,
                distance_strategy, side_strategy,
                join_strategy, end_strategy, circle_strategy);
     _multiP = result;
+	LOG(info) << "Number of points : " << bg::num_points(_multiP) << endl << endl;
     setOld();
 }
 
@@ -149,7 +154,6 @@ void Shape::setOld() {
 
     _oldP1 = _multiP[0].outer()[_indexP1];
     _oldP2 = _multiP[0].outer()[_indexP2];
-    cerr << "P1 " << _oldP1 << " P2 " << _oldP2 << endl;
 }
 
 /**
