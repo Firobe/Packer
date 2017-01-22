@@ -1,4 +1,4 @@
-# Linux instructions
+# GNU/Linux instructions
 
 #### Building
 
