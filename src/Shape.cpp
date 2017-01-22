@@ -39,27 +39,26 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
 array<double, 6> Shape::getTransMatrix() const {
     Point newP1 = _multiP[0].outer()[_indexP1];
     Point newP2 = _multiP[0].outer()[_indexP2];
-    //Computing the angle
-    double alpha = atan((newP2.y() - newP1.y())
-                        / (newP2.x() - newP1.x()))
-                   - atan((_oldP2.y() - _oldP1.y())
-                          / (_oldP2.x() - _oldP1.x()));
-    array<double, 6> result;
-    double c, s, x1, y1, x2, y2;
+    double c, s, x1, y1, x2, y2, n1, n2;
+    //Normalize vectors (x1, y1), (x2, y2)
+    n1 = bg::distance(_oldP1, _oldP2);
+    n2 = bg::distance(newP1, newP2);
+    x1 = (_oldP2.x() - _oldP1.x()) / n1;
+    y1 = (_oldP2.y() - _oldP1.y()) / n1;
+    x2 = (newP2.x() - newP1.x()) / n2;
+    y2 = (newP2.y() - newP1.y()) / n2;
+    //Computing cos & sin with dot products
+    c = x1 * x2 + y1 * y2;
+    s = x1 * y2 - x2 * y1;
     //Resulting matrix corresponding to the following operations:
-    //Translate to origin, rotate of alpha, translate to new position
-    c = cos(alpha);
-    s = sin(alpha);
-    x1 = _oldP1.x();
-    y1 = _oldP1.y();
-    x2 = newP1.x();
-    y2 = newP1.y();
+    //Translate to origin, rotate, translate to new position
+    array<double, 6> result;
     result[0] = c;
-    result[1] = -s;
-    result[2] = s;
+    result[1] = s;
+    result[2] = -s;
     result[3] = c;
-    result[4] = -x1 * c - y1 * s + x2;
-    result[5] = x1 * s - y1 * c + y2;
+    result[4] = - _oldP1.x() * c + _oldP1.y() * s + newP1.x();
+    result[5] = - _oldP1.x() * s - _oldP1.y() * c + newP1.y();
     return result;
 }
 
@@ -150,6 +149,7 @@ void Shape::setOld() {
 
     _oldP1 = _multiP[0].outer()[_indexP1];
     _oldP2 = _multiP[0].outer()[_indexP2];
+    cerr << "P1 " << _oldP1 << " P2 " << _oldP2 << endl;
 }
 
 /**
@@ -167,4 +167,44 @@ template <>
 void translate <Shape> (Shape& object, double x, double y) {
     translate<MultiPolygon> (object.getMultiP(), x, y);
 }
+
+
+/**
+ * Rotation pour boxer à l'aire minimale
+ */
+void rotateToBestAngle(Shape& object) {
+    const double ANGLE_MAX = 90.0;
+    const double ANGLE_STEP = 0.2;
+    double bestAngle, currAngle;
+    double bestArea, currArea;
+    Box currBox;
+    bestAngle = 0.0;
+    bg::envelope(object.getMultiP(), currBox);
+    bestArea = bg::area(currBox);
+    currAngle = 0.0;
+
+    while (currAngle <= ANGLE_MAX) {
+        rotate<Shape>(object, ANGLE_STEP);
+        bg::envelope(object.getMultiP(), currBox);
+        currArea = bg::area(currBox);
+
+        if (currArea < bestArea) {
+            bestArea = currArea;
+            bestAngle = currAngle;
+        }
+
+        currAngle += ANGLE_STEP;
+    }
+
+    rotate<Shape>(object, bestAngle - currAngle);
+}
+
+
+
+
+
+
+
+
+
 

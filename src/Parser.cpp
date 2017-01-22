@@ -97,11 +97,13 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
     //Estimating the flatness of our current curve
     bg::model::segment<Point> s14(p1, p4);
     double distSum = bg::distance(p2, s14) + bg::distance(p3, s14);
-	double d = bg::length(s14);
+    double d = bg::length(s14);
 
     if (distSum * distSum < BEZIER_TOLERANCE * d * d) //If our curve is flat enough
         return {p23}; //Ensure that there is less deviation (instead of picking p1234)
-    else return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    else {
+        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    }
 }
 
 /**
