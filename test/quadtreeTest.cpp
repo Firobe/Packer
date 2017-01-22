@@ -25,7 +25,7 @@ int main() {
         cout << bg::num_points(s.getMultiP()) << endl;
     }
 
-	quadTree tree(shapes[0], 50000);
+	quadTree tree(shapes[0], 1000);
 
 	return EXIT_SUCCESS;
 }

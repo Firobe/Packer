@@ -17,46 +17,44 @@
 
 using namespace std;
 
-void quadTree::construct(double x1, double y1, double x2, double y2, Shape &shape) {
+void quadTree::construct(double x1, double y1, double x2, double y2, Shape &shape, int maxDepth) {
 	min_corner = Point(x1, y1);
 	max_corner = Point(x2, y2);
 
-	if (depth >= 20) {
-		throw "erreur";
-	}
 
 	// Bounding box of this tree
 	Box box(min_corner, max_corner);
 
 	// if true, tree is black and if precision is not enought we can add new quadTrees
-	if(bg::intersects(box, shape.getMultiP())) {
+	//if(bg::intersects(box, shape.getMultiP())) {
 		black = true;
 
 		// Compute intersection area in order to know if we need to stop tree construction or not
 		MultiPolygon intersection;
-		bg::intersection(box, shape.getMultiP(), intersection);
+	/*	bg::intersection(box, shape.getMultiP(), intersection);
 		double area = bg::area(intersection);
-
+*/
 		// Create other quad tree if precision is not enought
-		if (area >= precision) {
+		if (depth < maxDepth) {
 			// Compute center points for defining each area
 			double xm = (double) (min_corner.x() + max_corner.x())/2.0;
 			double ym = (double) (min_corner.y() + max_corner.y())/2.0;
 
 			// For each quarter of the defined area, compute the quadTree
-			q1 = new quadTree(min_corner.x(), min_corner.y(), xm, ym, shape, precision, depth+1); //bottom left
-			q2 = new quadTree(min_corner.x(), ym, xm, max_corner.y(), shape, precision, depth+1); //bottom right
-			q3 = new quadTree(xm, ym, max_corner.x(), max_corner.y(), shape, precision, depth+1); //top    right
-			q4 = new quadTree(xm, min_corner.y(), max_corner.x(), ym, shape, precision, depth+1); //top    left
+			q1 = new quadTree(min_corner.x(), min_corner.y(), xm, ym, shape, precision, depth+1, maxDepth); //bottom left
+			q2 = new quadTree(min_corner.x(), ym, xm, max_corner.y(), shape, precision, depth+1, maxDepth); //bottom right
+			q3 = new quadTree(xm, ym, max_corner.x(), max_corner.y(), shape, precision, depth+1, maxDepth); //top    right
+			q4 = new quadTree(xm, min_corner.y(), max_corner.x(), ym, shape, precision, depth+1, maxDepth); //top    left
+			size = q1->size + q2->size + q3->size + q4->size + 1;
 		}
-	}
+	//}
 
 }
 
-quadTree::quadTree(double x1, double y1, double x2, double y2, Shape &shape, float precision, int depth)
+quadTree::quadTree(double x1, double y1, double x2, double y2, Shape &shape, float precision, int depth, int maxDepth)
 		: black(false), depth(depth), precision(precision), size(1),
 		  q1(nullptr), q2(nullptr), q3(nullptr), q4(nullptr) {
-	construct(x1, y1, x2, y2, shape);
+	construct(x1, y1, x2, y2, shape, maxDepth);
 }
 
 quadTree::quadTree(Shape &shape, float precision)
@@ -73,14 +71,25 @@ quadTree::quadTree(Shape &shape, float precision)
     translate<Shape>(shape, -reference.x(), -reference.y());
     translate<Box>(envelop, -reference.x(), -reference.y());
 
-	cout << "shape area : " << bg::area(shape.getMultiP()) << flush;
+	cout << "shape area : " << bg::area(shape.getMultiP()) << endl;
+
+	// We determine maxDepth thanks to the precision
+	// If the deaper quadTree represents a smaller area than precision, it's ok
+	int maxDepth = 0;
+	double area = (envelop.max_corner().x()-envelop.min_corner().x())*
+			(envelop.max_corner().y()*envelop.max_corner().y());
+	while (area > precision) {
+		area/=4.0;
+		maxDepth++;
+	}
+
+	cout << "max depth : " << maxDepth << endl;
 
     // QuadTree size is shape envelop size
 	construct(envelop.min_corner().y(), envelop.min_corner().y(),
-			 envelop.max_corner().x(), envelop.max_corner().y(), shape);
+			 envelop.max_corner().x(), envelop.max_corner().y(), shape, maxDepth);
 
-
-
+	cout << "size : " << size;
     // Restore shape position
     translate<Shape>(shape, reference.x(), reference.y());
 

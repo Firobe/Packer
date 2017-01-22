@@ -19,8 +19,8 @@ private:
 
     void copy(const quadTree&);
 
-	void construct(double x1, double y1, double x2, double y2, Shape &shape);
-    quadTree(double x1, double y1, double x2, double y2, Shape &shape, float precision, int depth);
+	void construct(double x1, double y1, double x2, double y2, Shape &shape, int maxDepth);
+	quadTree(double x1, double y1, double x2, double y2, Shape &shape, float precision, int depth, int maxDepth);
 
 public:
     quadTree(Shape &shape, float precision);
