@@ -1,6 +1,8 @@
 #ifndef BITMAP_HPP
 #define BITMAP_HPP
 
+#include <string>
+
 #include "Shape.hpp"
 
 class bitmap
@@ -14,6 +16,10 @@ public:
 	bitmap(Shape &s, int width, int height);
 	void set(int, int, bool);
 	bool get(int, int);
+	bool hasBlack(int offsetX, int offsetY, int length);
+	bool hasWhite(int offsetX, int offsetY, int length);
+
+	void saveMap(std::string filename);
 };
 
 #endif // BITMAP_HPP

@@ -1,5 +1,7 @@
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/vertebrae.svg ${CMAKE_CURRENT_BINARY_DIR}/vertebrae.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test.svg ${CMAKE_CURRENT_BINARY_DIR}/test.svg @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple.svg ${CMAKE_CURRENT_BINARY_DIR}/simple.svg @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lots.svg ${CMAKE_CURRENT_BINARY_DIR}/lots.svg @ONLY)
 
 add_custom_target(run_ToInfinityAndBeyondSolver
         COMMAND packer --dup=false ${CMAKE_SOURCE_DIR}/examples/vertebrae.svg > output.svg

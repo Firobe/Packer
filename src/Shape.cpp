@@ -8,6 +8,7 @@
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
+#include <boost/geometry/io/svg/svg_mapper.hpp>
 
 #include "Shape.hpp"
 #include "Log.hpp"
@@ -168,3 +169,19 @@ void translate <Shape> (Shape& object, double x, double y) {
     translate<MultiPolygon> (object.getMultiP(), x, y);
 }
 
+/**
+ * Output function using the svg output methods of BOOST.
+ * Should be used for debug only.
+ * Outputs what the solver actually sees.
+ */
+string Shape::debugOutputSVG() const {
+	stringstream ret;
+	bg::svg_mapper <Point> mapper(ret, 800, 800);
+
+	mapper.add(_multiP);
+	mapper.map(_multiP, "fill:rgb(" + to_string(rand() % 256) + "," +
+			   to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
+
+	LOG(info) << "Debug SVG generated" << endl;
+	return ret.str() + "</svg>";
+}

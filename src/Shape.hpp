@@ -50,6 +50,7 @@ public:
     const std::string& getOut() {
         return _out;
     }
+	std::string debugOutputSVG() const;
 };
 
 template <>
