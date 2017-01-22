@@ -40,9 +40,9 @@ array<double, 6> Shape::getTransMatrix() const {
     Point newP1 = _multiP[0].outer()[_indexP1];
     Point newP2 = _multiP[0].outer()[_indexP2];
     double c, s, x1, y1, x2, y2, n1, n2;
-	//Normalize vectors (x1, y1), (x2, y2)
-	n1 = bg::distance(_oldP1, _oldP2);
-	n2 = bg::distance(newP1, newP2);
+    //Normalize vectors (x1, y1), (x2, y2)
+    n1 = bg::distance(_oldP1, _oldP2);
+    n2 = bg::distance(newP1, newP2);
     x1 = (_oldP2.x() - _oldP1.x()) / n1;
     y1 = (_oldP2.y() - _oldP1.y()) / n1;
     x2 = (newP2.x() - newP1.x()) / n2;
@@ -50,11 +50,6 @@ array<double, 6> Shape::getTransMatrix() const {
     //Computing cos & sin with dot products
     c = x1 * x2 + y1 * y2;
     s = x1 * y2 - x2 * y1;
-	//Translation vectors (o1, o2) and (n1, n2) translates to origin and new position
-	double o1 = -_oldP1.x();
-	double o2 = -_oldP2.y();
-	double p1 = newP1.x();
-	double p2 = newP2.y();
     //Resulting matrix corresponding to the following operations:
     //Translate to origin, rotate, translate to new position
     array<double, 6> result;
@@ -62,8 +57,8 @@ array<double, 6> Shape::getTransMatrix() const {
     result[1] = s;
     result[2] = -s;
     result[3] = c;
-    result[4] = o1 * c - o2 * s + p1;
-    result[5] = o1 * s + o2 * c + p2;
+    result[4] = - _oldP1.x() * c + _oldP1.y() * s + newP1.x();
+    result[5] = - _oldP1.x() * s - _oldP1.y() * c + newP1.y();
     return result;
 }
 
@@ -154,7 +149,7 @@ void Shape::setOld() {
 
     _oldP1 = _multiP[0].outer()[_indexP1];
     _oldP2 = _multiP[0].outer()[_indexP2];
-	cerr << "P1 " << _oldP1 << " P2 " << _oldP2 << endl;
+    cerr << "P1 " << _oldP1 << " P2 " << _oldP2 << endl;
 }
 
 /**
@@ -177,35 +172,31 @@ void translate <Shape> (Shape& object, double x, double y) {
 /**
  * Rotation pour boxer à l'aire minimale
  */
-void rotateToBestAngle (Shape& object) {
-	const double ANGLE_MAX = 90.0;
-	const double ANGLE_STEP = 0.2;
-	
-	
-	double bestAngle, currAngle;
-	double bestArea, currArea;
-	Box currBox;
-	
-	bestAngle = 0.0;
-	bg::envelope(object.getMultiP(), currBox);
-	bestArea = bg::area(currBox);
-	
-	currAngle = 0.0;
-	while(currAngle <= ANGLE_MAX) {
-		rotate<Shape>(object, ANGLE_STEP);
-		
-		bg::envelope(object.getMultiP(), currBox);
-		currArea = bg::area(currBox);
-		
-		if(currArea < bestArea) {
-			bestArea = currArea;
-			bestAngle = currAngle;
-		}
-		
-		currAngle += ANGLE_STEP;
-	}
-	
-	rotate<Shape>(object, bestAngle-currAngle);
+void rotateToBestAngle(Shape& object) {
+    const double ANGLE_MAX = 90.0;
+    const double ANGLE_STEP = 0.2;
+    double bestAngle, currAngle;
+    double bestArea, currArea;
+    Box currBox;
+    bestAngle = 0.0;
+    bg::envelope(object.getMultiP(), currBox);
+    bestArea = bg::area(currBox);
+    currAngle = 0.0;
+
+    while (currAngle <= ANGLE_MAX) {
+        rotate<Shape>(object, ANGLE_STEP);
+        bg::envelope(object.getMultiP(), currBox);
+        currArea = bg::area(currBox);
+
+        if (currArea < bestArea) {
+            bestArea = currArea;
+            bestAngle = currAngle;
+        }
+
+        currAngle += ANGLE_STEP;
+    }
+
+    rotate<Shape>(object, bestAngle - currAngle);
 }
 
 

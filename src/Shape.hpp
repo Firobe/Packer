@@ -58,6 +58,6 @@ void rotate <Shape> (Shape& object, double angle);
 template <>
 void translate <Shape> (Shape& object, double x, double y);
 
-void rotateToBestAngle (Shape& object);
+void rotateToBestAngle(Shape& object);
 
 #endif
