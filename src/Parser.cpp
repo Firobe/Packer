@@ -9,6 +9,7 @@
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 #include <boost/geometry/algorithms/correct.hpp>
 #include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/algorithms/length.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
@@ -17,7 +18,7 @@
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_TOLERANCE 0.003 //Precision of bezier interpolation
+#define BEZIER_TOLERANCE 0.001 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -96,14 +97,11 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
     //Estimating the flatness of our current curve
     bg::model::segment<Point> s14(p1, p4);
     double distSum = bg::distance(p2, s14) + bg::distance(p3, s14);
-    Point d(p4);
-    bg::subtract_point(d, p1);
+	double d = bg::length(s14);
 
-    if (distSum * distSum < BEZIER_TOLERANCE * (d.x() * d.x() + d.y() *
-            d.y())) //If our curve is flat enough
+    if (distSum * distSum < BEZIER_TOLERANCE * d * d) //If our curve is flat enough
         return {p1234};
-    else return subdivision(p1, p12, p123, p1234)
-                    + subdivision(p1234, p234, p34, p4);
+    else return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
 }
 
 /**
