@@ -18,6 +18,34 @@
 
 using namespace std;
 
+void bitmap::copy(const bitmap &bmap) {
+	width = bmap.width;
+	height = bmap.height;
+	if (map != nullptr)
+		delete [] map;
+	map = new bool[height*width];
+	for (int i = 0; i < width*height; i++)
+		map[i] = bmap.map[i];
+}
+
+bitmap::bitmap(const bitmap &q) {
+	copy(q);
+}
+
+bitmap &bitmap::operator=(const bitmap &q) {
+	if (this != &q) {
+		this->~bitmap();
+		copy(q);
+	}
+	return *this;
+}
+
+bitmap::~bitmap() {
+	if (map != nullptr) delete [] map;
+	map = nullptr;
+}
+
+
 bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(height) {
 
 	map = new bool[height*width];
@@ -41,7 +69,8 @@ bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(heigh
 	std::cout << "X : " << width << " cells, " << envelop.max_corner().x() << " width, " << xpres << " /cell" << std::endl;
 	std::cout << "Y : " << height << " cells, " << envelop.max_corner().y() << " height, " << ypres << " /cell" << std::endl;
 
-	MultiPolygon mult = shape.getMultiP();
+	MultiPolygon &mult = shape.getMultiP();
+
 	// Detect collisions with the grid on the x axis
 	int nbBlack = 0;
 	for (int y=1; y<height; y++) {
