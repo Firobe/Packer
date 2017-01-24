@@ -29,3 +29,5 @@ add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree parser_lib)
 target_link_libraries(quadtree utils_lib)
 target_link_libraries(quadtree solver_lib)
+
+add_executable(openmp openmp.cpp)

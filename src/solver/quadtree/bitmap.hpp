@@ -11,6 +11,7 @@ private:
 	bool* map;
 	int width;
 	int height;
+	int nbBlack;
 
 private:
 	void copy(const bitmap&);
@@ -19,6 +20,7 @@ public:
 	bitmap& operator=(const bitmap&); //assignment operator
 	~bitmap();
 
+	bitmap(MultiPolygon &mult, int width, int height);
 	bitmap(Shape &s, int width, int height);
 
 	void set(int, int, bool);

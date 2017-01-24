@@ -21,6 +21,7 @@ using namespace std;
 void bitmap::copy(const bitmap &bmap) {
 	width = bmap.width;
 	height = bmap.height;
+	nbBlack = bmap.nbBlack;
 	if (map != nullptr)
 		delete [] map;
 	map = new bool[height*width];
@@ -46,7 +47,7 @@ bitmap::~bitmap() {
 }
 
 
-bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(height) {
+bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height(height) {
 
 	map = new bool[height*width];
 	for(int i=0; i<width*height; i++)
@@ -54,12 +55,12 @@ bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(heigh
 
 	// Compute the shape Box envelop
 	Box envelop;
-	bg::envelope(shape.getMultiP(), envelop);
+	bg::envelope(mult, envelop);
 	bg::correct(envelop);
 	Point reference = envelop.min_corner();
 
 	// Place the shape into the (0,0) point in order to create the quadTree
-	translate<Shape>(shape, -reference.x(), -reference.y());
+	translate<MultiPolygon>(mult, -reference.x(), -reference.y());
 	translate<Box>(envelop, -reference.x(), -reference.y());
 
 
@@ -68,8 +69,6 @@ bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(heigh
 
 	std::cout << "X : " << width << " cells, " << envelop.max_corner().x() << " width, " << xpres << " /cell" << std::endl;
 	std::cout << "Y : " << height << " cells, " << envelop.max_corner().y() << " height, " << ypres << " /cell" << std::endl;
-
-	MultiPolygon &mult = shape.getMultiP();
 
 	// Detect collisions with the grid on the x axis
 	int nbBlack = 0;
@@ -132,11 +131,14 @@ bitmap::bitmap(Shape &shape, int width, int height) : width(width), height(heigh
 		//cout << endl;
 	}
 
+	this->nbBlack = nbBlack;
 	std::cout << nbBlack << " bits occuped" << std::endl;
 
 	// Restore shape position
-	translate<Shape>(shape, reference.x(), reference.y());
+	translate<MultiPolygon>(mult, reference.x(), reference.y());
 }
+
+bitmap::bitmap(Shape &shape, int width, int height) : bitmap(shape.getMultiP(), width, height) {}
 
 void bitmap::set(int i, int j, bool val) {
 	map[width*i+j]=val;
@@ -154,7 +156,7 @@ bool bitmap::get(int i, int j) {
  * @param length
  */
 bool bitmap::hasBlack(int offsetX, int offsetY, int length) {
-	// TODO : Can be improve : store black dot at creation : more white => return not hasWhite
+	//if (2*nbBlack < width*height) return !hasWhite(offsetX, offsetY, length);
 
 	// We first try first and last line for a better execution time in the majority of the case
 	// We don't try first and last row because of the memory order of the map
@@ -163,7 +165,7 @@ bool bitmap::hasBlack(int offsetX, int offsetY, int length) {
 	// Two loop for memory caching
 	int offset = offsetX*width;
 	for (int y = offsetY; y < offsetY+length; y++) {
-		if (map[y])
+		if (map[offset + y])
 			return true;
 	}
 
@@ -195,7 +197,7 @@ bool bitmap::hasBlack(int offsetX, int offsetY, int length) {
  * @param length
  */
 bool bitmap::hasWhite(int offsetX, int offsetY, int length) {
-	// TODO : Can be improve : store black dot at creation : more white => return not hasWhite
+	//if (2*nbBlack > width*height) return !hasBlack(offsetX, offsetY, length);
 
 	// We first try first and last line for a better execution time in the majority of the case
 	// We don't try first and last row because of the memory order of the map
@@ -204,7 +206,7 @@ bool bitmap::hasWhite(int offsetX, int offsetY, int length) {
 	// Two loop for memory caching
 	int offset = offsetX*width;
 	for (int y = offsetY; y < offsetY+length; y++) {
-		if (!map[y])
+		if (!map[offset + y])
 			return true;
 	}
 
