@@ -119,7 +119,7 @@ void Shape::fillShape(vector<Ring>& rings) {
 void Shape::bufferize(double buffer) {
 	//Buffering at least the interpolation maximal deviation
 	//With this we guarantee that there is NO intersection between shapes (or at least it should)
-	buffer = std::max(BEZIER_TOLERANCE, buffer);
+	buffer += BEZIER_TOLERANCE;
     // Declare strategies
     static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
     static bg::strategy::buffer::join_miter join_strategy(2.); //Points will be located to at most 2 * buffer

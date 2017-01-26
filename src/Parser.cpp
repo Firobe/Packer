@@ -95,12 +95,13 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l) {
     Point p234(middlePoint(p23, p34));
     Point p1234(middlePoint(p123, p234));
     //Estimating the flatness of our current curve
-    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
+	double interpolatedX, interpolatedY;
+    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
+			interpolatedX, interpolatedY);
 
     if (norm < BEZIER_TOLERANCE){ //If our curve is flat enough
-		LOG(info) << p1 << " ; " << p2 << " ; " << p3 << " ; " << p4 << " L= " << l << endl;
-		LOG(info) << "GONNA INSERT " << p23 << " with norm " << norm << endl;
-        return {p23}; //Ensure that there is less deviation (instead of picking p1234)
+        return {Point(interpolatedX, interpolatedY)};
+		//Ensure that there is less deviation (instead of picking p1234)
 	}
     else {
         return subdivision(p1, p12, p123, p1234, l+1) + subdivision(p1234, p234, p34, p4, l +1);

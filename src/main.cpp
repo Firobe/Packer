@@ -15,12 +15,6 @@ using namespace std;
 
 int main(int argc, char** argv) {
     LOG(info) << "SUPER PACKER 2000\n===================" << endl;
-	cerr << "NORM = " <<
-		rotos::norm(
-				183.881, 105.635,
-				183.881, 130.431,
-				171.018, 153.417,
-				150.205, 165.815) << endl;
 
     srand(time(0));
     //Parsing command line
@@ -95,8 +89,8 @@ int main(int argc, char** argv) {
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //Producing the output (sending input file and the option to duplicate
-    cout << solver.debugOutputSVG();
-    //Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-    //             docDim.y(), packerDim.y(), shapes);
+    //cout << solver.debugOutputSVG();
+    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+                 docDim.y(), packerDim.y(), shapes);
     return EXIT_SUCCESS;
 }
