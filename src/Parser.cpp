@@ -14,6 +14,7 @@
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Rotos.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
@@ -94,11 +95,10 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
     Point p234(middlePoint(p23, p34));
     Point p1234(middlePoint(p123, p234));
     //Estimating the flatness of our current curve
-    bg::model::segment<Point> s14(p1, p4);
-    double distSum = bg::distance(p23, s14) + bg::distance(p3, s14); //Upper bound for the deviation
+    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
 
-    if (distSum < BEZIER_TOLERANCE) //If our curve is flat enough
-        return {p23}; //Ensure that there is less deviation (instead of picking p1234)
+    if (norm < BEZIER_TOLERANCE) //If our curve is flat enough
+        return {p1234}; //Ensure that there is less deviation (instead of picking p1234)
     else {
         return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
     }

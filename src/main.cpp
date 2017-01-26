@@ -87,8 +87,8 @@ int main(int argc, char** argv) {
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //Producing the output (sending input file and the option to duplicate
-    //cout << solver.debugOutputSVG();
-    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                 docDim.y(), packerDim.y(), shapes);
+    cout << solver.debugOutputSVG();
+    //Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+    //             docDim.y(), packerDim.y(), shapes);
     return EXIT_SUCCESS;
 }

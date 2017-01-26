@@ -16,7 +16,7 @@
 
 //Maximal deviation in bezier interpolation
 //A smaller value means more points but shapes will be closer to each other
-#define BEZIER_TOLERANCE 0.5
+#define BEZIER_TOLERANCE 0.1
 
 using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
 class Shape;

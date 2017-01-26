@@ -6,6 +6,7 @@ add_library(packer_lib STATIC
 		solver/box/TheSkyIsTheLimit.cpp
         Outer.cpp
 		Matrix.cpp
+		Rotos.cpp
 		solver/box/Scanline.cpp
 		solver/quadtree/quadTree.cpp
 		Splitter.cpp
