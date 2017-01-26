@@ -8,12 +8,20 @@
 #include "solver/box/Scanline.hpp"
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
+#include "Rotos.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char** argv) {
     LOG(info) << "SUPER PACKER 2000\n===================" << endl;
+	cerr << "NORM = " <<
+		rotos::norm(
+				183.881, 105.635,
+				183.881, 130.431,
+				171.018, 153.417,
+				150.205, 165.815) << endl;
+
     srand(time(0));
     //Parsing command line
     po::options_description

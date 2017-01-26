@@ -5,9 +5,10 @@
 #include <string>
 
 #include "Rotos.hpp"
+#include "Parser.hpp"
 #include "Log.hpp"
 
-#define MOCHE_EPSILON 10e-12
+#define MOCHE_EPSILON 10e-14
 using namespace std;
 
 vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d) {
@@ -21,7 +22,7 @@ vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d
 					return {complex<double>(0.5, 0)};
 				else{
 					LOG(fatal) << "POLYNOME ZOUGLOU D = " << d << endl;
-                	throw runtime_error("You wat : polynôme de degré 3 constant et pas plat");
+					return {complex<double>(0, 0.5)};
 				}
 			}
 
@@ -69,7 +70,7 @@ vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d
 bool rotos::intersects(double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy,
                 double distance) {
     for (int signe : {
-                -1, 1
+                1, -1
             }) {
         //On ramène à l'origine
         bx -= ax;
@@ -106,17 +107,11 @@ bool rotos::intersects(double ax, double ay, double bx, double by, double cx, do
             d = frac * ux - uy;
             }
 
-        LOG(trace) << "ux " << ux << "\nuy " << uy << "\nvx " << vx << "\nvy " << vy << endl;
-        LOG(trace) << "frac " << frac << endl;
-        LOG(trace) << "a " << a << "\nb " << b << "\nc " << c << "\nd " << d << endl;
+        LOG(info) << "ux " << ux << "\nuy " << uy << "\nvx " << vx << "\nvy " << vy << endl;
+        LOG(info) << "frac " << frac << endl;
+        LOG(info) << "a " << a << "\nb " << b << "\nc " << c << "\nd " << d << endl;
 		vector<complex<double>> roots ;
-		try{
-			roots = cubicRotos(a, b, c, d);
-		}
-		catch(...){
-			LOG(fatal) << "A : " << ax << " ; " << ay << endl << "D : " << dx << " ; " << dy << endl;
-			throw runtime_error("STAHP");
-		}
+		roots = cubicRotos(a, b, c, d);
 
         LOG(trace) << "Roots : ";
 
@@ -125,7 +120,7 @@ bool rotos::intersects(double ax, double ay, double bx, double by, double cx, do
 
             if (abs(r.imag()) < MOCHE_EPSILON) { //Réelle
                 if (r.real() < 1. && r.real() > 0.) {
-                    LOG(trace) << "Intersects for signe = " << signe << endl;
+                    LOG(info) << "Intersects for signe = " << signe << endl;
                     return true;
                     }
                 }
@@ -142,12 +137,18 @@ double rotos::norm(double ax, double ay, double bx, double by, double cx, double
     double lower = 0;
 	if(abs(ax - dx) < 10e-14 && abs(ay - dy) < 10e-14)
 		return 0.;
+	double longDist = sqrt((ax-dx)*(ax-dx) + (ay-dy)*(ay-dy));
+	double dist = sqrt((ax-bx)*(ax-bx) + (ay-by)*(ay-by)) +
+		sqrt((bx-cx)*(bx-cx) + (by-cy)*(by-cy)) +
+		sqrt((cx-dx)*(cx-dx) + (cy-dy)*(cy-dy));
+	if(abs(longDist - dist) < MOCHE_EPSILON)
+		return 0.;
 
     while (intersects(ax, ay, bx, by, cx, cy, dx, dy, upper)) upper *= 2;
 
     LOG(trace) << "Upper begin : " << upper << endl;
 
-    while (upper - lower > 10e-2) {
+    while (upper - lower > BEZIER_TOLERANCE * 0.001) {
         double mid = (upper + lower) / 2;
         LOG(trace) << "Lower, upper : " << lower << " ; " << upper << endl;
 

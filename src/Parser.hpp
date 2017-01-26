@@ -13,6 +13,7 @@
 
 #include "common.hpp"
 #include "Matrix.hpp"
+#include "Shape.hpp"
 
 //Maximal deviation in bezier interpolation
 //A smaller value means more points but shapes will be closer to each other
