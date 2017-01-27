@@ -16,9 +16,10 @@
 #include "Shape.hpp"
 
 //Maximal deviation in bezier interpolation
-//A smaller value means more points but shapes will be closer to each other
-#define BEZIER_TOLERANCE 0.1
-//NE PAS BAISSER SOUS PEINE DE ZOUGLOU
+//A smaller value means more points (and more computations) but shapes will be closer to each other
+#define BEZIER_TOLERANCE 0.5
+
+std::vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4);
 
 using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
 class Shape;

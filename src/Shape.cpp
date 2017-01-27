@@ -8,7 +8,7 @@
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
-#include <boost/geometry/algorithms/num_points.hpp> 
+#include <boost/geometry/algorithms/num_points.hpp>
 
 #include "Shape.hpp"
 #include "Log.hpp"
@@ -117,12 +117,13 @@ void Shape::fillShape(vector<Ring>& rings) {
  * _oldP1, P2, indexP1, P2 are also recalculated according to the new multiPolygon
  */
 void Shape::bufferize(double buffer) {
-	//Buffering at least the interpolation maximal deviation
-	//With this we guarantee that there is NO intersection between shapes (or at least it should)
-	buffer += BEZIER_TOLERANCE;
+    //Buffering at least the interpolation maximal deviation
+    //With this we guarantee that there is NO intersection between shapes (or at least it should)
+    buffer += BEZIER_TOLERANCE;
     // Declare strategies
     static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
-    static bg::strategy::buffer::join_miter join_strategy(2.); //Points will be located to at most 2 * buffer
+    static bg::strategy::buffer::join_miter join_strategy(
+        2.); //Points will be located to at most 2 * buffer
     static bg::strategy::buffer::end_flat end_strategy;
     static bg::strategy::buffer::point_square circle_strategy;
     static bg::strategy::buffer::side_straight side_strategy;
@@ -132,7 +133,7 @@ void Shape::bufferize(double buffer) {
                distance_strategy, side_strategy,
                join_strategy, end_strategy, circle_strategy);
     _multiP = result;
-	LOG(info) << "Number of points : " << bg::num_points(_multiP) << endl << endl;
+    LOG(info) << "Number of points : " << bg::num_points(_multiP) << endl << endl;
     setOld();
 }
 

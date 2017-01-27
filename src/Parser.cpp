@@ -85,7 +85,7 @@ Point middlePoint(Point& p1, Point& p2) {
  * defined by p1 p4 its anchor points and p2 p3 its control points,
  * using a recursive algorithm (Casteljau)
  */
-vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l) {
+vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
     //Computing points defining subdivised curves
     //Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
     Point p12(middlePoint(p1, p2));
@@ -95,16 +95,17 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4, int l) {
     Point p234(middlePoint(p23, p34));
     Point p1234(middlePoint(p123, p234));
     //Estimating the flatness of our current curve
-	double interpolatedX, interpolatedY;
+    double interpolatedX, interpolatedY;
     double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
-			interpolatedX, interpolatedY);
+                              interpolatedX, interpolatedY);
 
-    if (norm < BEZIER_TOLERANCE){ //If our curve is flat enough
+    if (norm < BEZIER_TOLERANCE) { //If our curve is flat enough
         return {Point(interpolatedX, interpolatedY)};
-		//Ensure that there is less deviation (instead of picking p1234)
-	}
+        //We pick the extremum returned by rotos
+    }
     else {
-        return subdivision(p1, p12, p123, p1234, l+1) + subdivision(p1234, p234, p34, p4, l +1);
+        //If not flat enough, continue subdivision and concatenate vectors
+        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
     }
 }
 
@@ -120,7 +121,7 @@ void Parser::path_cubic_bezier_to(
     double x, double y,
     svgpp::tag::coordinate::absolute) {
     Point p1(x1, y1), p2(x2, y2), p3(x, y);
-    vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3, 0);
+    vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3);
     _points.reserve(_points.size() + interpolated.size());
     _points.insert(_points.end(), interpolated.begin(), interpolated.end());
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
