@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         toPack.push_back(s.getID());
     }
 
-    //If there is a buffer distance specified
+    //Apply a buffer to the shapes
     LOG(info) << "Buffering shapes..." << endl;
 
     for (auto && s : shapes) {

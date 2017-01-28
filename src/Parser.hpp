@@ -17,7 +17,7 @@
 
 //Maximal deviation in bezier interpolation
 //A smaller value means more points (and more computations) but shapes will be closer to each other
-#define BEZIER_TOLERANCE 0.5
+#define BEZIER_TOLERANCE 0.1
 
 std::vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4);
 

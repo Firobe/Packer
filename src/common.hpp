@@ -11,8 +11,6 @@
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
 
-#define PRECISION 1.0e-10
-
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>; //Defines the Point type
 using Ring = bg::model::ring<Point>; //Defines the Ring type
