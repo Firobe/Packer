@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 project(free_packingPFA)
 set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
+set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
+set(FORCE_UNPACK 0)
 FIND_PROGRAM( TEST_PATH fefefffefe )
 
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
@@ -13,51 +15,56 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 
 
 # Define where headers only libs and statics libs are located
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party/boost)
 include_directories(${CMAKE_SOURCE_DIR}/src)
-link_directories(${CMAKE_SOURCE_DIR}/${LIBS_DIR})
 
-# Allow to automaticly unpack and build boost library according to build type
-# It can build both libraries for classic compilation and cross compilation
-if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost)
-    message(STATUS "Unpacking boost...")
-    execute_process(COMMAND tar -xf boost.tar.bz2
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
-    execute_process(COMMAND mv boost_1_62_0 boost
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
-    message(STATUS "done")
+find_package(Boost ${BOOST_REQUIRED_VERSION} COMPONENTS ${BOOST_LIBS})
+if(NOT Boost_FOUND OR ${FORCE_UNPACK})
+	# Allow to automaticly unpack and build boost library according to build type
+	# It can build both libraries for classic compilation and cross compilation
+	if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost)
+		message(STATUS "Unpacking boost...")
+		execute_process(COMMAND tar -xf boost.tar.bz2
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
+		execute_process(COMMAND mv boost_1_62_0 boost
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
+		message(STATUS "done")
+	else ()
+		message(STATUS "Boost directory found")
+	endif ()
+
+	# Check build type to detect wich boost lib should be build
+	if (DEFINED target-os AND target-os STREQUAL "windows")
+		foreach (BOOST_LIB ${BOOST_LIBS})
+			if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}-mt-s.a)
+				message(STATUS "${BOOST_LIB} missing")
+				message(STATUS "Building Boost required library...")
+				execute_process(COMMAND sh bootstrap.sh --with-libraries=${BOOST_LIB}
+						WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
+				file(APPEND third_party/boost/project-config.jam "using gcc : windows : x86_64-w64-mingw32-g++ ;")
+				execute_process(COMMAND ./b2 link=static runtime-link=static toolset=gcc-windows target-os=windows threadapi=win32 --layout=tagged
+						WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
+				message(STATUS "done")
+			endif ()
+		endforeach ()
+	else ()
+		foreach (BOOST_LIB ${BOOST_LIBS})
+			if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}.a)
+				message(STATUS "${BOOST_LIB} missing")
+				message(STATUS "Building Boost required library...")
+				execute_process(COMMAND sh bootstrap.sh --with-libraries=${BOOST_LIB}
+						WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
+				execute_process(COMMAND ./b2 link=static
+						WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
+				message(STATUS "Done")
+			endif ()
+		endforeach ()
+	endif ()
+	include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party/boost)
+	link_directories(${CMAKE_SOURCE_DIR}/${LIBS_DIR})
 else ()
-    message(STATUS "Boost directory found")
+	include_directories(${Boost_INCLUDE_DIRS})
+	link_directories(${Boost_LIBRARY_DIRS})
 endif ()
-
-# Check build type to detect wich boost lib should be build
-if (DEFINED target-os AND target-os STREQUAL "windows")
-    foreach (BOOST_LIB ${BOOST_LIBS})
-        if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}-mt-s.a)
-            message(STATUS "${BOOST_LIB} missing")
-            message(STATUS "Building Boost required library...")
-            execute_process(COMMAND sh bootstrap.sh --with-libraries=${BOOST_LIB}
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
-            file(APPEND third_party/boost/project-config.jam "using gcc : windows : x86_64-w64-mingw32-g++ ;")
-            execute_process(COMMAND ./b2 link=static runtime-link=static toolset=gcc-windows target-os=windows threadapi=win32 --layout=tagged
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
-            message(STATUS "done")
-        endif ()
-    endforeach ()
-else ()
-    foreach (BOOST_LIB ${BOOST_LIBS})
-        if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost/stage/lib/libboost_${BOOST_LIB}.a)
-            message(STATUS "${BOOST_LIB} missing")
-            message(STATUS "Building Boost required library...")
-            execute_process(COMMAND sh bootstrap.sh --with-libraries=${BOOST_LIB}
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
-            execute_process(COMMAND ./b2 link=static
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/boost)
-            message(STATUS "done")
-        endif ()
-    endforeach ()
-endif ()
-
 
 add_subdirectory(doc)
 add_subdirectory(src)
