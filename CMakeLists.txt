@@ -4,7 +4,7 @@ set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
-set(FORCE_UNPACK 0)
+set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
 FIND_PROGRAM( TEST_PATH fefefffefe )
 
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
@@ -19,6 +19,12 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 find_package(Boost ${BOOST_REQUIRED_VERSION} COMPONENTS ${BOOST_LIBS})
 if(NOT Boost_FOUND OR ${FORCE_UNPACK})
+	find_package(Boost)
+	if(Boost_FOUND AND NOT ${FORCE_UNPACK})
+		message(FATAL_ERROR "You have an out-of-date installation of Boost. Please upgrade it or completely remove it ! (or FORCE_UNPACK if you know what you are doing)")
+	else ()
+		message(STATUS "You have no version of Boost installed. Will locally install one.")
+	endif ()
 	# Allow to automaticly unpack and build boost library according to build type
 	# It can build both libraries for classic compilation and cross compilation
 	if (NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/boost)
