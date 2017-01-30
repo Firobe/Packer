@@ -44,7 +44,7 @@ int main() {
 
 	vector<QuadTree> quads;
 	for (Shape& s: shapes) {
-		quads.push_back(QuadTree(s, 1));
+		quads.push_back(QuadTree(s, 10));
 		cout << " - QuadTree : " << endl << quads.back() << endl;
 		//bitmap(s, 64, 64);
 	}
@@ -62,6 +62,12 @@ int main() {
 		}
 	}
 	cout << "QuadTrees approximations errors : " << diff << endl;
+
+	bitmap bmap(shapes[1].getMultiP(), 99, 100);
+	bmap.saveMap("test");
+	quads[1].saveTree(shapes[1].getID());
+
+	QuadTree(0).saveTree("ttest");
 
 	//quadTree(shapes[0], 1);
 

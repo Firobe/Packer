@@ -1,4 +1,6 @@
 #include <cmath>
+#include <iostream>
+#include <fstream>
 
 #include <boost/geometry/algorithms/correct.hpp>
 #include <boost/geometry/algorithms/intersects.hpp>
@@ -9,6 +11,7 @@
 #include "common.hpp"
 #include "Shape.hpp"
 
+using namespace std;
 
 void QuadTree::copy(const QuadTree &q) {
 	tree = new InnerQuadTree(*q.tree);
@@ -16,6 +19,7 @@ void QuadTree::copy(const QuadTree &q) {
 	_offsetX=q._offsetX;
 	_offsetY=q._offsetY;
 	_angle=q._angle;
+	_maxDepth=q._maxDepth;
 }
 
 QuadTree::QuadTree(const QuadTree &q) {
@@ -38,7 +42,9 @@ QuadTree::~QuadTree() {
 }
 
 QuadTree::QuadTree(Shape &s, float precision, float offsetX, float offsetY, float angle) :
-	QuadTree(s.getMultiP(), precision, offsetX, offsetY, angle) {}
+	QuadTree(s.getMultiP(), precision, offsetX, offsetY, angle) {
+	bmap->saveMap(s.getID());
+}
 
 QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float offsetY, float angle) :
 	tree(nullptr), _offsetX(offsetX), _offsetY(offsetY), _angle(angle){
@@ -67,12 +73,12 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
 	}
 
 	// Create the bitmap that will be used in order to create the quadTree
+	_maxDepth = maxDepth;
 	int size = pow(2, maxDepth);
 	bmap = new bitmap(mult,size,size);
-	// bmap.saveMap(shape.getID());
 
 	// QuadTree size is shape envelop size
-	tree = new InnerQuadTree(envelop.min_corner().y(), envelop.min_corner().y(),
+	tree = new InnerQuadTree(envelop.min_corner().x(), envelop.min_corner().y(),
 			 envelop.max_corner().x(), envelop.max_corner().y(),
 			 *bmap, 0, 0, size, 0);
 
@@ -104,4 +110,65 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
 	s << " - Tree : " << std::endl << *q.tree;
 	s << " - bitmap : " << std::endl << *q.bmap;
 	return s;
+}
+
+
+void QuadTree::saveTree(std::string filename, int depth) {
+	int size = pow(2, depth);
+
+	ofstream file;
+	file.open(filename + ".pgm");
+	file << "P2" << endl;
+	file << size << " " << size << endl;
+	file << "2" << endl;
+
+	for (int i=0; i<size; i++) {
+		std::vector<color_enum> vec = tree->getLine(i, depth);
+		//cout << vec.size() << " - " << size << endl;
+		for (color_enum color : vec) {
+			switch (color) {
+			case white:
+				file << "2 ";
+				break;
+			case grey:
+				file << "1 ";
+				break;
+			default:
+				file << "0 ";
+				break;
+			}
+		}
+		file << endl;
+	}
+	file.close();
+}
+
+void QuadTree::saveTree(std::string filename) {
+	cout << _maxDepth << endl;
+	for (int i=0; i<=_maxDepth; i++){
+		saveTree(filename + "-" + std::to_string(i), i);
+	}
+}
+
+
+QuadTree::QuadTree(int) {
+	_maxDepth = 2;
+	tree = new InnerQuadTree();
+	tree->color = grey;
+	tree->q1 = new InnerQuadTree();
+	tree->q1->color = grey;
+	tree->q1->q1 = new InnerQuadTree();
+	tree->q1->q1->color = grey;
+	tree->q1->q2 = new InnerQuadTree();
+	tree->q1->q2->color = black;
+	tree->q1->q3 = new InnerQuadTree();
+	tree->q1->q3->color = grey;
+	tree->q1->q4 = new InnerQuadTree();
+	tree->q1->q4->color = white;
+	tree->q2 = new InnerQuadTree();
+	tree->q2->color = black;
+	tree->q3 = new InnerQuadTree();
+	tree->q3->color = white;
+	tree->q4 = new InnerQuadTree();
+	tree->q4->color = grey;
 }

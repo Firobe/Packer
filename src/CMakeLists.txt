@@ -6,6 +6,7 @@ add_library(utils_lib STATIC
     Matrix.cpp
     Splitter.cpp
     Outer.cpp
+    Rotos.cpp
     solver/quadtree/QuadTree.cpp
     solver/quadtree/InnerQuadTree.cpp
     solver/quadtree/bitmap.cpp)

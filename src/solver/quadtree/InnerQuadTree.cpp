@@ -218,3 +218,47 @@ std::ostream& operator<<(std::ostream& s, const InnerQuadTree& q) {
 	s << "Size : " << q.size << endl;
 	return s;
 }
+
+
+std::vector<color_enum> InnerQuadTree::getLine(int i, int depth) {
+	std::vector<color_enum> vec, vec2;
+	if(depth == 0) {
+		vec.push_back(color);
+		return vec;
+	}
+	else {
+		int med = pow(2, depth-1);
+		if (i >= med) {
+			if (q1 != nullptr) {
+				vec = q1->getLine(i-med, depth-1);
+			}
+			else {
+				for (int j=0; j<med; j++)
+					vec.push_back(color);
+			}
+			if (q2 != nullptr) {
+				vec2 = q2->getLine(i-med, depth-1);
+				vec.insert(vec.end(), vec2.begin(), vec2.end());
+			}
+			else {
+				for (int j=0; j<med; j++)
+					vec.push_back(color);
+			}
+		}
+		else {
+			if (q4 != nullptr)
+				vec = q4->getLine(i, depth-1);
+			else
+				for (int j=0; j<med; j++)
+					vec.push_back(color);
+			if (q3 != nullptr) {
+				vec2 = q3->getLine(i, depth-1);
+				vec.insert(vec.end(), vec2.begin(), vec2.end());
+			}
+			else
+				for (int j=0; j<med; j++)
+					vec.push_back(color);
+		}
+		return vec;
+	}
+}

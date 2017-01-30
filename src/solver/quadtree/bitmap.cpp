@@ -65,9 +65,6 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 	double xpres = (double) envelop.max_corner().x()/width;
 	double ypres = (double) envelop.max_corner().y()/height;
 
-	//std::cout << "X : " << width << " cells, " << envelop.max_corner().x() << " width, " << xpres << " /cell" << std::endl;
-	//std::cout << "Y : " << height << " cells, " << envelop.max_corner().y() << " height, " << ypres << " /cell" << std::endl;
-
 	// Detect collisions with the grid on the x axis
 	int nbBlack = 0;
 	for (int y=1; y<height; y++) {
@@ -81,13 +78,13 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 				if (!first) {
 					double x2 = p.x();
 					for (int x=(int) x1/xpres; x<=(int) x2/xpres; x++) {
-						if (!get(x,y-1)) {
+						if (!get(y-1,x)) {
 							nbBlack++;
-							set(x,y-1,true);
+							set(y-1,x,true);
 						}
-						if (!get(x,y)) {
+						if (!get(y,x)) {
 							nbBlack++;
-							set(x,y,true);
+							set(y,x,true);
 						}
 					}
 					x1 = x2;
@@ -111,13 +108,13 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 				if (!first) {
 					double y2 = p.y();
 					for (int y=(int) y1/ypres; y<=(int) y2/ypres; y++) {
-						if (!get(x-1,y)) {
+						if (!get(y,x-1)) {
 							nbBlack++;
-							set(x-1,y,true);
+							set(y,x-1,true);
 						}
-						if (!get(x,y)) {
+						if (!get(y,x)) {
 							nbBlack++;
-							set(x,y,true);
+							set(y,x,true);
 						}
 					}
 					y1 = y2;
@@ -130,7 +127,6 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 	}
 
 	this->nbBlack = nbBlack;
-	//std::cout << nbBlack << " bits occuped" << std::endl;
 
 	// Restore shape position
 	translate<MultiPolygon>(mult, reference.x(), reference.y());
@@ -138,10 +134,22 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 
 bitmap::bitmap(Shape &shape, int width, int height) : bitmap(shape.getMultiP(), width, height) {}
 
+/**
+ * @brief bitmap::set set the value of the point (i,j)
+ * @param i line
+ * @param j row
+ * @param val true : black, false : white
+ */
 void bitmap::set(int i, int j, bool val) {
 	map[width*i+j]=val;
 }
 
+/**
+ * @brief bitmap::get the value of the point (i,j)
+ * @param i
+ * @param j
+ * @return
+ */
 bool bitmap::get(int i, int j) {
 	return map[width*i+j];
 }

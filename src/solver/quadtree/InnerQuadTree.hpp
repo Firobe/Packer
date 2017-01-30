@@ -35,11 +35,15 @@ private:
 private:
 	void construct(float x1, float y1, float x2, float y2, bitmap& bmap, int offsetX, int offsetY, int length);
 	InnerQuadTree(float x1, float y1, float x2, float y2, bitmap& bmap, int offsetX, int offsetY, int size, int depth);
+//test
+	InnerQuadTree() : q1(nullptr), q2(nullptr), q3(nullptr), q4(nullptr) {}
 
 	friend class QuadTree;
 
 	bool intersectsRec(const InnerQuadTree&, float offsetX, float offsetY, float offsetX2, float offsetY2) const;
 	void deepTranslater(float x, float y);
+
+	std::vector<color_enum> getLine(int i, int depth);
 
 public:
 	friend std::ostream& operator<<(std::ostream&, const InnerQuadTree&);
