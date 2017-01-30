@@ -112,51 +112,87 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
 	//float x1 = this->x1+0.2, x2 = this->x2+0.2, y1 = this->y1+0.2, y2 = this->y2+0.2;
 	//float qx1 = q.x1+0.2, qx2 = q.x2+0.2, qy1 = q.y1+0.2, qy2 = q.y2+0.2;
 	//bool boxIntersects = ((qx1 <= x1 && x1 <= qx2) || (x1 <= qx1 && qx1 <= x2)) && ((qy1 <= y1 && y1 <= qy2) || (y1 <= qy1 && qy1 <= y2));
+	/*if (x2+offsetX1 < q.x1+offsetX2)
+		return false;
+	if (q.x2+offsetX2 < x1+offsetX1)
+		return false;
+	if (y2+offsetY1 < q.y1+offsetY2)
+		return false;
+	if (q.y2+offsetY2 < y1+offsetY1)
+		return false;
+*/
+
 	Box b1{{x1+offsetX1,y1+offsetY1},{x2+offsetX1,y2+offsetY1}};
 	Box b2{{q.x1+offsetX2,q.y1+offsetY2},{q.x2+offsetX2,q.y2+offsetY2}};
 	bool boxIntersects = bg::intersects(b1, b2);
-	//cout << boxIntersects << bg::intersects(Box(min_corner, max_corner), Box(q.min_corner, q.max_corner)) << endl;
+	//cout << boxIntersects << test << endl;
 
 	if (!boxIntersects)
 		return false;
 
-	if (color == black && q.color == black)
+	if (color == black && q.color == black) {
+		cout << bg::wkt(b1) << " - " << bg::wkt(b2) << endl;
 		return boxIntersects;
+	}
 
 	if (color == black && q.color == grey) {
-		if (this->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
+		if (this->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
 		return false;
 	}
 
 	if (color == grey && q.color == black) {
-		if (q.intersectsRec(*q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (q.intersectsRec(*q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (q.intersectsRec(*q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (q.intersectsRec(*q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
+		if (q.intersectsRec(*q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (q.intersectsRec(*q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (q.intersectsRec(*q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (q.intersectsRec(*q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
 		return false;
 	}
 
 	else {
 		// In this case both nodes are grey
-		if (this->q1->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q1->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q1->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q1->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q2->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q2->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q2->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q2->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q3->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q3->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q3->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q3->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q4->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q4->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q4->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
-		if (this->q4->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2)) return true;
+		if (this->q1->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q1->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q1->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q1->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q2->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q2->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q2->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q2->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q3->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q3->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q3->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q3->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q4->intersectsRec(*q.q1, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q4->intersectsRec(*q.q2, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q4->intersectsRec(*q.q3, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
+		if (this->q4->intersectsRec(*q.q4, offsetX1, offsetY1, offsetX2, offsetY2))
+			return true;
 	}
 
 	return false;
@@ -174,4 +210,11 @@ void InnerQuadTree::deepTranslater(float x, float y) {
 		q3->deepTranslater(x, y);
 		q4->deepTranslater(x, y);
 	}
+}
+
+
+std::ostream& operator<<(std::ostream& s, const InnerQuadTree& q) {
+	s << "Boundind box : (" << q.x1 << "," << q.y1 << ") (" << q.x2 << "," << q.y2 << ")" << endl;
+	s << "Size : " << q.size << endl;
+	return s;
 }

@@ -1,6 +1,8 @@
 #ifndef INNER_QUADTREE_HPP
 #define INNER_QUADTREE_HPP
 
+#include <iostream>
+
 #include "common.hpp"
 #include "Shape.hpp"
 #include "bitmap.hpp"
@@ -39,6 +41,8 @@ private:
 	bool intersectsRec(const InnerQuadTree&, float offsetX, float offsetY, float offsetX2, float offsetY2) const;
 	void deepTranslater(float x, float y);
 
+public:
+	friend std::ostream& operator<<(std::ostream&, const InnerQuadTree&);
 };
 
 

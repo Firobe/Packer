@@ -29,6 +29,9 @@ public:
 	bool hasWhite(int offsetX, int offsetY, int length);
 
 	void saveMap(std::string filename);
+
+public:
+	friend std::ostream& operator<<(std::ostream& s, const bitmap&);
 };
 
 #endif // BITMAP_HPP

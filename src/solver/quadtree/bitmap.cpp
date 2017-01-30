@@ -22,8 +22,6 @@ void bitmap::copy(const bitmap &bmap) {
 	width = bmap.width;
 	height = bmap.height;
 	nbBlack = bmap.nbBlack;
-	if (map != nullptr)
-		delete [] map;
 	map = new bool[height*width];
 	for (int i = 0; i < width*height; i++)
 		map[i] = bmap.map[i];
@@ -67,8 +65,8 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 	double xpres = (double) envelop.max_corner().x()/width;
 	double ypres = (double) envelop.max_corner().y()/height;
 
-	std::cout << "X : " << width << " cells, " << envelop.max_corner().x() << " width, " << xpres << " /cell" << std::endl;
-	std::cout << "Y : " << height << " cells, " << envelop.max_corner().y() << " height, " << ypres << " /cell" << std::endl;
+	//std::cout << "X : " << width << " cells, " << envelop.max_corner().x() << " width, " << xpres << " /cell" << std::endl;
+	//std::cout << "Y : " << height << " cells, " << envelop.max_corner().y() << " height, " << ypres << " /cell" << std::endl;
 
 	// Detect collisions with the grid on the x axis
 	int nbBlack = 0;
@@ -132,7 +130,7 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 	}
 
 	this->nbBlack = nbBlack;
-	std::cout << nbBlack << " bits occuped" << std::endl;
+	//std::cout << nbBlack << " bits occuped" << std::endl;
 
 	// Restore shape position
 	translate<MultiPolygon>(mult, reference.x(), reference.y());
@@ -254,4 +252,10 @@ void bitmap::saveMap(string filename) {
 
 	file.close();
 
+}
+
+std::ostream& operator<<(std::ostream& s, const bitmap& bmap) {
+	s << "Size : " << bmap.width << "x" << bmap.height << std::endl;
+	s << bmap.nbBlack << " blacks out of " << bmap.width*bmap.height << " points" << std::endl;
+	return s;
 }

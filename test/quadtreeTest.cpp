@@ -44,21 +44,28 @@ int main() {
 
 	vector<QuadTree> quads;
 	for (Shape& s: shapes) {
-		quads.push_back(QuadTree(s, 10));
+		quads.push_back(QuadTree(s, 1));
+		cout << " - QuadTree : " << endl << quads.back() << endl;
 		//bitmap(s, 64, 64);
 	}
 
 	// Intersection accuracy verification
+	int diff = 0;
 	for(size_t i=0; i<quads.size(); i++) {
 		for(size_t j=i+1; j<quads.size(); j++) {
+			bool b1 = quads[i].intersects(quads[j]);
+			bool b2 = bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP());
 			cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
-			cout << "Inter : " << quads[i].intersects(quads[j]) << "-" << bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP()) << endl;
+			cout << "Inter : " << b1 << "-" << b2 << endl;
+			if (b1 && !b2) diff++;
+			if (!b1 && b2) throw "QuadTree accuracy critical error";
 		}
 	}
+	cout << "QuadTrees approximations errors : " << diff << endl;
 
 	//quadTree(shapes[0], 1);
 
-	auto start = Clock::now();
+	/*auto start = Clock::now();
 	for (int i=0; i<REPEAT; i++)
 		for (Shape& s1: shapes) {
 			for (Shape& s2 : shapes)
@@ -82,7 +89,7 @@ int main() {
 	end = Clock::now();
 	int elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "qd int : " << elapsed2 << " microseconds elapsed" << endl;
-	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
+	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;*/
 
 	/*start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)

@@ -3,14 +3,16 @@
 #include <boost/geometry/algorithms/correct.hpp>
 #include <boost/geometry/algorithms/intersects.hpp>
 
+#include "bitmap.hpp"
 #include "QuadTree.hpp"
 #include "InnerQuadTree.hpp"
 #include "common.hpp"
 #include "Shape.hpp"
-#include "bitmap.hpp"
+
 
 void QuadTree::copy(const QuadTree &q) {
 	tree = new InnerQuadTree(*q.tree);
+	bmap = new bitmap(*q.bmap);
 	_offsetX=q._offsetX;
 	_offsetY=q._offsetY;
 	_angle=q._angle;
@@ -31,6 +33,8 @@ QuadTree &QuadTree::operator=(const QuadTree &q) {
 QuadTree::~QuadTree() {
 	if (tree != nullptr) delete tree;
 	tree = nullptr;
+	if (bmap != nullptr) delete bmap;
+	bmap = nullptr;
 }
 
 QuadTree::QuadTree(Shape &s, float precision, float offsetX, float offsetY, float angle) :
@@ -44,6 +48,8 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
 	bg::envelope(mult, envelop);
 	bg::correct(envelop);
 	Point reference = envelop.min_corner();
+	_offsetX+=reference.x();
+	_offsetY+=reference.y();
 
 	// Place the shape into the (0,0) point in order to create the quadTree
 	translate<MultiPolygon>(mult, -reference.x(), -reference.y());
@@ -62,18 +68,19 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
 
 	// Create the bitmap that will be used in order to create the quadTree
 	int size = pow(2, maxDepth);
-	bitmap bmap(mult,size,size);
+	bmap = new bitmap(mult,size,size);
 	// bmap.saveMap(shape.getID());
 
 	// QuadTree size is shape envelop size
 	tree = new InnerQuadTree(envelop.min_corner().y(), envelop.min_corner().y(),
 			 envelop.max_corner().x(), envelop.max_corner().y(),
-			 bmap, 0, 0, size, 0);
+			 *bmap, 0, 0, size, 0);
 
 	// Restore shape position
-	//translate<MultiPolygon>(mult, reference.x(), reference.y());
+	translate<MultiPolygon>(mult, reference.x(), reference.y());
 
 	/*
+	std::cout << offsetX << ":" << offsetY << std::endl;
 	cout << "max depth : " << maxDepth << endl;
 	cout << "Shape ID :" << shape.getID() << endl;
 	cout << "shape area : " << bg::area(shape.getMultiP()) << endl;
@@ -88,4 +95,13 @@ bool QuadTree::intersects(const QuadTree&q) const {
 void QuadTree::translater(float x, float y) {
 	_offsetX+=x;
 	_offsetY+=y;
+}
+
+
+std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
+	s << "Position : (" << q._offsetX << "," << q._offsetY << ")" << std::endl;
+	s << "Angle : " << q._angle << std::endl;
+	s << " - Tree : " << std::endl << *q.tree;
+	s << " - bitmap : " << std::endl << *q.bmap;
+	return s;
 }

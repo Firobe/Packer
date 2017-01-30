@@ -1,9 +1,14 @@
 #ifndef QUADTREE_HPP
 #define QUADTREE_HPP
 
+#include <string>
+#include <iostream>
+
 #include "InnerQuadTree.hpp"
 #include "common.hpp"
 #include "Shape.hpp"
+
+class bitmap;
 
 class QuadTree
 {
@@ -11,6 +16,7 @@ private:
 	InnerQuadTree *tree;
 	float _offsetX, _offsetY;
 	float _angle;
+	bitmap *bmap;
 
 
 private:
@@ -27,6 +33,9 @@ public:
 public:
 	bool intersects(const QuadTree&) const;
 	void translater(float x, float y);
+
+public:
+	friend std::ostream& operator<<(std::ostream& s, const QuadTree&);
 };
 
 #endif // QUADTREE_HPP
