@@ -6,7 +6,6 @@
 
 #include "common.hpp"
 
-#define BUFFER_POINTS_PER_CIRCLE 10
 
 /**
  * Shape class. Designed to be
@@ -43,7 +42,7 @@ public:
     MultiPolygon& getMultiP() {
         return _multiP;
     }
-    void bufferize(int buffer);
+    void bufferize(double buffer);
     void appendOut(const std::string& s) {
         _out += s;
     }
@@ -58,5 +57,7 @@ void rotate <Shape> (Shape& object, double angle);
 
 template <>
 void translate <Shape> (Shape& object, double x, double y);
+
+void rotateToBestAngle(Shape& object);
 
 #endif

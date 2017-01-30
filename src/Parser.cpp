@@ -14,11 +14,11 @@
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Rotos.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_TOLERANCE 0.003 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -95,13 +95,18 @@ vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
     Point p234(middlePoint(p23, p34));
     Point p1234(middlePoint(p123, p234));
     //Estimating the flatness of our current curve
-    bg::model::segment<Point> s14(p1, p4);
-    double distSum = bg::distance(p2, s14) + bg::distance(p3, s14);
-	double d = bg::length(s14);
+    double interpolatedX, interpolatedY;
+    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
+                              interpolatedX, interpolatedY);
 
-    if (distSum * distSum < BEZIER_TOLERANCE * d * d) //If our curve is flat enough
-        return {p23}; //Ensure that there is less deviation (instead of picking p1234)
-    else return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    if (norm < BEZIER_TOLERANCE) { //If our curve is flat enough
+        return {Point(interpolatedX, interpolatedY)};
+        //We pick the extremum returned by rotos
+    }
+    else {
+        //If not flat enough, continue subdivision and concatenate vectors
+        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    }
 }
 
 /**
@@ -140,7 +145,6 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
-    LOG(info) << "The path contains " << _points.size() << " points\n";
     _toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and

@@ -9,9 +9,11 @@
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
 #include <boost/geometry/io/svg/svg_mapper.hpp>
+#include <boost/geometry/algorithms/num_points.hpp>
 
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Parser.hpp"
 
 using namespace std;
 
@@ -22,11 +24,13 @@ inline bool ringLess(const Ring& a, const Ring& b) {
     return bg::area(a) < bg::area(b);
 }
 
+/**
+ * Point stream operator
+ */
 std::ostream& operator<<(std::ostream& os, const Point& p) {
     os << bg::wkt(p);
     return os;
 }
-
 
 
 /**
@@ -40,27 +44,26 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
 array<double, 6> Shape::getTransMatrix() const {
     Point newP1 = _multiP[0].outer()[_indexP1];
     Point newP2 = _multiP[0].outer()[_indexP2];
-    //Computing the angle
-    double alpha = atan((newP2.y() - newP1.y())
-                        / (newP2.x() - newP1.x()))
-                   - atan((_oldP2.y() - _oldP1.y())
-                          / (_oldP2.x() - _oldP1.x()));
-    array<double, 6> result;
-    double c, s, x1, y1, x2, y2;
+    double c, s, x1, y1, x2, y2, n1, n2;
+    //Normalize vectors (x1, y1), (x2, y2)
+    n1 = bg::distance(_oldP1, _oldP2);
+    n2 = bg::distance(newP1, newP2);
+    x1 = (_oldP2.x() - _oldP1.x()) / n1;
+    y1 = (_oldP2.y() - _oldP1.y()) / n1;
+    x2 = (newP2.x() - newP1.x()) / n2;
+    y2 = (newP2.y() - newP1.y()) / n2;
+    //Computing cos & sin with dot products
+    c = x1 * x2 + y1 * y2;
+    s = x1 * y2 - x2 * y1;
     //Resulting matrix corresponding to the following operations:
-    //Translate to origin, rotate of alpha, translate to new position
-    c = cos(alpha);
-    s = sin(alpha);
-    x1 = _oldP1.x();
-    y1 = _oldP1.y();
-    x2 = newP1.x();
-    y2 = newP1.y();
+    //Translate to origin, rotate, translate to new position
+    array<double, 6> result;
     result[0] = c;
-    result[1] = -s;
-    result[2] = s;
+    result[1] = s;
+    result[2] = -s;
     result[3] = c;
-    result[4] = -x1 * c - y1 * s + x2;
-    result[5] = x1 * s - y1 * c + y2;
+    result[4] = - _oldP1.x() * c + _oldP1.y() * s + newP1.x();
+    result[5] = - _oldP1.x() * s - _oldP1.y() * c + newP1.y();
     return result;
 }
 
@@ -113,23 +116,29 @@ void Shape::fillShape(vector<Ring>& rings) {
 
 /**
  * Change shapes by adding a buffer
- * (of <buffer> px) around each of them.
+ * (of <buffer>+BEZIER_TOLERANCE px) around each of them.
  * _oldP1, P2, indexP1, P2 are also recalculated according to the new multiPolygon
  */
-void Shape::bufferize(int buffer) {
+void Shape::bufferize(double buffer) {
+    /*
+	 * Buffering at least the interpolation maximal deviation
+     * With this we guarantee that there is NO intersection between shapes (or at least it should)
+	 * due to the interpolation error.
+	 */
+    buffer += BEZIER_TOLERANCE;
     // Declare strategies
-    const int points_per_circle = BUFFER_POINTS_PER_CIRCLE;
-    bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
-    bg::strategy::buffer::join_round join_strategy(points_per_circle);
-    bg::strategy::buffer::end_round end_strategy(points_per_circle);
-    bg::strategy::buffer::point_circle circle_strategy(points_per_circle);
-    bg::strategy::buffer::side_straight side_strategy;
+    static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
+    static bg::strategy::buffer::join_miter join_strategy(2.); //Points will be located to at most 2 * buffer
+    static bg::strategy::buffer::end_flat end_strategy;
+    static bg::strategy::buffer::point_square circle_strategy;
+    static bg::strategy::buffer::side_straight side_strategy;
     MultiPolygon result;
     // Create the buffer of a multi polygon
     bg::buffer(_multiP, result,
                distance_strategy, side_strategy,
                join_strategy, end_strategy, circle_strategy);
     _multiP = result;
+    LOG(debug) << "Number of points : " << bg::num_points(_multiP) << endl;
     setOld();
 }
 
@@ -185,3 +194,45 @@ string Shape::debugOutputSVG() const {
 	LOG(info) << "Debug SVG generated" << endl;
 	return ret.str() + "</svg>";
 }
+
+/**
+ * Rotates object so that its retangular bounding box
+ * will be of minimal area
+ * Explores a range of 90 degrees with a fixed step
+ */
+void rotateToBestAngle(Shape& object) {
+    const double ANGLE_MAX = 90.0;
+    const double ANGLE_STEP = 0.2;
+    double bestAngle, currAngle;
+    double bestArea, currArea;
+    Box currBox;
+    bestAngle = 0.0;
+    bg::envelope(object.getMultiP(), currBox);
+    bestArea = bg::area(currBox);
+    currAngle = 0.0;
+
+    while (currAngle <= ANGLE_MAX) {
+        rotate<Shape>(object, ANGLE_STEP);
+        bg::envelope(object.getMultiP(), currBox);
+        currArea = bg::area(currBox);
+
+        if (currArea < bestArea) {
+            bestArea = currArea;
+            bestAngle = currAngle;
+        }
+
+        currAngle += ANGLE_STEP;
+    }
+
+    rotate<Shape>(object, bestAngle - currAngle);
+}
+
+
+
+
+
+
+
+
+
+

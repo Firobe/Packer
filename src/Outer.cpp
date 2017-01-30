@@ -56,9 +56,8 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
     }
 
     if (_currentShape == -1 || forceNoMatrix) {
-        if (forceNoMatrix || (!_stopPrinting && strcmp(node->name(), "g") != 0))
+        if (forceNoMatrix || (!_stopPrinting && strcmp(node->name(), "g") != 0)){
             //Stop printing upon encountering the first useless group
-        {
             cout << tmp.str();
         }
         else {
@@ -106,7 +105,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
         return false;
     }
 
-    // used for duplication
+    //Used for duplication
     if (forceNoMatrix) {
         return true;
     }
@@ -248,7 +247,7 @@ NodeType Outer::identNode(XMLElement node) const {
 
 /**
  * Now that the shapes are loaded with
- * their oout string, display them
+ * their out string, display them
  * in group, corresponding to the bins.
  */
 void Outer::groupShapes(double binHeight) {
