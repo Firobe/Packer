@@ -65,7 +65,7 @@ void InnerQuadTree::construct(float x1, float y1, float x2, float y2, bitmap& bm
 
 	if (length == 1) {
 		// Stoping case, leaf canno't be grey
-		if(bmap.get(offsetX, offsetY))
+		if(bmap.get(offsetY, offsetX))
 			color = black;
 		else
 			color = white;

@@ -65,9 +65,16 @@ int main() {
 
 	bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");
-	quads[1].saveTree(shapes[1].getID());
+	for (size_t i=0; i<quads.size(); i++)
+		quads[i].saveTree(shapes[i].getID());
 
-	QuadTree(0).saveTree("ttest");
+	bool* nmap = new bool[4];
+	nmap[0] = true; nmap[1] = true; nmap[2] = false; nmap[3] = true;
+	bitmap bmap2(nmap, 2, 2);
+	bmap2.saveMap("lol");
+	//QuadTree(0).saveTree("ttest"); //ok
+
+
 
 	//quadTree(shapes[0], 1);
 

@@ -85,13 +85,6 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
 	// Restore shape position
 	translate<MultiPolygon>(mult, reference.x(), reference.y());
 
-	/*
-	std::cout << offsetX << ":" << offsetY << std::endl;
-	cout << "max depth : " << maxDepth << endl;
-	cout << "Shape ID :" << shape.getID() << endl;
-	cout << "shape area : " << bg::area(shape.getMultiP()) << endl;
-	cout << "size : " << size << endl;
-	cout << "quadtrees : " << this->size << endl << endl;	*/
 }
 
 bool QuadTree::intersects(const QuadTree&q) const {
