@@ -44,7 +44,7 @@ int main() {
 
 	vector<QuadTree> quads;
 	for (Shape& s: shapes) {
-		quads.push_back(QuadTree(s, 10));
+		quads.push_back(QuadTree(s, 5));
 		cout << " - QuadTree : " << endl << quads.back() << endl;
 		//bitmap(s, 64, 64);
 	}
@@ -68,17 +68,7 @@ int main() {
 	for (size_t i=0; i<quads.size(); i++)
 		quads[i].saveTree(shapes[i].getID());
 
-	bool* nmap = new bool[4];
-	nmap[0] = true; nmap[1] = true; nmap[2] = false; nmap[3] = true;
-	bitmap bmap2(nmap, 2, 2);
-	bmap2.saveMap("lol");
-	//QuadTree(0).saveTree("ttest"); //ok
-
-
-
-	//quadTree(shapes[0], 1);
-
-	/*auto start = Clock::now();
+	auto start = Clock::now();
 	for (int i=0; i<REPEAT; i++)
 		for (Shape& s1: shapes) {
 			for (Shape& s2 : shapes)
@@ -102,9 +92,9 @@ int main() {
 	end = Clock::now();
 	int elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "qd int : " << elapsed2 << " microseconds elapsed" << endl;
-	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;*/
+	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
 
-	/*start = Clock::now();
+	start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)
 		for (Shape& s1: shapes)
 				translate<Shape>(s1,rand()*10-5, rand()*10-5);
@@ -113,20 +103,20 @@ int main() {
 	cout << "sh tra : " << elapsed << " microseconds elapsed" << endl;
 
 	start = Clock::now();
-	for (vector<InnerQuadTree>::size_type i=0; i<100*quads.size(); i++)
-		for (InnerQuadTree& s1: quads)
+	for (vector<QuadTree>::size_type i=0; i<100*quads.size(); i++)
+		for (QuadTree& s1: quads)
 				s1.translater(rand()*10-5, rand()*10-5);
 	end = Clock::now();
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;
 
-	start = Clock::now();
-	for (vector<InnerQuadTree>::size_type i=0; i<REPEAT*quads.size(); i++)
-		for (InnerQuadTree& s1: quads)
+	/*start = Clock::now();
+	for (vector<QuadTree>::size_type i=0; i<REPEAT*quads.size(); i++)
+		for (QuadTree& s1: quads)
 				s1.deepTranslater(rand()*10-5, rand()*10-5);
 	end = Clock::now();
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
-	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;
+	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;*/
 
 	start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)
@@ -139,25 +129,10 @@ int main() {
 	start = Clock::now();
 	for (int i=0; i<REPEAT; i++)
 		for (Shape& s1: shapes)
-				InnerQuadTree(s1, 10);
+				QuadTree(s1, 10);
 	end = Clock::now();
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "Qd cre : " << elapsed << " microseconds elapsed" << endl;
-
-	Box box{{0,0},{100,100}};
-	MultiPolygon poly;
-	rotate<Box>(box, 35);
-	bg::convert(box, poly);
-	//rotate<MultiPolygon>(poly,35);
-	cout << bg::wkt(poly) << endl;
-	bitmap(poly, 256, 256).saveMap("test");*/
-
-
-	/*for (int i = 0; i<quads.size(); i++) {
-		for (int j = 0; j<quads.size(); j++) {
-			cout << "Intersects : " << quads[i].intersects(quads[j]) << "-" << bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP()) << endl;
-		}
-	}*/
 
 	return EXIT_SUCCESS;
 }

@@ -30,12 +30,11 @@ public:
 public:
 	QuadTree(Shape &, float precision, float offsetX=0.0, float offsetY=0.0, float angle=0.0);
 	QuadTree(MultiPolygon &mult, float precision, float offsetX=0.0, float offsetY=0.0, float angle=0.0);
-//test
-	QuadTree(int);
 
 public:
 	bool intersects(const QuadTree&) const;
 	void translater(float x, float y);
+
 
 private:
 	void saveTree(std::string filename, int depth);

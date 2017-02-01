@@ -65,7 +65,7 @@ void InnerQuadTree::construct(float x1, float y1, float x2, float y2, bitmap& bm
 
 	if (length == 1) {
 		// Stoping case, leaf canno't be grey
-		if(bmap.get(offsetY, offsetX))
+		if(bmap.get(offsetX, offsetY))
 			color = black;
 		else
 			color = white;
@@ -87,10 +87,10 @@ void InnerQuadTree::construct(float x1, float y1, float x2, float y2, bitmap& bm
 
 			// For each quarter of the defined area, compute the quadTree
 			int half = length/2;
-			q1 = new InnerQuadTree(x1, y1, xm, ym, bmap, offsetX, offsetY, half, depth+1); //bottom left
-			q2 = new InnerQuadTree(x1, ym, xm, y2, bmap, offsetX, offsetY+half, half, depth+1); //bottom right
-			q3 = new InnerQuadTree(xm, ym, x2, y2, bmap, offsetX+half, offsetY, half, depth+1); //top    right
-			q4 = new InnerQuadTree(xm, y1, x2, ym, bmap, offsetX+half, offsetY+half, half, depth+1); //top    left
+			q1 = new InnerQuadTree(x1, y1, xm, ym, bmap, offsetX, offsetY, half, depth+1); //top left
+			q2 = new InnerQuadTree(xm, y1, x2, ym, bmap, offsetX+half, offsetY, half, depth+1); //top right
+			q3 = new InnerQuadTree(xm, ym, x2, y2, bmap, offsetX+half, offsetY+half, half, depth+1); //bottom right
+			q4 = new InnerQuadTree(x1, ym, xm, y2, bmap, offsetX, offsetY+half, half, depth+1); //bottom left
 			size = q1->size + q2->size + q3->size + q4->size + 1;
 		}
 	}
@@ -131,7 +131,7 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
 		return false;
 
 	if (color == black && q.color == black) {
-		cout << bg::wkt(b1) << " - " << bg::wkt(b2) << endl;
+		//cout << bg::wkt(b1) << " - " << bg::wkt(b2) << endl;
 		return boxIntersects;
 	}
 

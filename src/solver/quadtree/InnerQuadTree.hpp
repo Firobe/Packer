@@ -35,8 +35,6 @@ private:
 private:
 	void construct(float x1, float y1, float x2, float y2, bitmap& bmap, int offsetX, int offsetY, int length);
 	InnerQuadTree(float x1, float y1, float x2, float y2, bitmap& bmap, int offsetX, int offsetY, int size, int depth);
-//test
-	InnerQuadTree() : q1(nullptr), q2(nullptr), q3(nullptr), q4(nullptr) {}
 
 	friend class QuadTree;
 

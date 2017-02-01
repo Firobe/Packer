@@ -46,13 +46,13 @@ bitmap::bitmap(const bitmap &q) {
 
 /**
  * @brief assignement operator
- * @param q
+ * @param bmap
  * @return the bitmap copied
  */
-bitmap &bitmap::operator=(const bitmap &q) {
-	if (this != &q) {
+bitmap &bitmap::operator=(const bitmap &bmap) {
+	if (this != &bmap) {
 		this->~bitmap();
-		copy(q);
+		copy(bmap);
 	}
 	return *this;
 }

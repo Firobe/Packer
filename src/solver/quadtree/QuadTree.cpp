@@ -13,6 +13,10 @@
 
 using namespace std;
 
+/**
+ * @brief QuadTree::copy copy the content of q into this
+ * @param q
+ */
 void QuadTree::copy(const QuadTree &q) {
 	tree = new InnerQuadTree(*q.tree);
 	bmap = new bitmap(*q.bmap);
@@ -22,10 +26,19 @@ void QuadTree::copy(const QuadTree &q) {
 	_maxDepth=q._maxDepth;
 }
 
+/**
+ * @brief copy constructor
+ * @param q
+ */
 QuadTree::QuadTree(const QuadTree &q) {
 	copy(q);
 }
 
+/**
+ * @brief assignement operator
+ * @param q
+ * @return the quadtree copied
+ */
 QuadTree &QuadTree::operator=(const QuadTree &q) {
 	if (this != &q) {
 		this->~QuadTree();
@@ -34,6 +47,9 @@ QuadTree &QuadTree::operator=(const QuadTree &q) {
 	return *this;
 }
 
+/**
+ * @brief destructor
+ */
 QuadTree::~QuadTree() {
 	if (tree != nullptr) delete tree;
 	tree = nullptr;
@@ -41,11 +57,31 @@ QuadTree::~QuadTree() {
 	bmap = nullptr;
 }
 
+/**
+ * @brief Constructor for Shapes, it just call the MultiPolygon constructor with the Shape's MultiPolygon
+ * @param s shape that will be used for the construction
+ * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
+   than precision can be detected by the quadtree
+ * @param offsetX is optional and allow to translate the initial X position of the QuadTree
+ * @param offsetY is optional and allow to translate the initial Y position of the QuadTree
+ * @param angle is optional and allow to rotate the initial angle of the QuadTree
+ */
 QuadTree::QuadTree(Shape &s, float precision, float offsetX, float offsetY, float angle) :
 	QuadTree(s.getMultiP(), precision, offsetX, offsetY, angle) {
 	bmap->saveMap(s.getID());
 }
 
+
+/**
+ * @brief QuadTree::QuadTree is the main constructor of the QuadTree, it will create a bitmap according to the
+   desired precision and will use it in order to generate a region QuadTree that represent the given MultiPolygon
+ * @param mult is the MultiPolygon that will be transformed into a QuadTree
+ * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
+   than precision can be detected by the quadtree
+ * @param offsetX is optional and allow to translate the initial X position of the QuadTree
+ * @param offsetY is optional and allow to translate the initial Y position of the QuadTree
+ * @param angle is optional and allow to rotate the initial angle of the QuadTree
+ */
 QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float offsetY, float angle) :
 	tree(nullptr), _offsetX(offsetX), _offsetY(offsetY), _angle(angle){
 
@@ -87,16 +123,30 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
 
 }
 
+/**
+ * @brief QuadTree::intersects detect if two QuadTree intersects each other
+ * @param q
+ * @return
+ */
 bool QuadTree::intersects(const QuadTree&q) const {
 	return tree->intersectsRec(*q.tree, _offsetX, _offsetY, q._offsetX, q._offsetY);
 }
 
+/**
+ * @brief QuadTree::translater translates the QuadTree position
+ * @param x
+ * @param y
+ */
 void QuadTree::translater(float x, float y) {
 	_offsetX+=x;
 	_offsetY+=y;
 }
 
-
+/**
+ * @brief operator << get informations about the QuadTree for debugging purpose
+ * @param s
+ * @param q
+ */
 std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
 	s << "Position : (" << q._offsetX << "," << q._offsetY << ")" << std::endl;
 	s << "Angle : " << q._angle << std::endl;
@@ -105,7 +155,11 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
 	return s;
 }
 
-
+/**
+ * @brief QuadTree::saveTree save the depth QuadTree in the PGM format
+ * @param filename base name of the file, the full name will be : filename.pbm
+ * @param depth
+ */
 void QuadTree::saveTree(std::string filename, int depth) {
 	int size = pow(2, depth);
 
@@ -136,32 +190,13 @@ void QuadTree::saveTree(std::string filename, int depth) {
 	file.close();
 }
 
+/**
+ * @brief QuadTree::saveTree save the any QuadTree's depth in the PGM format
+ * @param filename base name of the file, the full name will be : filename-depth.pbm
+ */
 void QuadTree::saveTree(std::string filename) {
 	cout << _maxDepth << endl;
 	for (int i=0; i<=_maxDepth; i++){
 		saveTree(filename + "-" + std::to_string(i), i);
 	}
-}
-
-
-QuadTree::QuadTree(int) {
-	_maxDepth = 2;
-	tree = new InnerQuadTree();
-	tree->color = grey;
-	tree->q1 = new InnerQuadTree();
-	tree->q1->color = grey;
-	tree->q1->q1 = new InnerQuadTree();
-	tree->q1->q1->color = grey;
-	tree->q1->q2 = new InnerQuadTree();
-	tree->q1->q2->color = black;
-	tree->q1->q3 = new InnerQuadTree();
-	tree->q1->q3->color = grey;
-	tree->q1->q4 = new InnerQuadTree();
-	tree->q1->q4->color = white;
-	tree->q2 = new InnerQuadTree();
-	tree->q2->color = black;
-	tree->q3 = new InnerQuadTree();
-	tree->q3->color = white;
-	tree->q4 = new InnerQuadTree();
-	tree->q4->color = grey;
 }
