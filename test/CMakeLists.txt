@@ -21,3 +21,7 @@ target_link_libraries(compare packer_lib)
 
 add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree packer_lib)
+
+add_executable(rotos rotosTest.cpp)
+target_link_libraries(rotos packer_lib)
+add_test(RotosTest rotos)

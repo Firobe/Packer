@@ -9,7 +9,7 @@
 #include "Log.hpp"
 
 #define MOCHE_EPSILON 10e-10 //Precision on the norm dichotomy (and c/d)
-#define DEGREE_EPSILON 10e-2 //Precision to approximate cubic or quadratic polynomial to quadratic or linear
+#define DEGREE_EPSILON 10e-4 //Precision to approximate cubic or quadratic polynomial to quadratic or linear
 using namespace std;
 
 /**
@@ -21,7 +21,7 @@ vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d
     //It's Maths all over again
     vector<complex<double>> roots;
 
-    if (abs(a) < DEGREE_EPSILON * max(abs(b),
+    if (abs(a) <= DEGREE_EPSILON * max(abs(b),
                                       abs(c))) { //If a is negligible before b and c, a = 0
         if (abs(b) < DEGREE_EPSILON * abs(c)) { //Idem for b before c
             if (abs(c) < MOCHE_EPSILON) { //If c is really small, approximate to constant (c = 0)
