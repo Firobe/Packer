@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/geometry/algorithms/buffer.hpp>
 #include <boost/geometry/algorithms/area.hpp>
@@ -47,6 +48,8 @@ array<double, 6> Shape::getTransMatrix() const {
     //Normalize vectors (x1, y1), (x2, y2)
     n1 = bg::distance(_oldP1, _oldP2);
     n2 = bg::distance(newP1, newP2);
+	if( !floatEqual(n1, n2, 10e-6))
+		throw runtime_error("Point order was modified or the shape was scaled");
     x1 = (_oldP2.x() - _oldP1.x()) / n1;
     y1 = (_oldP2.y() - _oldP1.y()) / n1;
     x2 = (newP2.x() - newP1.x()) / n2;

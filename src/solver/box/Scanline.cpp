@@ -7,14 +7,16 @@
 #include "Log.hpp"
 #include "common.hpp"
 
-#define PRECISION 10e-5
+#define PRECISION 10e-3
 
 using namespace std;
 
 void Scanline::preSolve() {
+	/*
     for (unsigned i = 0; i < _shapes.size(); ++i) {
         rotateToBestAngle(_shapes[i]);
     }
+    */
 
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 

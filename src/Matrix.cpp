@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <iostream>
+
 #include "Matrix.hpp"
 
 #define MAT_TERM(x, y) lhs[x] * rhs[y]
@@ -46,7 +49,7 @@ Point Matrix::operator()(const Point& p) const {
  * cout << matrix;
  */
 std::ostream& operator<<(std::ostream& os, const Matrix& m) {
-    os << "matrix(" << m[0];
+    os << "matrix(" << std::setprecision(9) << m[0];
 
     for (int i = 1 ; i < 6 ; ++i) {
         os << ", " << m[i];
