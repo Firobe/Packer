@@ -76,8 +76,7 @@ std::ostream& operator<<(std::ostream& os, const Point& p);
  * Avoid default epsilon
  */
 template<typename T>
-static bool floatEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
-{
+static bool floatEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon()) {
     T diff = std::fabs(a - b);
     return diff <= epsilon or diff < std::fmax(std::fabs(a), std::fabs(b)) * epsilon;
 }
@@ -87,8 +86,7 @@ static bool floatEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
  * Avoid default epsilon
  */
 template<typename T>
-static bool floatZero(T a, T epsilon = std::numeric_limits<T>::epsilon())
-{
+static bool floatZero(T a, T epsilon = std::numeric_limits<T>::epsilon()) {
     return std::fabs(a) <= epsilon;
 }
 

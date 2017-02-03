@@ -81,8 +81,8 @@ public:
 
     Parser(std::vector<std::string>& i, Point& d) :
         _ids(i), _groupStack(-1), _docDim(d),
-        _currentMatrix(1, 0, 0, 1, 0, 0)
-    {}
+        _currentMatrix(1, 0, 0, 1, 0, 0) {
+    }
     std::vector<Shape> getShapes() {
         return _shapes;
     }

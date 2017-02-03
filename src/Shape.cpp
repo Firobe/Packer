@@ -48,8 +48,11 @@ array<double, 6> Shape::getTransMatrix() const {
     //Normalize vectors (x1, y1), (x2, y2)
     n1 = bg::distance(_oldP1, _oldP2);
     n2 = bg::distance(newP1, newP2);
-	if( !floatEqual(n1, n2, 10e-6))
-		throw runtime_error("Point order was modified or the shape was scaled");
+
+    if (!floatEqual(n1, n2, 10e-6)) {
+        throw runtime_error("Point order was modified or the shape was scaled");
+    }
+
     x1 = (_oldP2.x() - _oldP1.x()) / n1;
     y1 = (_oldP2.y() - _oldP1.y()) / n1;
     x2 = (newP2.x() - newP1.x()) / n2;
@@ -123,14 +126,15 @@ void Shape::fillShape(vector<Ring>& rings) {
  */
 void Shape::bufferize(double buffer) {
     /*
-	 * Buffering at least the interpolation maximal deviation
+     * Buffering at least the interpolation maximal deviation
      * With this we guarantee that there is NO intersection between shapes (or at least it should)
-	 * due to the interpolation error.
-	 */
+     * due to the interpolation error.
+     */
     buffer += BEZIER_TOLERANCE;
     // Declare strategies
     static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
-    static bg::strategy::buffer::join_miter join_strategy(2.); //Points will be located to at most 2 * buffer
+    static bg::strategy::buffer::join_miter join_strategy(
+        2.); //Points will be located to at most 2 * buffer
     static bg::strategy::buffer::end_flat end_strategy;
     static bg::strategy::buffer::point_square circle_strategy;
     static bg::strategy::buffer::side_straight side_strategy;

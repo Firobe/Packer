@@ -19,12 +19,12 @@ int main(int argc, char** argv) {
     po::options_description
     desc("Packer usage : ./packer [options] input-file\nAllowed options ");
     desc.add_options()
-    ("help,H", "produce help message")
-    ("input-file,I", po::value<string>()->required(), "input file path")
-    ("dup,D", po::value<bool>()->default_value(false),
+    ("help,h", "produce help message")
+    ("input-file,f", po::value<string>()->required(), "input file path")
+    ("dup,d", po::value<bool>()->default_value(false),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width,w", po::value<int>()->default_value(0), "width of the packing space (px)")
-    ("height,h", po::value<int>()->default_value(0), "height of the packing space (px)")
+    ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
+    ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)");

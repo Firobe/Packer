@@ -22,7 +22,7 @@ vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d
     vector<complex<double>> roots;
 
     if (abs(a) <= DEGREE_EPSILON * max(abs(b),
-                                      abs(c))) { //If a is negligible before b and c, a = 0
+                                       abs(c))) { //If a is negligible before b and c, a = 0
         if (abs(b) < DEGREE_EPSILON * abs(c)) { //Idem for b before c
             if (abs(c) < MOCHE_EPSILON) { //If c is really small, approximate to constant (c = 0)
                 if (abs(d) < MOCHE_EPSILON) //If our polynomial is 0 = 0, return an arbitrary real root

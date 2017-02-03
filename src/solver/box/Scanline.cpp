@@ -12,12 +12,11 @@
 using namespace std;
 
 void Scanline::preSolve() {
-	/*
+    /*
     for (unsigned i = 0; i < _shapes.size(); ++i) {
         rotateToBestAngle(_shapes[i]);
     }
     */
-
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
@@ -78,7 +77,7 @@ void Scanline::solveBin() {
                         // == Division ==
                         if (lastW > PRECISION &&
                                 cellW[lastX] - lastW > PRECISION) { // If it perfectly fits, no need for division
-							lastW += PRECISION;
+                            lastW += PRECISION;
                             cellIsEmpty.insert(cellIsEmpty.begin() + lastX + 1,
                                                cellIsEmpty[lastX]); // Column copy (with new column same as old)
                             cellW.insert(cellW.begin() + lastX + 1, cellW[lastX] - lastW);   //
@@ -86,7 +85,8 @@ void Scanline::solveBin() {
                         }
 
                         if (lastH > PRECISION && cellH[lastY] - lastH > PRECISION) {
-							lastH += PRECISION;
+                            lastH += PRECISION;
+
                             for (unsigned j = 0; j < cellIsEmpty.size(); j++) {
                                 cellIsEmpty[j].insert(cellIsEmpty[j].begin() + lastY + 1, cellIsEmpty[j][lastY]);
                             }
