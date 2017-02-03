@@ -23,7 +23,7 @@ public:
     }
   }
   void merge(std::vector<std::vector<int> > shapesToMerge);
-
+  void reset();
 
 };
 

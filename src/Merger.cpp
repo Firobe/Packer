@@ -18,3 +18,18 @@ void Merger::merge(std::vector<std::vector<int> > shapesToMerge) {
       _shapesMerged.erase(_shapesMerged.begin()+shapesToPop[i]-i);
     }
   }
+
+void Merger::reset(){
+  std::vector<int> nbElem(_shapesInfos.size());
+  for(auto& s : _shapesInfos) s.getMultiP().resize(_shapesInfos.size());
+  for(unsigned i = 0; i < _shapes.size(); ++i){
+    for(unsigned j = 1; j < _shapesMerged[i].size(); ++j){
+      _shapesInfos[_shapesMerged[i][j]].getMultiP()[nbElem[_shapesMerged[i][j]]++] 
+	= _shapes[i].getMultiP()[j];
+    }
+  }
+  for(unsigned i = 0; i < nbElem.size(); ++i)
+    _shapesInfos[i].getMultiP().resize(nbElem[i]);
+  _shapes.clear();
+  for(auto& s : _shapesInfos) _shapes.push_back(s);
+}

@@ -8,6 +8,8 @@
 #include "solver/box/Scanline.hpp"
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
+#include "Merger.hpp"
+#include "SimpleTransformer.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -87,17 +89,24 @@ int main(int argc, char** argv) {
         (!vm.count("height") ||
          vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
 
+    //Prepacking the shapes
+    Merger merger(shapes);
+    SimpleTransformer trans(shapes);
+    merger.merge(trans.transform());
+    // merger.merge(trans.transform());
+    
+
     //Packing the shapes
     Scanline solver(shapes, packerDim);
     solver.solve();
 
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
-    //cout << solver.debugOutputSVG();
+    cout << solver.debugOutputSVG();
 
     //Producing the output (sending input file and the option to duplicate
-    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                 docDim.y(), packerDim.y(), shapes);
+    //Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+    //       docDim.y(), packerDim.y(), shapes);
 
     return EXIT_SUCCESS;
 }

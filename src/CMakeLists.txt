@@ -9,5 +9,6 @@ add_library(packer_lib STATIC
   solver/box/Scanline.cpp
   Splitter.cpp
   Merger.cpp
+  common.cpp
   SimpleTransformer.cpp
   )
