@@ -1,14 +1,21 @@
 #include "SimpleTransformer.hpp"
 #include "common.hpp"
 
-SimpleTransformer::transform() {
+#include <boost/geometry/algorithms/buffer.hpp>
+#include <boost/geometry/algorithms/area.hpp>
+#include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
+#include <boost/geometry/algorithms/covered_by.hpp>
+#include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
+#include <boost/geometry/strategies/agnostic/relate.hpp>
+
+std::vector<std::vector<int> > SimpleTransformer::transform() {
     std::vector<std::vector<int> > ret;
     for(int i = 0 ; i < _shapes.size() ; i+=2) {
       double bestAlpha, bestBeta, bestMid; // best rotations
       int bestUngh; // best translation (see PPAP for further information)
       float bestArea; // best area of merged couples of shapes
       if (i+1 < _shapes.size()) { // odd case
-	ret.emplace_back({i,i+1}); // _shapes update
+	ret.push_back({i,i+1}); // _shapes update
 	// move shapes
 	double alpha, beta;
 	Shape shapeA, shapeB;
@@ -16,8 +23,8 @@ SimpleTransformer::transform() {
 	Box boxA, boxB, boxMerge; //boxMerge est la bounding box resultant du merge
 	shapeA = _shapes[i];
 	shapeB = _shapes[i+1];
-	envelope(shapeA.getMultiP(),boxA);
-	envelope(shapeB.getMultiP(),boxB);
+	bg::envelope(shapeA.getMultiP(),boxA);
+	bg::envelope(shapeB.getMultiP(),boxB);
 	bestArea = area(boxA)+area(boxB);
 	bestAlpha = 0.;
 	bestBeta = 0.;
@@ -28,10 +35,10 @@ SimpleTransformer::transform() {
 
 	    rotate<Shape>(shapeA,alpha);
 	    rotate<Shape>(shapeB,beta);
-	    centroid(shapeA,ptA); // calcule le centre de gravite de shapeA (dans ptA)
+	    bg::centroid(shapeA,ptA); // calcule le centre de gravite de shapeA (dans ptA)
 	    translate<Shape>(shapeA,-ptA.x(),-ptA.y()); // ramène shapeA à l'origine
-	    envelope(shapeA.getMultiP(),boxA);
-	    envelope(shapeB.getMultiP(),boxB);
+	    bg::envelope(shapeA.getMultiP(),boxA);
+	    bg::envelope(shapeB.getMultiP(),boxB);
 	    translate<Shape>(shapeB,-boxB.minCorner().x()+boxA.maxCorner().x(),-boxB.minCorner().y()); // Coller les box au depart
 	    for(int ungh = 0, ungh < TRANSLATESTEPS ; ++ungh) {
 	      float x1, x2, mid;
@@ -52,8 +59,8 @@ SimpleTransformer::transform() {
 	      multiP doubleP;
 	      Box doubleBox;
 	      doubleP.resize(2);
-	      fusionMultiPs(doubleP,shapeA.getMultiP(),shapeB.getMultiP()); //NIY
-	      envelope(doubleP,doubleBox);
+	      mergeMultiP(doubleP,shapeA.getMultiP(),shapeB.getMultiP()); 
+	      bg::envelope(doubleP,doubleBox);
 	      double doubleArea = area(doubleBox);
 	      if (doubleArea < bestArea) {
 		bestArea = doubleArea;
@@ -68,9 +75,9 @@ SimpleTransformer::transform() {
 	}
 	rotate<Shape>(_shapes[i],bestAlpha);
 	rotate<Shape>(_shapes[i+1],bestBeta);
-	centroid(_shapes[i],ptA);
-	envelope(_shapes[i].getMultiP(),boxA);
-	envelope(_shapes[i+1].getMultiP(),boxB);
+	bg::centroid(_shapes[i],ptA);
+	bg::envelope(_shapes[i].getMultiP(),boxA);
+	bg::envelope(_shapes[i+1].getMultiP(),boxB);
 	translate(_shapes[i],-ptA.x(),-ptA.y());
 	translate(_shapes[i+1],-boxB.minCorner().x()+bestMid,-boxB.minCorner.y()-((boxB.minCorner.y()-boxB.maxCorner.y())*((float) bestUngh))/((float) TRANSLATESTEPS));
       }
