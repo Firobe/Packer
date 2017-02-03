@@ -30,13 +30,14 @@ private:
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
     void setOld();
 public:
-  Shape(){}
+    Shape() {}
     Shape(std::vector<Ring>& r, std::string id) : _id(id), _out() {
         fillShape(r);
     }
 
-  Shape(Point P1, Point P2, unsigned i1, unsigned i2, std::string id) : _oldP1(P1), _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {} 
-  
+    Shape(Point P1, Point P2, unsigned i1, unsigned i2, std::string id) : _oldP1(P1),
+        _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
+
     std::string getID() const {
         return _id;
     }
@@ -55,11 +56,19 @@ public:
         return _out;
     }
 
-  Point getOldP1(){return _oldP1;}
-  Point getOldP2(){return _oldP2;}
-  unsigned getIndexP1(){return _indexP1;}
-  unsigned getIndexP2(){return _indexP2;}
-  
+    Point getOldP1() {
+        return _oldP1;
+    }
+    Point getOldP2() {
+        return _oldP2;
+    }
+    unsigned getIndexP1() {
+        return _indexP1;
+    }
+    unsigned getIndexP2() {
+        return _indexP2;
+    }
+
 
 
 };

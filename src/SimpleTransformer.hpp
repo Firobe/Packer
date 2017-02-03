@@ -3,14 +3,16 @@
 
 #include "Transformer.hpp"
 
-#define ROTATESTEP 45. // pas de rotation des shapes
-#define TRANSLATESTEPS 8 // nombre de pas lors de la translation (emboitement)
+#define ROTATESTEP 20. // pas de rotation des shapes
+#define TRANSLATESTEPS 15 // nombre de pas lors de la translation (emboitement)
 #define EPSEMBOITEMENT 1. // precision d'emboitement a tant de pixels pres
 
-class SimpleTransformer : Transformer{
+class SimpleTransformer : Transformer {
 public:
-  SimpleTransformer(std::vector<Shape>& s) : Transformer(s) {}
-  std::vector<std::vector<int> > transform();
+    SimpleTransformer(std::vector<Shape>& s) : Transformer(s) {}
+    std::vector<std::vector<int> > transform();
 };
 
+void bloubla(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box& boxA,
+             Box& boxB, double mid, bool midmid);
 #endif

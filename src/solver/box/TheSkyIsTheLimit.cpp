@@ -29,9 +29,9 @@ void TheSkyIsTheLimit::solveBin() {
         }
     }
 
-
     double currY = _binNumber * _dimensions.y(), currX = 0, offset;
-    offset = _boxes[0].max_corner().y() - _boxes[0].min_corner().y(); //height of the working line
+    offset = _boxes[0].max_corner().y() -
+             _boxes[0].min_corner().y(); //height of the working line
 
     for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end() ; ++i) {
         if (currX + _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x() > _dimensions.x()) {
@@ -48,7 +48,7 @@ void TheSkyIsTheLimit::solveBin() {
             }
         }
 
-        translate<Shape>(_shapes[*i], currX - _boxes[*i].min_corner().x() ,
+        translate<Shape>(_shapes[*i], currX - _boxes[*i].min_corner().x(),
                          currY - _boxes[*i].min_corner().y());
         translate<Box>(_boxes[*i], currX - _boxes[*i].min_corner().x(),
                        currY - _boxes[*i].min_corner().y());

@@ -53,6 +53,6 @@ void translate(T& object, double x, double y) {
     object = r;
 }
 
-void mergeMultiP(MultiPolygon &ret, const MultiPolygon &A, const MultiPolygon &B);
+void mergeMultiP(MultiPolygon& A, const MultiPolygon& B);
 
 #endif
