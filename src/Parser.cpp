@@ -8,15 +8,17 @@
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 #include <boost/geometry/algorithms/correct.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/algorithms/length.hpp>
 
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Rotos.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
-#define BEZIER_STEP 0.01 //Precision of bezier interpolation
 
 /**
  * Fills shapes with the different interpolated
@@ -69,6 +71,45 @@ void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) 
 }
 
 /**
+ * Computes the middle of the [p1 p2] segment
+ */
+Point middlePoint(Point& p1, Point& p2) {
+    Point r(p1);
+    bg::add_point(r, p2);
+    bg::divide_value(r, 2.);
+    return r;
+}
+
+/**
+ * Returns a sufficiently accurate interpolation of a Bezier curve
+ * defined by p1 p4 its anchor points and p2 p3 its control points,
+ * using a recursive algorithm (Casteljau)
+ */
+vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
+    //Computing points defining subdivised curves
+    //Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
+    Point p12(middlePoint(p1, p2));
+    Point p23(middlePoint(p2, p3));
+    Point p34(middlePoint(p3, p4));
+    Point p123(middlePoint(p12, p23));
+    Point p234(middlePoint(p23, p34));
+    Point p1234(middlePoint(p123, p234));
+    //Estimating the flatness of our current curve
+    double interpolatedX, interpolatedY;
+    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
+                              interpolatedX, interpolatedY);
+
+    if (norm < BEZIER_TOLERANCE) { //If our curve is flat enough
+        return {Point(interpolatedX, interpolatedY)};
+        //We pick the extremum returned by rotos
+    }
+    else {
+        //If not flat enough, continue subdivision and concatenate vectors
+        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    }
+}
+
+/**
  * Draws a cubic Bézier curbe from the current point to (x, y)
  * using (x1, y1) as the control point at the beginning of the
  * curbe and (x2, y2) as the control point at the end of the curve.
@@ -79,16 +120,10 @@ void Parser::path_cubic_bezier_to(
     double x2, double y2,
     double x, double y,
     svgpp::tag::coordinate::absolute) {
-    Point p0 = _points.back();
-
-    for (double t = BEZIER_STEP ; t <= 1 ; t += BEZIER_STEP) {
-        double nx = p0.x() * (1 - t) * (1 - t) * (1 - t) + 3 * x1 * t * (1 - t) * (1 - t) +
-                    3 * x2 * t * t * (1 - t) + x * t * t * t;
-        double ny = p0.y() * (1 - t) * (1 - t) * (1 - t) + 3 * y1 * t * (1 - t) * (1 - t) +
-                    3 * y2 * t * t * (1 - t) + y * t * t * t;
-        _points.emplace_back(nx, ny);
-    }
-
+    Point p1(x1, y1), p2(x2, y2), p3(x, y);
+    vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3);
+    _points.reserve(_points.size() + interpolated.size());
+    _points.insert(_points.end(), interpolated.begin(), interpolated.end());
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
                x2 << "," << y2 << ") ; (" << x << "," << y << ")" << endl;
 }
@@ -110,6 +145,7 @@ void Parser::path_exit() {
     //This should probably send all the accumulated points to a new Shape
     //and add it to the shape vector.
     LOG(trace) << "Path exit (" << _groupStack << ")\n";
+    _toApply++;
     _rings.emplace_back(_points.begin(), _points.end());
     //Reverse the points if the ring has the wrong orientation and
     //close the ring if it isn't.
@@ -121,18 +157,11 @@ void Parser::path_exit() {
  */
 void Parser::on_enter_element(svgpp::tag::element::g) {
     LOG(debug) << "Element enter (group)" << endl;
-    //Pushing identity
-    _matStack.push(_matStack.top());
 
     //i need to be signed because of the loop test
     for (int i = _rings.size() - 1 ; i >= 0 ; --i) {
         //Iterate through the parsed rings (in reverse order to match the stack)
         LOG(debug) << "Flushing rings..." << endl;
-
-        for (auto && p : _rings[i]) {
-            p = _matStack.top()(p);
-        }
-
         vector<Ring> tmp {_rings[i]};
 
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
@@ -152,9 +181,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
  * Beginning of a new shape (or unknown element)
  */
 void Parser::on_enter_element(svgpp::tag::element::any) {
-    //Pushing identity
-    _matStack.push(_matStack.top());
     LOG(debug) << "Element enter (" << _groupStack << ")\n";
+    _currentMatrix = Matrix(1, 0, 0, 1, 0, 0);
 
     if (_groupStack >= 0) {
         _groupStack++;
@@ -176,15 +204,19 @@ void Parser::on_exit_element() {
         }
     }
 
+    //Apply current matrix to recently generated points
+    for (int i = (int)_rings.size() - 1 ; (unsigned)i >= _rings.size() - _toApply &&
+            i >= 0; --i)
+        for (auto && p : _rings[i]) {
+            p = _currentMatrix(p);
+        }
+
+    _toApply = 0;
+
     if (_groupStack <= 0 && !_rings.empty()) {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
-            for (auto && points : _rings)
-                for (auto && p : points) {
-                    p = _matStack.top()(p);
-                }
-
             _shapes.emplace_back(_rings, _idStack.top());
         }
 
@@ -193,13 +225,6 @@ void Parser::on_exit_element() {
     }
 
     _groupStack--;
-    Matrix tmp = _matStack.top();
-    _matStack.pop();
-
-    if (tmp != _matStack.top()) {
-        LOG(debug) << "Popped a real transformation matrix : " << tmp << endl;
-        _matStack.pop();
-    }
 }
 
 /**
@@ -253,7 +278,6 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
  * Parse the current transform matrix.
  */
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
-    _matStack.append(Matrix(matrix));
-    LOG(debug) << "New transformation state : " << _matStack.top() << " (stack size : ";
-    LOG(debug) << _matStack.size() << ")"	<< endl;
+    _currentMatrix = Matrix(matrix);
+    LOG(debug) << "New transformation state : " << _currentMatrix << " (stack size : ";
 }

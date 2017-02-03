@@ -6,6 +6,7 @@
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/strategies/agnostic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/agnostic/relate.hpp>
+#include <boost/geometry/algorithms/convex_hull.hpp> 
 #include <boost/geometry/geometry.hpp>
 
 #include "common.hpp"
@@ -25,24 +26,20 @@ vector<vector<int> > SimpleTransformer::transform() {
 
         if (i + 1 < static_cast<int>(_shapes.size())) { // odd case
             //Move shapes
-            double alpha, beta;
             bool merged = false;
-            Shape shapeA, shapeB;
             //boxMerge est la bounding box resultant du merge
-            Box boxA, boxB, boxMerge;
-            shapeA = _shapes[i];
-            shapeB = _shapes[i + 1];
-            bg::envelope(shapeA.getMultiP(), boxA);
-            bg::envelope(shapeB.getMultiP(), boxB);
-            bestArea = bg::area(boxA) + bg::area(boxB);
+            bestArea = 0.;
             bestAlpha = 0.;
             bestBeta = 0.;
             bestOffset = 0.;
 
-            for (alpha = 0.; alpha < 360.; alpha += ROTATESTEP) {
+#pragma omp parallel for schedule(dynamic, 1)
+            for (int alpha = 0; alpha < 360; alpha += ROTATESTEP) {
+				Shape shapeA, shapeB;
+				Box boxA, boxB, boxMerge;
                 LOG(info) << "alpha " << alpha << endl;
 
-                for (beta = 0.; beta < 360.; beta += ROTATESTEP) {
+                for (double beta = 0.; beta < 360.; beta += ROTATESTEP) {
                     for (unsigned offset = 0; offset < TRANSLATESTEPS ; ++offset) {
                         shapeA = _shapes[i];
                         shapeB = _shapes[i + 1];
@@ -66,14 +63,16 @@ vector<vector<int> > SimpleTransformer::transform() {
                             }
                         }
 
-                        Box doubleBox;
-                        mergeMultiP(shapeA.getMultiP(), shapeB.getMultiP());
-                        bg::envelope(shapeA.getMultiP(), doubleBox);
-                        double doubleArea = bg::area(doubleBox);
+						Polygon hullA, hullB;
+						MultiPolygon inter;
+						bg::convex_hull(shapeA.getMultiP(), hullA);
+						bg::convex_hull(shapeB.getMultiP(), hullB);
+						bg::intersection(hullA, hullB, inter);
+						double ratio = bg::area(inter);
 
-                        if (doubleArea < bestArea) {
+                        if (ratio > bestArea) {
                             merged = true;
-                            bestArea = doubleArea;
+                            bestArea = ratio;
                             bestAlpha = alpha;
                             bestBeta = beta;
                             bestOffset = offset;
@@ -83,12 +82,12 @@ vector<vector<int> > SimpleTransformer::transform() {
                 }
             }
 
+			Box boxA, boxB, boxMerge;
             if (merged) {
-				cerr << "bestAlpha " << bestAlpha << " bestBeta " << bestBeta << " bestOffset " << bestOffset << " bestMid " << bestMid << endl;
+                cerr << "bestAlpha " << bestAlpha << " bestBeta " << bestBeta << " bestOffset " <<
+                     bestOffset << " bestMid " << bestMid << endl;
                 ret.push_back({i, i + 1}); // _shapes update
-                bloubla(_shapes[i], _shapes[i + 1], bestAlpha, bestBeta, bestOffset, boxA, boxB, bestMid,
-                        false);
-				cerr << "couille " << boxA.max_corner().x() << endl;
+                bloubla(_shapes[i], _shapes[i + 1], bestAlpha, bestBeta, bestOffset, boxA, boxB, bestMid);
             }
             else {
                 ret.push_back({i});
@@ -110,13 +109,13 @@ void bloubla(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box
     rotate(a, alpha);
     rotate(b, beta);
     bg::centroid(a.getMultiP(), ptA);
+    translate(a, -ptA.x(), -ptA.y());
     bg::envelope(a.getMultiP(), boxA);
     bg::envelope(b.getMultiP(), boxB);
     double length = abs(boxA.max_corner().y() - boxA.min_corner().y()) +
                     abs(boxB.max_corner().y() - boxB.min_corner().y());
-    translate(a, -ptA.x(), -ptA.y());
     translate(b,
-              -boxB.min_corner().x() + (midmid ? boxA.max_corner().x() : mid),
+              -boxB.min_corner().x() + (midmid ? boxA.max_corner().x() : mid) + (1 - midmid) * EPSEMBOITEMENT,
               -boxA.max_corner().y() -
               length *
               (static_cast<double>(offset) / static_cast<double>(TRANSLATESTEPS)));

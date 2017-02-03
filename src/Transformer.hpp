@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Shape.hpp"
+#include "Merger.hpp"
 
 class Transformer {
 protected:

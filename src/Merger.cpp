@@ -49,3 +49,9 @@ void Merger::reset() {
         _shapes.push_back(s);
     }
 }
+
+void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
+    for (auto& b : B) {
+        A.push_back(b);
+    }
+}

@@ -28,7 +28,8 @@ public:
     }
     void merge(std::vector<std::vector<int> > shapesToMerge);
     void reset();
-
 };
+
+void mergeMultiP(MultiPolygon& A, const MultiPolygon& B);
 
 #endif

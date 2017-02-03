@@ -21,14 +21,15 @@ int main(int argc, char** argv) {
     po::options_description
     desc("Packer usage : ./packer [options] input-file\nAllowed options ");
     desc.add_options()
-    ("help,H", "produce help message")
-    ("input-file,I", po::value<string>()->required(), "input file path")
-    ("dup", po::value<bool>()->required(),
+    ("help,h", "produce help message")
+    ("input-file,f", po::value<string>()->required(), "input file path")
+    ("dup,d", po::value<bool>()->default_value(false),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width,w", po::value<int>(), "width of the packing space (px)")
-    ("height,h", po::value<int>(), "height of the packing space (px)")
+    ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
+    ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
-    ("buffer", po::value<int>(), "minimal distance between packed items (px)");
+    ("buffer", po::value<double>()->default_value(0.),
+     "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
     po::positional_options_description p; //Used to indicate input file without --input-file
     p.add("input-file", -1);
@@ -74,27 +75,26 @@ int main(int argc, char** argv) {
         toPack.push_back(s.getID());
     }
 
-    //If there is a buffer distance specified
-    if (vm.count("buffer") && vm["buffer"].as<int>() > 0) {
-        LOG(info) << "Buffering shapes..." << endl;
+    //Apply a buffer to the shapes
+    LOG(info) << "Buffering shapes..." << endl;
 
-        for (auto && s : shapes) {
-            s.bufferize(vm["buffer"].as<int>());
-        }
+    for (auto && s : shapes) {
+        s.bufferize(vm["buffer"].as<double>());
     }
 
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
-        (!vm.count("width") || vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
-        (!vm.count("height") ||
-         vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+        (vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
+        (vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
     //Prepacking the shapes
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
     merger.merge(trans.transform());
-    // merger.merge(trans.transform());
-    //Packing the shapes
-    Scanline solver(shapes, packerDim);
+    merger.merge(trans.transform());
+    merger.merge(trans.transform());
+    merger.merge(trans.transform());
+    //
+    Solver solver(shapes, packerDim);
     solver.solve();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;

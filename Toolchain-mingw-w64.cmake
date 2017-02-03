@@ -3,7 +3,7 @@ SET(CMAKE_SYSTEM_NAME Windows)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
-set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS  "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -s")
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS  "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -s ")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -s")
 
 # which compilers to use for C and C++

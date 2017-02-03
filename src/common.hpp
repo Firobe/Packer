@@ -4,12 +4,12 @@
 #include <algorithm>
 #include <vector>
 
+#include <boost/geometry/arithmetic/arithmetic.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
-
-#define PRECISION 1.0e-2
+#include <boost/geometry/io/wkt/write.hpp>
 
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>; //Defines the Point type
@@ -53,6 +53,41 @@ void translate(T& object, double x, double y) {
     object = r;
 }
 
-void mergeMultiP(MultiPolygon& A, const MultiPolygon& B);
+/**
+ * Concatenate two vectors
+ */
+template <typename T>
+std::vector<T> operator+(const std::vector<T>& A, const std::vector<T>& B) {
+    std::vector<T> AB;
+    AB.reserve(A.size() + B.size());
+    AB.insert(AB.end(), A.begin(), A.end());
+    AB.insert(AB.end(), B.begin(), B.end());
+    return AB;
+}
+
+/**
+ * Stream operator for Boost Geometries
+ */
+std::ostream& operator<<(std::ostream& os, const Point& p);
+
+/**
+ * Relative comparison between floating point numbers
+ * DO NOT USE for comparing with ZERO
+ * Avoid default epsilon
+ */
+template<typename T>
+static bool floatEqual(T a, T b, T epsilon = std::numeric_limits<T>::epsilon()) {
+    T diff = std::fabs(a - b);
+    return diff <= epsilon or diff < std::fmax(std::fabs(a), std::fabs(b)) * epsilon;
+}
+
+/**
+ * Absolute comparison between a floating point number and zero
+ * Avoid default epsilon
+ */
+template<typename T>
+static bool floatZero(T a, T epsilon = std::numeric_limits<T>::epsilon()) {
+    return std::fabs(a) <= epsilon;
+}
 
 #endif

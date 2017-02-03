@@ -4,11 +4,12 @@ add_library(packer_lib STATIC
   Solver.cpp
   solver/box/ToInfinityAndBeyond.cpp
   solver/box/TheSkyIsTheLimit.cpp
+  solver/quadtree/quadTree.cpp
   Outer.cpp
   Matrix.cpp
   solver/box/Scanline.cpp
   Splitter.cpp
   Merger.cpp
-  common.cpp
+  Rotos.cpp
   SimpleTransformer.cpp
   )
