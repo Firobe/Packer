@@ -13,25 +13,34 @@
 #include "SimpleTransformer.hpp"
 #include "Log.hpp"
 
+//#define OPTIMAL
+
 using namespace std;
 
 vector<vector<int> > SimpleTransformer::transform() {
     vector<vector<int> > ret;
+	vector<bool> mergedV(_shapes.size(), false);
 
-    for (int i = 0 ; i < static_cast<int>(_shapes.size()) ; i += 2) {
+    for (int i = 0 ; i < static_cast<int>(_shapes.size()) ; ++i) {
+		if(mergedV[i]) continue;
         LOG(info) << "CURRENTLY HoffsetING i= " << i << endl;
         double bestAlpha, bestBeta, bestMid = 0; //Best rotations
         int bestOffset; //Best translation (see PPAP for further information)
         double bestArea; //Best area of merged couples of shapes
-
-        if (i + 1 < static_cast<int>(_shapes.size())) { // odd case
-            //Move shapes
-            bool merged = false;
-            //boxMerge est la bounding box resultant du merge
+		unsigned j = i + 1;
+		int bestJ = j;
             bestArea = 0.;
             bestAlpha = 0.;
             bestBeta = 0.;
             bestOffset = 0.;
+#ifdef OPTIMAL
+for(; j < _shapes.size() ; ++j)
+	if(!mergedV[j])
+#endif //OPTIMAL
+        if (j < _shapes.size()) { // odd case
+            //Move shapes
+            bool merged = false;
+            //boxMerge est la bounding box resultant du merge
 
 #pragma omp parallel for schedule(dynamic, 1)
             for (int alpha = 0; alpha < 360; alpha += ROTATESTEP) {
@@ -42,7 +51,7 @@ vector<vector<int> > SimpleTransformer::transform() {
                 for (double beta = 0.; beta < 360.; beta += ROTATESTEP) {
                     for (unsigned offset = 0; offset < TRANSLATESTEPS ; ++offset) {
                         shapeA = _shapes[i];
-                        shapeB = _shapes[i + 1];
+                        shapeB = _shapes[j];
                         bloubla(shapeA, shapeB, alpha, beta, offset, boxA, boxB, 0, true);
                         double x1, x2, mid;
                         x1 = boxA.min_corner().x();
@@ -70,35 +79,33 @@ vector<vector<int> > SimpleTransformer::transform() {
 						bg::intersection(hullA, hullB, inter);
 						double ratio = bg::area(inter);
 
-                        if (ratio > bestArea) {
+                        if (ratio > bestArea && ratio >= 0.05 * (bg::area(hullA) + bg::area(hullB))) {
                             merged = true;
                             bestArea = ratio;
                             bestAlpha = alpha;
                             bestBeta = beta;
                             bestOffset = offset;
                             bestMid = mid;
+							bestJ = j;
                         }
-                    }
-                }
-            }
+                    }//for offset
+                }//for beta
+            }//for alpha
 
 			Box boxA, boxB, boxMerge;
             if (merged) {
-                cerr << "bestAlpha " << bestAlpha << " bestBeta " << bestBeta << " bestOffset " <<
-                     bestOffset << " bestMid " << bestMid << endl;
-                ret.push_back({i, i + 1}); // _shapes update
-                bloubla(_shapes[i], _shapes[i + 1], bestAlpha, bestBeta, bestOffset, boxA, boxB, bestMid);
+				mergedV[i] = true;
+				mergedV[bestJ] = true;
+				LOG(info) << "===========================> UNGH <=====================" << endl;
+                ret.push_back({i, bestJ}); // _shapes update
+                bloubla(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB, bestMid);
             }
             else {
                 ret.push_back({i});
-                ret.push_back({i + 1});
+                //ret.push_back({bestJ});
             }
-
-            if (bg::overlaps(_shapes[i].getMultiP(), _shapes[i + 1].getMultiP())) {
-                LOG(error) << "OULA OULA OULA" << endl;
-            }
-        }
-    }
+        } //if
+    }//for i
 
     return ret;
 }

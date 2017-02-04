@@ -3,8 +3,8 @@
 
 #include "Transformer.hpp"
 
-#define ROTATESTEP 20 // pas de rotation des shapes
-#define TRANSLATESTEPS 20 // nombre de pas lors de la translation (emboitement)
+#define ROTATESTEP 30 // pas de rotation des shapes
+#define TRANSLATESTEPS 15 // nombre de pas lors de la translation (emboitement)
 #define EPSEMBOITEMENT 1. // precision d'emboitement a tant de pixels pres
 
 class SimpleTransformer : Transformer {

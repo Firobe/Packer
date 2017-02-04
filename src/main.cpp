@@ -89,12 +89,9 @@ int main(int argc, char** argv) {
     //Prepacking the shapes
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
-    merger.merge(trans.transform());
-    merger.merge(trans.transform());
-    merger.merge(trans.transform());
-    merger.merge(trans.transform());
-    //
-    Solver solver(shapes, packerDim);
+	for(int i = 0 ; i < 2 ; ++i)
+		merger.merge(trans.transform());
+    Scanline solver(shapes, packerDim);
     solver.solve();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
