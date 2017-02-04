@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
 		merger.merge(trans.transform());
     Scanline solver(shapes, packerDim);
     solver.solve();
+	//merger.reset();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     cout << solver.debugOutputSVG();

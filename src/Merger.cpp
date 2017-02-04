@@ -1,6 +1,8 @@
 #include "Merger.hpp"
 #include "common.hpp"
 
+using namespace std;
+
 void Merger::merge(std::vector<std::vector<int> > shapesToMerge) {
     std::vector<int> shapesToPop;
 
@@ -23,6 +25,12 @@ void Merger::merge(std::vector<std::vector<int> > shapesToMerge) {
         _shapes.erase(_shapes.begin() + shapesToPop[i] - i);
         _shapesMerged.erase(_shapesMerged.begin() + shapesToPop[i] - i);
     }
+	for(auto& i : _shapesMerged){
+		cerr << endl;
+		for(auto& j : i)
+			cerr << j << " ; ";
+	}
+	cerr << endl;
 }
 
 void Merger::reset() {
@@ -33,7 +41,7 @@ void Merger::reset() {
     }
 
     for (unsigned i = 0; i < _shapes.size(); ++i) {
-        for (unsigned j = 1; j < _shapesMerged[i].size(); ++j) {
+        for (unsigned j = 0; j < _shapesMerged[i].size(); ++j) {
             _shapesInfos[_shapesMerged[i][j]].getMultiP()[nbElem[_shapesMerged[i][j]]++]
                 = _shapes[i].getMultiP()[j];
         }
@@ -44,7 +52,7 @@ void Merger::reset() {
     }
 
     _shapes.clear();
-
+	cerr << "Shapesinfo size " << _shapesInfos.size() << endl;
     for (auto& s : _shapesInfos) {
         _shapes.push_back(s);
     }

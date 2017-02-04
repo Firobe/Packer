@@ -14,6 +14,7 @@
 #include "Log.hpp"
 
 //#define OPTIMAL
+#define RENTABILITY 0.05
 
 using namespace std;
 
@@ -79,7 +80,7 @@ for(; j < _shapes.size() ; ++j)
 						bg::intersection(hullA, hullB, inter);
 						double ratio = bg::area(inter);
 
-                        if (ratio > bestArea && ratio >= 0.05 * (bg::area(hullA) + bg::area(hullB))) {
+                        if (ratio > bestArea && ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))) {
                             merged = true;
                             bestArea = ratio;
                             bestAlpha = alpha;
