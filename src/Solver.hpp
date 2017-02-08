@@ -8,6 +8,7 @@
 
 #include <boost/geometry/algorithms/envelope.hpp>
 
+#include "Parser.hpp"
 #include "Shape.hpp"
 
 #define SPACE_COEF (1.2) //Spacing between bins
@@ -24,7 +25,6 @@ class Solver {
 protected:
     std::vector<Shape>& _shapes; //Shapes to be packed
     unsigned _binNumber; //Current number of bins
-    Point _dimensions; //Document dimensions
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
 
     /**
@@ -45,7 +45,7 @@ protected:
     }
 
 public:
-    Solver(std::vector<Shape>& s, Point p) : _shapes(s), _binNumber(0), _dimensions(p) {}
+    Solver(std::vector<Shape>& s) : _shapes(s), _binNumber(0) {}
     void solve();
     double compressionRatio() const;
     std::string debugOutputSVG() const;

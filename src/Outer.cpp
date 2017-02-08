@@ -13,13 +13,12 @@ using namespace std;
 using namespace rapidxml_ns;
 using XMLElement = rapidxml_ns::xml_node<>* ;  //Defines the XMLElement type
 
-Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
+Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp,
              vector<Shape>& s) :
     _shapes(s),
     _ids(tp),
     _addTo(addto),
     _svgFile(path.c_str()),
-    _height(height),
     _currentShape(-1),
     _stopPrinting(false) {
     //Opening SVG file
@@ -107,7 +106,7 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
     array<double, 6> m = _shapes[i].getTransMatrix();
 
     if (_addTo)
-        m[5] += _height;
+        m[5] += Parser::getDims().y();
 
     // string equivalent of the matrix
     stringstream s;
@@ -231,7 +230,7 @@ NodeType Outer::identNode(XMLElement node) const {
  * their out string, display them
  * in group, corresponding to the bins.
  */
-void Outer::groupShapes(double binHeight) {
+void Outer::groupShapes() {
     //Sort shapes by final height of first point
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
         return a.getMultiP()[0].outer()[0].y() <
@@ -246,12 +245,12 @@ void Outer::groupShapes(double binHeight) {
 
         //Loop on elements of a single bin
         while (i < _shapes.size() and
-                _shapes[i].getMultiP()[0].outer()[0].y() - curBottom < binHeight) {
+                _shapes[i].getMultiP()[0].outer()[0].y() - curBottom < Parser::getDims().y()) {
             cout << _shapes[i].getOut();
             ++i;
         }
 
-        curBottom += binHeight * SPACE_COEF;
+        curBottom += Parser::getDims().y() * SPACE_COEF;
         cout << "</g>" << endl;
     }
 
@@ -264,13 +263,12 @@ void Outer::groupShapes(double binHeight) {
  * (Theoretically with the packed shapes)
  */
 void Outer::Write(std::string path, bool addto, std::vector<std::string>& tp,
-                  double height, double binHeight,
                   std::vector<Shape>& s) {
-    Outer outer(path, addto, tp, height, s);
+    Outer outer(path, addto, tp, s);
     XMLElement rootNode = outer._doc.first_node();
     LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
     outer.recurOutput(rootNode, addto);
     LOG(info) << "Original file completely parsed..." << endl;
-    outer.groupShapes(binHeight);
+    outer.groupShapes();
     LOG(info) << "SVG successfully generated." << endl;
 }

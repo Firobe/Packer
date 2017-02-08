@@ -17,7 +17,7 @@ private:
     void printAll(std::vector<std::vector<bool>>& cellIsEmpty, std::vector<double> cellW,
                   std::vector<double>& cellH);
 public:
-    Scanline(std::vector<Shape>& v, Point p) : Solver(v, p),
+    Scanline(std::vector<Shape>& v) : Solver(v),
         _boxes(v.size()) {}
 };
 

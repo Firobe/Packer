@@ -18,9 +18,7 @@ private:
     void solveBin() override;
 
 public:
-    TheSkyIsTheLimit(std::vector<Shape>& v, Point p) :
-        Solver(v, p),
-        _boxes(v.size()) {}
+    TheSkyIsTheLimit(std::vector<Shape>& v) : Solver(v), _boxes(v.size()) {}
 };
 
 #endif

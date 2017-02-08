@@ -10,13 +10,12 @@ using namespace std;
 
 int main() {
     try {
-        Point docDim;
         vector<string> toPack;
-        vector<Shape> shapes = Parser::Parse(TEST_DIR + "test.svg", toPack, docDim);
+        vector<Shape> shapes = Parser::Parse(TEST_DIR + "test.svg", toPack);
 
         //Testing base
-        ASSERT(docDim.x() == 500, "Bad doc width");
-        ASSERT(docDim.y() == 1000, "Bad doc height");
+        ASSERT(Parser::getDims().x() == 500, "Bad doc width");
+        ASSERT(Parser::getDims().y() == 1000, "Bad doc height");
         ASSERT(shapes.size() == 3, "Invalid number of shapes");
 
         //Testing IDs

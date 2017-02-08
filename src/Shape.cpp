@@ -129,7 +129,7 @@ void Shape::bufferize(double buffer) {
      * With this we guarantee that there is NO intersection between shapes (or at least it should)
      * due to the interpolation error.
      */
-    buffer += BEZIER_TOLERANCE;
+    buffer += 2 * BEZIER_TOLERANCE;
     // Declare strategies
     static bg::strategy::buffer::distance_symmetric<double> distance_strategy(buffer);
     static bg::strategy::buffer::join_miter join_strategy(

@@ -19,9 +19,6 @@
 //A smaller value means more points (and more computations) but shapes will be closer to each other
 #define BEZIER_TOLERANCE 0.1
 
-std::vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4);
-
-using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
 class Shape;
 
 /**
@@ -73,18 +70,24 @@ private:
      * < 0 else
      */
     int _groupStack;
-    Point& _docDim;
     Matrix _currentMatrix;
     int _toApply; //Number of recently created rings
     static std::vector<std::string> _identifiers; //Contains all unique shape identifiers
+    static Point _binDims;
 public:
-    static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
+    static std::vector<Shape> Parse(std::string, std::vector<std::string>&);
     static const std::string& id(unsigned i) {
         return _identifiers[i];
     }
+    static const Point& getDims() {
+        return _binDims;
+    }
+    static void setDims(const Point& p) {
+        _binDims = p;
+    }
 
-    Parser(std::vector<std::string>& i, Point& d) :
-        _ids(i), _groupStack(-1), _docDim(d),
+    Parser(std::vector<std::string>& i) :
+        _ids(i), _groupStack(-1),
         _currentMatrix(1, 0, 0, 1, 0, 0), _toApply(0) {
     }
     std::vector<Shape> getShapes() {
@@ -111,71 +114,5 @@ public:
     void on_enter_element(svgpp::tag::element::g);
     void on_exit_element();
 };
-
-/**
- * This enables the parser to ignore any unknown attribute
- * or CSS property and thus avoid a fatal error on
- * files not SVG 1.1 compliant.
- */
-struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
-    template<class XMLAttributesIterator, class AttributeName>
-    static bool unknown_attribute(context_type&,
-                                  XMLAttributesIterator const&,
-                                  AttributeName const&,
-                                  svgpp::tag::source::css) {
-        return true;
-    }
-    template<class XMLAttributesIterator, class AttributeName>
-    static bool unknown_attribute(context_type&,
-                                  XMLAttributesIterator const&,
-                                  AttributeName const&,
-                                  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id),
-                                  svgpp::tag::source::attribute) {
-        return true;
-    }
-};
-
-/**
- * Select the tags that will be processed
- * by our parser
- */
-using ProcessedElements =
-    boost::mpl::set <
-    // SVG Structural Elements
-    svgpp::tag::element::svg,
-    svgpp::tag::element::g,
-    // SVG Shape Elements
-    svgpp::tag::element::path,
-    svgpp::tag::element::rect,
-    svgpp::tag::element::ellipse,
-    svgpp::tag::element::line,
-    svgpp::tag::element::polygon,
-    svgpp::tag::element::polyline,
-    svgpp::tag::element::circle
-    //Text and other things not handled
-    >::type;
-
-/**
- * Select the additionnal attributes that will
- * be processed by our parser
- */
-using CustomAttributes =
-    boost::mpl::set <
-    svgpp::tag::attribute::height,
-    svgpp::tag::attribute::id,
-    svgpp::tag::attribute::width,
-    svgpp::tag::attribute::transform
-    >::type;
-
-/**
- * Merge default processed attributes and custom
- * ones, using beautiful functional meta-programming.
- */
-using ProcessedAttributes =
-    boost::mpl::fold <
-    CustomAttributes,
-    svgpp::traits::shapes_attributes_by_element,
-    boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
-    >::type;
 
 #endif

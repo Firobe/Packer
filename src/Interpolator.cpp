@@ -4,12 +4,13 @@
 #include <stdexcept>
 #include <string>
 
-#include "Rotos.hpp"
+#include "Interpolator.hpp"
 #include "Parser.hpp"
 #include "Log.hpp"
 
-#define MOCHE_EPSILON 10e-10 //Precision on the norm dichotomy (and c/d)
+#define COMMON_EPSILON 10e-10 //Precision on the norm dichotomy (and c/d)
 #define DEGREE_EPSILON 10e-4 //Precision to approximate cubic or quadratic polynomial to quadratic or linear
+
 using namespace std;
 
 /**
@@ -17,15 +18,15 @@ using namespace std;
  * Returns a vector of (potentially complex) roots
  * If a root is multiple, it is not duplicated
  */
-vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d) {
+vector<complex<double>> Interpolator::cubicRotos(double a, double b, double c, double d) {
     //It's Maths all over again
     vector<complex<double>> roots;
 
     if (abs(a) <= DEGREE_EPSILON * max(abs(b),
                                        abs(c))) { //If a is negligible before b and c, a = 0
         if (abs(b) < DEGREE_EPSILON * abs(c)) { //Idem for b before c
-            if (abs(c) < MOCHE_EPSILON) { //If c is really small, approximate to constant (c = 0)
-                if (abs(d) < MOCHE_EPSILON) //If our polynomial is 0 = 0, return an arbitrary real root
+            if (abs(c) < COMMON_EPSILON) { //If c is really small, approximate to constant (c = 0)
+                if (abs(d) < COMMON_EPSILON) //If our polynomial is 0 = 0, return an arbitrary real root
                     return {complex<double>(0.5, 0)};
                 else {//If our polynomial is x = 0 (x != 0), undefined behaviour (returning complex root)
                     LOG(error) << "POLYNOME ZOUGLOU D = " << d << endl;
@@ -89,9 +90,10 @@ vector<complex<double>> rotos::cubicRotos(double a, double b, double c, double d
  *
  * If it does, sets (whereX, whereY) to the first point of intersection detected;
  */
-bool rotos::intersects(double ax, double ay, double bx, double by, double cx, double cy,
-                       double dx, double dy,
-                       double distance, double& whereX, double& whereY) {
+bool Interpolator::intersects(double ax, double ay, double bx, double by, double cx,
+                              double cy,
+                              double dx, double dy,
+                              double distance, double& whereX, double& whereY) {
     double backAx = ax, backAy = ay; //Save the position of A
     double frac, a, b, c, d, snorm, tx, ty, ux, uy, vx, vy;
     //Take back A to the origin and translates B, C, D appropriately
@@ -143,7 +145,7 @@ bool rotos::intersects(double ax, double ay, double bx, double by, double cx, do
 
         for (auto r : roots) {
             //If the root is real (meaning there IS an intersection)
-            if (abs(r.imag()) < MOCHE_EPSILON) {
+            if (abs(r.imag()) < COMMON_EPSILON) {
                 //Check that the intersection occurs on the curve's domain ([0, 1])
                 if (r.real() < 1. && r.real() > 0.) {
                     //Evalutes the curve where the intersection occurs and returns that point
@@ -166,9 +168,10 @@ bool rotos::intersects(double ax, double ay, double bx, double by, double cx, do
  * (defined by its two anchor points A = (ax, ay) and D = (dx, dy) and its two control points (bx, by)
  * and (cx, cy)) and (AD) and returns the said distance.
  */
-double rotos::norm(double ax, double ay, double bx, double by, double cx, double cy,
-                   double dx, double dy,
-                   double& Ex, double& Ey) {
+double Interpolator::norm(double ax, double ay, double bx, double by, double cx,
+                          double cy,
+                          double dx, double dy,
+                          double& Ex, double& Ey) {
     //The result is computed through a dichotomy
     double upper = 128;
     double lower = 0;
@@ -180,7 +183,7 @@ double rotos::norm(double ax, double ay, double bx, double by, double cx, double
                   sqrt((cx - dx) * (cx - dx) + (cy - dy) * (cy - dy));
 
     //Using these length, check that A, B, C and D are not colinear
-    if (abs(longDist - dist) < MOCHE_EPSILON)
+    if (abs(longDist - dist) < COMMON_EPSILON)
         return 0.;
 
     //Initialization of the dichotomy (find a distance where the line does not intersect)
@@ -203,3 +206,44 @@ double rotos::norm(double ax, double ay, double bx, double by, double cx, double
 
     return (upper + lower) / 2;
 }
+
+/**
+ * Computes the middle of the [p1 p2] segment
+ */
+Point Interpolator::middlePoint(Point& p1, Point& p2) {
+    Point r(p1);
+    bg::add_point(r, p2);
+    bg::divide_value(r, 2.);
+    return r;
+}
+
+/**
+ * Returns a sufficiently accurate interpolation of a Bezier curve
+ * defined by p1 p4 its anchor points and p2 p3 its control points,
+ * using a recursive algorithm (Casteljau)
+ */
+vector<Point> Interpolator::subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
+    //Computing points defining subdivised curves
+    //Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
+    Point p12(middlePoint(p1, p2));
+    Point p23(middlePoint(p2, p3));
+    Point p34(middlePoint(p3, p4));
+    Point p123(middlePoint(p12, p23));
+    Point p234(middlePoint(p23, p34));
+    Point p1234(middlePoint(p123, p234));
+    //Estimating the flatness of our current curve
+    double interpolatedX, interpolatedY;
+    double compNorm = norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
+                           interpolatedX, interpolatedY);
+
+    if (compNorm < BEZIER_TOLERANCE) { //If our curve is flat enough
+        return {Point(interpolatedX, interpolatedY)};
+        //We pick the extremum returned by rotos
+    }
+    else {
+        //If not flat enough, continue subdivision and concatenate vectors
+        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
+    }
+}
+
+

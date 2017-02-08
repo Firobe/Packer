@@ -3,18 +3,20 @@
 
 #include "Matrix.hpp"
 
-#define MAT_TERM(x, y) lhs[x] * rhs[y]
-#define MAT_SUPERTERM(a, b, c, d) MAT_TERM(a, b) + MAT_TERM(c, d)
+#define MAT_PRODUCT(x, y) lhs[x] * rhs[y]
+#define MAT_CROSSPRODUCT(a, b, c, d) MAT_PRODUCT(a, b) + MAT_PRODUCT(c, d)
 
 /**
  * + operator
  * Adds each coefficient and returns the result
  */
-Matrix operator+(Matrix lhs, const Matrix& rhs) {
-    for (int i = 0 ; i < 6 ; ++i)
-        lhs[i] += rhs[i];
+Matrix operator+(const Matrix& lhs, const Matrix& rhs) {
+    Matrix ret = lhs;
 
-    return lhs;
+    for (int i = 0 ; i < 6 ; ++i)
+        ret[i] += rhs[i];
+
+    return ret;
 }
 
 /**
@@ -22,14 +24,13 @@ Matrix operator+(Matrix lhs, const Matrix& rhs) {
  * Efficient matrix multiplication between lhs and rhs
  */
 Matrix operator*(const Matrix& lhs, const Matrix& rhs) {
-    Matrix ret(0, 0, 0, 0, 0, 0);
-    ret[0] = MAT_SUPERTERM(0, 0, 2, 1);
-    ret[1] = MAT_SUPERTERM(1, 0, 3, 1);
-    ret[2] = MAT_SUPERTERM(0, 2, 2, 3);
-    ret[3] = MAT_SUPERTERM(1, 2, 3, 3);
-    ret[4] = MAT_SUPERTERM(0, 4, 2, 5) + lhs[4];
-    ret[5] = MAT_SUPERTERM(1, 4, 3, 5) + lhs[5];
-    return ret;
+    return {
+        MAT_CROSSPRODUCT(0, 0, 2, 1),
+        MAT_CROSSPRODUCT(1, 0, 3, 1),
+        MAT_CROSSPRODUCT(0, 2, 2, 3),
+        MAT_CROSSPRODUCT(1, 2, 3, 3),
+        MAT_CROSSPRODUCT(0, 4, 2, 5) + lhs[4],
+        MAT_CROSSPRODUCT(1, 4, 3, 5) + lhs[5] };
 }
 
 /**

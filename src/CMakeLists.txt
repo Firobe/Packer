@@ -10,6 +10,6 @@ add_library(packer_lib STATIC
   solver/box/Scanline.cpp
   Splitter.cpp
   Merger.cpp
-  Rotos.cpp
+  Interpolator.cpp
   SimpleTransformer.cpp
   )

@@ -56,7 +56,7 @@ double Solver::compressionRatio() const {
     });
     //Compensate spacing between bins
     Point maxCorner((*xIt).max_corner().x(),
-                    (*yIt).max_corner().y() - (_binNumber - 1) * _dimensions.y() * (SPACE_COEF - 1));
+                    (*yIt).max_corner().y() - (_binNumber - 1) * Parser::getDims().y() * (SPACE_COEF - 1));
     LOG(debug) << "Max point is (" << maxCorner.x() << ", " << maxCorner.y() << ")\n";
     LOG(debug) << "(total area : " << maxCorner.x() * maxCorner.y() << endl;
     //Computing the sum of every shape area

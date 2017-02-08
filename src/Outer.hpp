@@ -25,15 +25,13 @@ protected:
     std::vector<std::string>& _ids; //IDs of packed shapes.
     bool _addTo; //Are we duplicating or not
     rapidxml_ns::file<> _svgFile; //SVG file used to build _doc
-    double _height;
     int _currentShape;
     bool _stopPrinting;
 public:
     static void Write(std::string path, bool addto, std::vector<std::string>& tp,
-                      double height, double binHeight,
                       std::vector<Shape>&);
 private:
-    Outer(std::string path, bool addto, std::vector<std::string>& tp, double height,
+    Outer(std::string path, bool addto, std::vector<std::string>& tp,
           std::vector<Shape>&);
     ~Outer();
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
@@ -41,7 +39,7 @@ private:
     NodeType identNode(rapidxml_ns::xml_node<>*) const;
     bool appendMatrix(rapidxml_ns::xml_node<>*, char*&, bool);
     int getCurrentShape(rapidxml_ns::xml_node<>*) const;
-    void groupShapes(double);
+    void groupShapes();
 };
 
 #endif

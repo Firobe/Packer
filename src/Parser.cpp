@@ -14,21 +14,89 @@
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "Log.hpp"
-#include "Rotos.hpp"
+#include "Interpolator.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
 
+using XMLElement = rapidxml_ns::xml_node<> const* ; //Defines the XMLElement type
+
 std::vector<std::string> Parser::_identifiers;
+Point Parser::_binDims = Point(1, 1);
+
+/**
+ * This enables the parser to ignore any unknown attribute
+ * or CSS property and thus avoid a fatal error on
+ * files not SVG 1.1 compliant.
+ */
+struct IgnoreError : svgpp::policy::error::raise_exception<Parser> {
+    template<class XMLAttributesIterator, class AttributeName>
+    static bool unknown_attribute(context_type&,
+                                  XMLAttributesIterator const&,
+                                  AttributeName const&,
+                                  svgpp::tag::source::css) {
+        return true;
+    }
+    template<class XMLAttributesIterator, class AttributeName>
+    static bool unknown_attribute(context_type&,
+                                  XMLAttributesIterator const&,
+                                  AttributeName const&,
+                                  BOOST_SCOPED_ENUM(svgpp::detail::namespace_id),
+                                  svgpp::tag::source::attribute) {
+        return true;
+    }
+};
+
+/**
+ * Select the tags that will be processed
+ * by our parser
+ */
+using ProcessedElements =
+    boost::mpl::set <
+    // SVG Structural Elements
+    svgpp::tag::element::svg,
+    svgpp::tag::element::g,
+    // SVG Shape Elements
+    svgpp::tag::element::path,
+    svgpp::tag::element::rect,
+    svgpp::tag::element::ellipse,
+    svgpp::tag::element::line,
+    svgpp::tag::element::polygon,
+    svgpp::tag::element::polyline,
+    svgpp::tag::element::circle
+    //Text and other things not handled
+    >::type;
+
+/**
+ * Select the additionnal attributes that will
+ * be processed by our parser
+ */
+using CustomAttributes =
+    boost::mpl::set <
+    svgpp::tag::attribute::height,
+    svgpp::tag::attribute::id,
+    svgpp::tag::attribute::width,
+    svgpp::tag::attribute::transform
+    >::type;
+
+/**
+ * Merge default processed attributes and custom
+ * ones, using beautiful functional meta-programming.
+ */
+using ProcessedAttributes =
+    boost::mpl::fold <
+    CustomAttributes,
+    svgpp::traits::shapes_attributes_by_element,
+    boost::mpl::insert<boost::mpl::_1, boost::mpl::_2>
+    >::type;
 
 /**
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
 vector<Shape> Parser::Parse(string path,
-                            vector<string>& ids,
-                            Point& docDim) { // TODO : Returns a copy, can be improved
+                            vector<string>& ids) { // TODO : Returns a copy, can be improved
     LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file
     file<> svgFile(path.c_str());
@@ -36,7 +104,7 @@ vector<Shape> Parser::Parse(string path,
     doc.parse<0>(svgFile.data());
     //Parse the XML
     XMLElement rootNode = doc.first_node();
-    Parser context(ids, docDim);
+    Parser context(ids);
     document_traversal <error_policy<IgnoreError>, //Enables IgnoreError
                        path_policy<policy::path::minimal>, /* Enables approximation of all types of curved paths
 															 to cubic bezier paths */
@@ -72,44 +140,6 @@ void Parser::path_line_to(double x, double y, svgpp::tag::coordinate::absolute) 
     LOG(trace) << "Path line to " << x << "," << y << endl;
 }
 
-/**
- * Computes the middle of the [p1 p2] segment
- */
-Point middlePoint(Point& p1, Point& p2) {
-    Point r(p1);
-    bg::add_point(r, p2);
-    bg::divide_value(r, 2.);
-    return r;
-}
-
-/**
- * Returns a sufficiently accurate interpolation of a Bezier curve
- * defined by p1 p4 its anchor points and p2 p3 its control points,
- * using a recursive algorithm (Casteljau)
- */
-vector<Point> subdivision(Point& p1, Point& p2, Point& p3, Point& p4) {
-    //Computing points defining subdivised curves
-    //Names follow http://www.antigrain.com/research/adaptive_bezier/bezier06.gif
-    Point p12(middlePoint(p1, p2));
-    Point p23(middlePoint(p2, p3));
-    Point p34(middlePoint(p3, p4));
-    Point p123(middlePoint(p12, p23));
-    Point p234(middlePoint(p23, p34));
-    Point p1234(middlePoint(p123, p234));
-    //Estimating the flatness of our current curve
-    double interpolatedX, interpolatedY;
-    double norm = rotos::norm(p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y(),
-                              interpolatedX, interpolatedY);
-
-    if (norm < BEZIER_TOLERANCE) { //If our curve is flat enough
-        return {Point(interpolatedX, interpolatedY)};
-        //We pick the extremum returned by rotos
-    }
-    else {
-        //If not flat enough, continue subdivision and concatenate vectors
-        return subdivision(p1, p12, p123, p1234) + subdivision(p1234, p234, p34, p4);
-    }
-}
 
 /**
  * Draws a cubic Bézier curbe from the current point to (x, y)
@@ -123,7 +153,7 @@ void Parser::path_cubic_bezier_to(
     double x, double y,
     svgpp::tag::coordinate::absolute) {
     Point p1(x1, y1), p2(x2, y2), p3(x, y);
-    vector<Point> interpolated = subdivision(_points.back(), p1, p2, p3);
+    vector<Point> interpolated = Interpolator::subdivision(_points.back(), p1, p2, p3);
     _points.reserve(_points.size() + interpolated.size());
     _points.insert(_points.end(), interpolated.begin(), interpolated.end());
     LOG(trace) << "Path cubic bezier (" << x1 << "," << y1 << ") ; (" <<
@@ -263,7 +293,7 @@ void Parser::set(svgpp::tag::attribute::id,
  */
 void Parser::set(svgpp::tag::attribute::height, double height) {
     LOG(debug) << "Parsed " << height << " as doc height" << endl;
-    _docDim.set<1>(height);
+    Parser::_binDims.set<1>(height);
 }
 
 /**
@@ -271,7 +301,7 @@ void Parser::set(svgpp::tag::attribute::height, double height) {
  */
 void Parser::set(svgpp::tag::attribute::width, double width) {
     LOG(debug) << "Parsed " << width << " as doc width" << endl;
-    _docDim.set<0>(width);
+    Parser::_binDims.set<0>(width);
 }
 
 /**

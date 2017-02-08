@@ -16,10 +16,8 @@ int main() {
     //Will contain the IDs the solver will pack
     vector<string> toPack;
 
-    Point docDim; //Container for the document dimensions
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
-	vector<Shape> shapes = Parser::Parse("vertebrae.svg",
-                                         toPack, docDim);
+	vector<Shape> shapes = Parser::Parse("vertebrae.svg", toPack);
 
     for (Shape& s: shapes) {
         cout << bg::num_points(s.getMultiP()) << endl;

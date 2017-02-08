@@ -13,6 +13,6 @@ int main() {
         splitter.split(Point(rand() % width, rand() % height), Point(rand() % width, rand() % height));
 
     vector<Shape> ss = splitter.getShapes();
-    Solver solver(ss, Point(1, 1));
+    Solver solver(ss);
     cout << solver.debugOutputSVG();
     }

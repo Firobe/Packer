@@ -24,13 +24,13 @@ void Scanline::preSolve() {
 
 void Scanline::solveBin() {
     // == Stopping Cases ==
-    if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > _dimensions.y()) {
+    if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > Parser::getDims().y()) {
         // STOP, remaining pieces are too tall to fit in any way
         throw invalid_argument("Shape height greater than bin height");
     }
 
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x())
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().x())
             throw invalid_argument("Shape width greater than bin width");
     }
 
@@ -42,8 +42,8 @@ void Scanline::solveBin() {
     vector<double> cellH(1);
     vector<vector<bool>> cellIsEmpty(1, vector<bool>(1, true)); //2-dim boolean matrix
     vector<bool> newCellLine(1); // to divide and add a cell row
-    cellW[0] = _dimensions.x();
-    cellH[0] = _dimensions.y();
+    cellW[0] = Parser::getDims().x();
+    cellH[0] = Parser::getDims().y();
     double shapeWidth;
     double shapeHeight;
     int lastX, lastY;
@@ -106,10 +106,12 @@ void Scanline::solveBin() {
                             }
 
                             translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                             getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                             getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + Parser::getDims().y() *
+                                             _binNumber *
                                              SPACE_COEF);
                             translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                           getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
+                                           getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + Parser::getDims().y() *
+                                           _binNumber *
                                            SPACE_COEF);
                             // We're done here, going onto next piece
                             markPacked(i);
@@ -149,26 +151,26 @@ bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned i
 
 void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
                         vector<double>& cellH) {
-    LOG(debug) << "============\nCELL MATRIX";
+    cerr << "============\nCELL MATRIX";
 
     for (auto && x : cellIsEmpty) {
-        LOG(debug) << endl;
+        cerr << endl;
 
-        for (auto && y : x)
-            LOG(debug) << y;
+        for (bool y : x)
+            cerr << y;
     }
 
-    LOG(debug) << endl << "CellW" << endl;
+    cerr << endl << "CellW" << endl;
 
     for (auto && x : cellW)
-        LOG(debug) << x << " ; ";
+        cerr << x << " ; ";
 
-    LOG(debug) << endl << "CellH" << endl;
+    cerr << endl << "CellH" << endl;
 
     for (auto && x : cellH)
-        LOG(debug) << x << " ; ";
+        cerr << x << " ; ";
 
-    LOG(debug) << endl;
+    cerr << endl;
 }
 
 double Scanline::getLenFromIndex(const vector<double>& lengthVector,

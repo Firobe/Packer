@@ -10,6 +10,8 @@
 #include "common.hpp"
 #include "SimpleTransformer.hpp"
 #include "Log.hpp"
+#include "Merger.hpp"
+#include "Parser.hpp"
 
 #define ROTATE_STEP 30 //Step used when rotating
 #define TRANSLATE_NB 15 //Number of translations test to make
@@ -28,8 +30,6 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
 
     //We try to merge {0, 1}, {1, 2}, ..., {n - 1, n}
     for (unsigned i = 0 ; i < _shapes.size() - 1 ; ++i) {
-        LOG(info) << ".";
-
         if (mergedV[i])
             continue;
 
@@ -77,9 +77,14 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
                     bg::convex_hull(shapeB.getMultiP(), hullB);
                     bg::intersection(hullA, hullB, inter);
                     double ratio = bg::area(inter);
+                    mergeMultiP(shapeA.getMultiP(), shapeB.getMultiP());
+                    bg::envelope(shapeA.getMultiP(), boxA);
+                    bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() < Parser::getDims().x()
+                                     and boxA.max_corner().y() - boxA.min_corner().y() < Parser::getDims().y();
 
                     //Store the best candidate
-                    if (ratio > bestArea && ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))) {
+                    if (ratio > bestArea and ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))
+                            and withinBin) {
                         merged = true;
                         bestArea = ratio;
                         bestAlpha = alpha;
@@ -95,6 +100,7 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
         Box boxA, boxB, boxMerge;
 
         if (merged) {
+            LOG(info) << "!";
             mergedV[i] = true;
             mergedV[bestJ] = true;
             LOG(debug) << "===========================> MERGED <=====================" << endl;
@@ -102,8 +108,10 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,
                        bestMid);
         }
-        else
+        else {
+            LOG(info) << ".";
             ret.push_back({_shapes[i].getID()});
+        }
     }//for i
 
     LOG(info) << endl;
@@ -120,7 +128,7 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
  */
 void applyTrans(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box& boxA,
                 Box& boxB, double mid, bool start) {
-    Point ptA;
+    Point ptA(0, 0);
     rotate(a, alpha);
     rotate(b, beta);
     bg::centroid(a.getMultiP(), ptA);

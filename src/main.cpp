@@ -59,11 +59,10 @@ int main(int argc, char** argv) {
     if (vm.count("id"))
         toPack = vm["id"].as<vector<string>>();
 
-    Point docDim; //Container for the document dimensions
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
-    vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(),
-                                         toPack, docDim);
-    LOG(debug) << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
+    vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
+    LOG(debug) << "Doc dimensions " << Parser::getDims().x() << " ; " << Parser::getDims().y()
+               << endl;
 
     //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))
@@ -79,9 +78,9 @@ int main(int argc, char** argv) {
         s.bufferize(vm["buffer"].as<double>());
 
     //If the user did not specify width, take document width for packing (idem for height)
-    Point packerDim(
-        (vm["width"].as<int>() == 0) ? docDim.x() : vm["width"].as<int>(),
-        (vm["height"].as<int>() == 0) ? docDim.y() : vm["height"].as<int>());
+    Parser::setDims(Point(
+                        (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
+                        (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //Prepacking the shapes
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
@@ -89,14 +88,13 @@ int main(int argc, char** argv) {
     for (int i = 0 ; i < 2 ; ++i)
         merger.merge(trans.transform());
 
-    Scanline solver(shapes, packerDim);
+    Scanline solver(shapes);
     solver.solve();
     merger.reset();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
-    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-                 docDim.y(), packerDim.y(), shapes);
+    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
     return EXIT_SUCCESS;
 }
