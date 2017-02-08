@@ -56,9 +56,8 @@ int main(int argc, char** argv) {
     vector<string> toPack;
 
     //If the user selected some shapes, add them to toPack
-    if (vm.count("id")) {
+    if (vm.count("id"))
         toPack = vm["id"].as<vector<string>>();
-    }
 
     Point docDim; //Container for the document dimensions
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
@@ -67,20 +66,17 @@ int main(int argc, char** argv) {
     LOG(debug) << "Doc dimensions " << docDim.x() << " ; " << docDim.y() << endl;
 
     //If nothing was selected, fill toPack with every parsed ID
-    if (!vm.count("id")) {
+    if (!vm.count("id"))
         LOG(info) << "Will pack *all* shapes." << endl;
-    }
 
-    for (auto && s : shapes) {
+    for (auto && s : shapes)
         toPack.push_back(s.getIdentifier());
-    }
 
     //Apply a buffer to the shapes
     LOG(info) << "Buffering shapes..." << endl;
 
-    for (auto && s : shapes) {
+    for (auto && s : shapes)
         s.bufferize(vm["buffer"].as<double>());
-    }
 
     //If the user did not specify width, take document width for packing (idem for height)
     Point packerDim(
@@ -90,9 +86,8 @@ int main(int argc, char** argv) {
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
 
-    for (int i = 0 ; i < 2 ; ++i) {
+    for (int i = 0 ; i < 2 ; ++i)
         merger.merge(trans.transform());
-    }
 
     Scanline solver(shapes, packerDim);
     solver.solve();

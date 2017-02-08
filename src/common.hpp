@@ -30,12 +30,10 @@ template<typename T>
 unsigned binaryFind(std::vector<T>& v, T val) {
     auto i = std::lower_bound(v.begin(), v.end(), val);
 
-    if (i != v.end() && !(val < *i)) {
+    if (i != v.end() && !(val < *i))
         return static_cast<unsigned>(i - v.begin());
-    }
-    else {
+    else
         return -1;
-    }
 }
 
 /**

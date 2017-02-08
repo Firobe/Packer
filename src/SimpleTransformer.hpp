@@ -3,16 +3,20 @@
 
 #include "Transformer.hpp"
 
-#define ROTATESTEP 30 // pas de rotation des shapes
-#define TRANSLATESTEPS 15 // nombre de pas lors de la translation (emboitement)
-#define EPSEMBOITEMENT 1. // precision d'emboitement a tant de pixels pres
-
+/**
+ * Dirty bruteforce : tries arbritrary high number of rotations on two
+ * objects, and with each configuration tries a fixed number of translation in
+ * order to test different offsets between the shapes.
+ *
+ * Keeps the configuration when the intersection between the convex hulls of
+ * the two shapes is the highest.
+ */
 class SimpleTransformer : Transformer {
 public:
     SimpleTransformer(std::vector<Shape>& s) : Transformer(s) {}
     std::vector<std::vector<unsigned> > transform();
 };
 
-void bloubla(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box& boxA,
-             Box& boxB, double mid, bool midmid = false);
+void applyTrans(Shape&, Shape&, double, double, unsigned, Box&, Box&, double,
+                bool = false);
 #endif

@@ -49,9 +49,8 @@ array<double, 6> Shape::getTransMatrix() const {
     n1 = bg::distance(_oldP1, _oldP2);
     n2 = bg::distance(newP1, newP2);
 
-    if (!floatEqual(n1, n2, 10e-6)) {
+    if (!floatEqual(n1, n2, 10e-6))
         throw runtime_error("Point order was modified or the shape was scaled");
-    }
 
     x1 = (_oldP2.x() - _oldP1.x()) / n1;
     y1 = (_oldP2.y() - _oldP1.y()) / n1;
@@ -160,9 +159,8 @@ void Shape::setOld() {
 
     for (unsigned i = 1 ; i < _multiP[0].outer().size() ; ++i)
         if (bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[i]) >
-                bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2])) {
+                bg::distance(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2]))
             _indexP2 = i;
-        }
 
     _oldP1 = _multiP[0].outer()[_indexP1];
     _oldP2 = _multiP[0].outer()[_indexP2];

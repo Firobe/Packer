@@ -58,13 +58,11 @@ void Splitter::split(Point a, Point b) {
         bg::correct(sup);
         bg::correct(inf);
 
-        if (!sup.empty()) {
+        if (!sup.empty())
             result.push_back(sup);
-        }
 
-        if (!inf.empty()) {
+        if (!inf.empty())
             result.push_back(inf);
-        }
     }
 
     _shapes = result;

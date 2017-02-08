@@ -9,9 +9,8 @@ void ToInfinityAndBeyond::solveBin() {
     Point previous, reference;
 
     //Create the bounding boxes
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         bg::envelope(_shapes[i].getMultiP(), boxes[i]);
-    }
 
     for (unsigned i = 0; i < _shapes.size(); ++i) {
         reference = boxes[i].min_corner();

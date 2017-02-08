@@ -11,9 +11,8 @@
  * Adds each coefficient and returns the result
  */
 Matrix operator+(Matrix lhs, const Matrix& rhs) {
-    for (int i = 0 ; i < 6 ; ++i) {
+    for (int i = 0 ; i < 6 ; ++i)
         lhs[i] += rhs[i];
-    }
 
     return lhs;
 }
@@ -51,9 +50,8 @@ Point Matrix::operator()(const Point& p) const {
 std::ostream& operator<<(std::ostream& os, const Matrix& m) {
     os << "matrix(" << std::setprecision(9) << m[0];
 
-    for (int i = 1 ; i < 6 ; ++i) {
+    for (int i = 1 ; i < 6 ; ++i)
         os << ", " << m[i];
-    }
 
     os << ")";
     return os;

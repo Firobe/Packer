@@ -12,16 +12,14 @@
 using namespace std;
 
 void Scanline::preSolve() {
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         rotateToBestAngle(_shapes[i]);
-    }
 
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
-    }
 }
 
 void Scanline::solveBin() {
@@ -32,9 +30,8 @@ void Scanline::solveBin() {
     }
 
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x())
             throw invalid_argument("Shape width greater than bin width");
-        }
     }
 
     // =============================================================================
@@ -67,9 +64,8 @@ void Scanline::solveBin() {
                     lastX = getLast(cellW, iX, shapeWidth, lastW);
                     lastY = getLast(cellH, iY, shapeHeight, lastH);
 
-                    if (lastX == -1 || lastY == -1) { // piece goes off the frame
+                    if (lastX == -1 || lastY == -1)   // piece goes off the frame
                         continue;
-                    }
 
                     if (allCellsEmpty(cellIsEmpty, iX, lastX, iY,
                                       lastY)) { // If all cells are free to store the box
@@ -86,9 +82,8 @@ void Scanline::solveBin() {
                         if (lastH > PRECISION && cellH[lastY] - lastH > PRECISION) {
                             lastH += PRECISION;
 
-                            for (unsigned j = 0; j < cellIsEmpty.size(); j++) {
+                            for (unsigned j = 0; j < cellIsEmpty.size(); j++)
                                 cellIsEmpty[j].insert(cellIsEmpty[j].begin() + lastY + 1, cellIsEmpty[j][lastY]);
-                            }
 
                             cellH.insert(cellH.begin() + lastY + 1, cellH[lastY] - lastH);
                             cellH[lastY] = lastH;
@@ -96,9 +91,8 @@ void Scanline::solveBin() {
 
                         // == Filling cells ==
                         for (int jx = iX; jx <= lastX; ++jx) {
-                            for (int jy = iY; jy <= lastY; ++jy) {
+                            for (int jy = iY; jy <= lastY; ++jy)
                                 cellIsEmpty[jx][jy] = false;
-                            }
                         }
 
                         // == translation ==
@@ -124,9 +118,8 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
         length -= cells[i];
         i++;
 
-        if (i >= cells.size()) { // piece goes off the frame
+        if (i >= cells.size())   // piece goes off the frame
             return -1;
-        }
     }
 
     plast = length; // Last width/height is kept (to divide the cell)
@@ -138,9 +131,8 @@ bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned i
                              int lastY) const {
     for (int x = iX; x <= lastX; ++x) {
         for (int y = iY; y <= lastY; ++y) {
-            if (cellIsEmpty[x][y] == false) {
+            if (cellIsEmpty[x][y] == false)
                 return false;
-            }
         }
     }
 
@@ -154,22 +146,19 @@ void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
     for (auto && x : cellIsEmpty) {
         LOG(debug) << endl;
 
-        for (auto && y : x) {
+        for (auto && y : x)
             LOG(debug) << y;
-        }
     }
 
     LOG(debug) << endl << "CellW" << endl;
 
-    for (auto && x : cellW) {
+    for (auto && x : cellW)
         LOG(debug) << x << " ; ";
-    }
 
     LOG(debug) << endl << "CellH" << endl;
 
-    for (auto && x : cellH) {
+    for (auto && x : cellH)
         LOG(debug) << x << " ; ";
-    }
 
     LOG(debug) << endl;
 }
@@ -178,9 +167,8 @@ double Scanline::getLenFromIndex(const vector<double>& lengthVector,
                                  unsigned index) const {
     double length = 0;
 
-    for (unsigned i = 0; i < index; ++i) {
+    for (unsigned i = 0; i < index; ++i)
         length += lengthVector[i];
-    }
 
     return length;
 }

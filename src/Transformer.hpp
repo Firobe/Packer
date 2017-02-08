@@ -1,15 +1,20 @@
 #ifndef TRANSFORMER__H
 #define TRANSFORMER__H
 
-#include <algorithm>
 #include <vector>
 
 #include "Shape.hpp"
-#include "Merger.hpp"
 
+/**
+ * Abstract class for transformers.
+ * Transformers are meant to apply arbritrary transformations on shape.
+ *
+ * As opposed to Solvers, transformers are not final treatments, and do not check position
+ * on bin. There were created in order to merge shapes, and this is their main goal.
+ */
 class Transformer {
 protected:
-    std::vector<Shape>& _shapes; // Contains parsed shapes;
+    std::vector<Shape>& _shapes; // Contains parsed shapes
 public:
     Transformer(std::vector<Shape>& s) : _shapes(s) {}
     virtual std::vector<std::vector<unsigned> > transform() = 0;

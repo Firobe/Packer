@@ -41,9 +41,8 @@ double Solver::compressionRatio() const {
     //Computing the total enveloppe of shapes
     std::vector<Box> boxes(_shapes.size());
 
-    for (unsigned i = 0; i < _shapes.size(); i++) {
+    for (unsigned i = 0; i < _shapes.size(); i++)
         bg::envelope(_shapes[i].getMultiP(), boxes[i]);
-    }
 
     //Max x-axis point
     auto xIt = max_element(boxes.begin(), boxes.end(),
@@ -63,9 +62,8 @@ double Solver::compressionRatio() const {
     //Computing the sum of every shape area
     double sum = 0.;
 
-    for (auto && s : _shapes) {
+    for (auto && s : _shapes)
         sum += bg::area(s.getMultiP());
-    }
 
     LOG(debug) << "Minimal area is " << sum << endl;
     //Computing ratio
@@ -81,9 +79,8 @@ string Solver::debugOutputSVG() const {
     stringstream ret;
     bg::svg_mapper <Point> mapper(ret, 800, 800);
 
-    for (const Shape& s : _shapes) {
+    for (const Shape& s : _shapes)
         mapper.add(s.getMultiP());
-    }
 
     for (const Shape& s : _shapes) {
         mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
