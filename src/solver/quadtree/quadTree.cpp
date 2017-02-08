@@ -100,21 +100,17 @@ void quadTree::copy(const quadTree& q) {
     depth = q.depth;
     q1 = q2 = q3 = q4 = nullptr;
 
-    if (q.q1 != nullptr) {
+    if (q.q1 != nullptr)
         q1 = new quadTree(*q.q1);
-    }
 
-    if (q.q2 != nullptr) {
+    if (q.q2 != nullptr)
         q2 = new quadTree(*q.q2);
-    }
 
-    if (q.q3 != nullptr) {
+    if (q.q3 != nullptr)
         q3 = new quadTree(*q.q3);
-    }
 
-    if (q.q4 != nullptr) {
+    if (q.q4 != nullptr)
         q4 = new quadTree(*q.q4);
-    }
 }
 
 quadTree::quadTree(const quadTree& q) {
@@ -131,27 +127,23 @@ quadTree& quadTree::operator=(const quadTree& q) {
 }
 
 quadTree::~quadTree() {
-    if (q1 != nullptr) {
+    if (q1 != nullptr)
         delete q1;
-    }
 
     q1 = nullptr;
 
-    if (q2 != nullptr) {
+    if (q2 != nullptr)
         delete q2;
-    }
 
     q2 = nullptr;
 
-    if (q3 != nullptr) {
+    if (q3 != nullptr)
         delete q3;
-    }
 
     q3 = nullptr;
 
-    if (q4 != nullptr) {
+    if (q4 != nullptr)
         delete q4;
-    }
 
     q4 = nullptr;
 }

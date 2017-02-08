@@ -20,6 +20,8 @@ using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
 
+std::vector<std::string> Parser::_identifiers;
+
 /**
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
@@ -167,7 +169,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             //Add the ring to _shapes only if the ID on top of the stack (its own ID)
             //is in the _ids vector (or if there is no ID specified by the user)
-            _shapes.emplace_back(tmp, _idStack.top());
+            _identifiers.push_back(_idStack.top());
+            _shapes.emplace_back(tmp, _identifiers.size() - 1);
         }
 
         _idStack.pop();
@@ -184,9 +187,8 @@ void Parser::on_enter_element(svgpp::tag::element::any) {
     LOG(debug) << "Element enter (" << _groupStack << ")\n";
     _currentMatrix = Matrix(1, 0, 0, 1, 0, 0);
 
-    if (_groupStack >= 0) {
+    if (_groupStack >= 0)
         _groupStack++;
-    }
 
     _points.clear();
 }
@@ -199,17 +201,15 @@ void Parser::on_exit_element() {
 
     //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
-        for (unsigned i = 0 ; i < _rings.size() ; ++i) {
+        for (unsigned i = 0 ; i < _rings.size() ; ++i)
             _idStack.pop();
-        }
     }
 
     //Apply current matrix to recently generated points
     for (int i = (int)_rings.size() - 1 ; (unsigned)i >= _rings.size() - _toApply &&
             i >= 0; --i)
-        for (auto && p : _rings[i]) {
+        for (auto && p : _rings[i])
             p = _currentMatrix(p);
-        }
 
     _toApply = 0;
 
@@ -217,7 +217,8 @@ void Parser::on_exit_element() {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
-            _shapes.emplace_back(_rings, _idStack.top());
+            _identifiers.push_back(_idStack.top());
+            _shapes.emplace_back(_rings, _identifiers.size() - 1);
         }
 
         _idStack.pop();
@@ -251,9 +252,8 @@ void Parser::set(svgpp::tag::attribute::id,
     _idStack.push(ss.str());
 
     //Ignoring layers
-    if (_idStack.top().find("layer") != string::npos) {
+    if (_idStack.top().find("layer") != string::npos)
         _groupStack = -1;
-    }
 
     LOG(debug) << "Current ID : " << _idStack.top() << endl;
 }

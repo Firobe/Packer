@@ -50,9 +50,8 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
             //adding bool "forceNoMatrix" (0/1) to avoid duplication of attribute identifiers
             tmp << attr->value() << forceNoMatrix << "\"\n";
         }
-        else {
+        else
             tmp << attr->value() << "\"\n";
-        }
     }
 
     if (_currentShape == -1 || forceNoMatrix) {
@@ -60,13 +59,11 @@ void Outer::printNode(XMLElement node, bool forceNoMatrix) {
             //Stop printing upon encountering the first useless group
             cout << tmp.str();
         }
-        else {
+        else
             _stopPrinting = true;
-        }
     }
-    else {
+    else
         _shapes[_currentShape].appendOut(tmp.str());
-    }
 }
 
 /**
@@ -79,15 +76,13 @@ int Outer::getCurrentShape(XMLElement node) const {
     xml_attribute<>* id = node->first_attribute("id");
 
     // Case id error/not found
-    if (id == nullptr || !vectorContains<string>(_ids, id->value())) {
+    if (id == nullptr || !vectorContains<string>(_ids, id->value()))
         return -1;
-    }
 
     //Find to which shape (i) the ID belongs to
     for (unsigned i = 0 ; i < _shapes.size() ; ++i)
-        if (_shapes[i].getID() == id->value()) {
+        if (_shapes[i].getIdentifier() == id->value())
             return i;
-        }
 
     return -1;
 }
@@ -101,21 +96,18 @@ int Outer::getCurrentShape(XMLElement node) const {
 bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
     int i = getCurrentShape(node);
 
-    if (i == -1) {
+    if (i == -1)
         return false;
-    }
 
     //Used for duplication
-    if (forceNoMatrix) {
+    if (forceNoMatrix)
         return true;
-    }
 
     //Get the matrix and write its SVG string equivalent
     array<double, 6> m = _shapes[i].getTransMatrix();
 
-    if (_addTo) {
+    if (_addTo)
         m[5] += _height;
-    }
 
     // string equivalent of the matrix
     stringstream s;
@@ -157,9 +149,8 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
     stringstream outStream;
     LOG(trace) << "Current shape : " << _currentShape << "/" << _shapes.size() << endl;
 
-    if (computed) {
+    if (computed)
         _currentShape = getCurrentShape(node);
-    }
 
     //Get the ID attribute of the node
     char* cs = nullptr;
@@ -175,13 +166,11 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
 
     case hasChild: { // node(s) within
         if (_currentShape == -1 || forceNoMatrix) {
-            if (!_stopPrinting || forceNoMatrix) {
+            if (!_stopPrinting || forceNoMatrix)
                 cout << ">\n";
-            }
         }
-        else {
+        else
             _shapes[_currentShape].appendOut(">\n");
-        }
 
         //Call each of the children
         XMLElement next = node->first_node();
@@ -192,9 +181,8 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
         }
 
         //Do not close the file yet, wait for groupShapes
-        if (strcmp(node->name(), "svg") != 0) {
+        if (strcmp(node->name(), "svg") != 0)
             outStream << "</" << node->name() << ">\n";
-        }
 
         break;
     }
@@ -206,23 +194,19 @@ void Outer::recurOutput(XMLElement node, bool forceNoMatrix) {
 
     //Display the cached output in cout or store it in the correct shape
     if (_currentShape == -1 || forceNoMatrix) {
-        if (!_stopPrinting || forceNoMatrix) {
+        if (!_stopPrinting || forceNoMatrix)
             cout << outStream.str();
-        }
     }
-    else {
+    else
         _shapes[_currentShape].appendOut(outStream.str());
-    }
 
     //If the currentShape was -1, set it back
-    if (computed) {
+    if (computed)
         _currentShape = -1;
-    }
 
     //Duplicate if needed
-    if (packed && forceNoMatrix) {
+    if (packed && forceNoMatrix)
         recurOutput(node, false);
-    }
 }
 
 /**
@@ -233,16 +217,13 @@ NodeType Outer::identNode(XMLElement node) const {
     XMLElement next = node->first_node();
 
     if (next != nullptr) {
-        if (node->value_size() == 0) {
+        if (node->value_size() == 0)
             return hasChild;
-        }
-        else {
+        else
             return hasValue;
-        }
     }
-    else {
+    else
         return noChild;
-    }
 }
 
 /**

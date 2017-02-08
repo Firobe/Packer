@@ -180,9 +180,8 @@ double rotos::norm(double ax, double ay, double bx, double by, double cx, double
                   sqrt((cx - dx) * (cx - dx) + (cy - dy) * (cy - dy));
 
     //Using these length, check that A, B, C and D are not colinear
-    if (abs(longDist - dist) < MOCHE_EPSILON) {
+    if (abs(longDist - dist) < MOCHE_EPSILON)
         return 0.;
-    }
 
     //Initialization of the dichotomy (find a distance where the line does not intersect)
     while (intersects(ax, ay, bx, by, cx, cy, dx, dy, upper, Ex, Ey)) {
@@ -195,13 +194,11 @@ double rotos::norm(double ax, double ay, double bx, double by, double cx, double
         double mid = (upper + lower) / 2;
 
         //If our line intersects, the extremum is higher
-        if (intersects(ax, ay, bx, by, cx, cy, dx, dy, mid, Ex, Ey)) {
+        if (intersects(ax, ay, bx, by, cx, cy, dx, dy, mid, Ex, Ey))
             lower = mid;
-        }
         //If not, it is lower
-        else {
+        else
             upper = mid;
-        }
     }
 
     return (upper + lower) / 2;

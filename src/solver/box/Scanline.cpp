@@ -12,16 +12,14 @@
 using namespace std;
 
 void Scanline::preSolve() {
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         rotateToBestAngle(_shapes[i]);
-        }
 
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
-        }
     }
 
 void Scanline::solveBin() {
@@ -32,9 +30,8 @@ void Scanline::solveBin() {
         }
 
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x())
             throw invalid_argument("Shape width greater than bin width");
-            }
         }
 
     // =============================================================================
@@ -54,7 +51,6 @@ void Scanline::solveBin() {
     bool keepLooking;
 
     // Iterates on yet-to-be-processed shapes
-
     for (int clounk = 0; clounk < 2; clounk++) {
         for (list<unsigned>::iterator i = _indices.begin(); i != _indices.end(); ++i) {
             LOG(debug) << ".";
@@ -133,9 +129,8 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
         length -= cells[i];
         i++;
 
-        if (i >= cells.size()) { // piece goes off the frame
+        if (i >= cells.size())   // piece goes off the frame
             return -1;
-            }
         }
 
     plast = length; // Last width/height is kept (to divide the cell)
@@ -145,51 +140,42 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
 bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
                              int lastX, unsigned iY,
                              int lastY) const {
-    for (int x = iX; x <= lastX; ++x) {
-        for (int y = iY; y <= lastY; ++y) {
-            if (cellIsEmpty[x][y] == false) {
+    for (int x = iX; x <= lastX; ++x)
+        for (int y = iY; y <= lastY; ++y)
+            if (cellIsEmpty[x][y] == false)
                 return false;
-                }
-            }
-        }
 
     return true;
     }
 
-void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
-                        vector<double>& cellH) {
+void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW, vector<double>& cellH) {
     LOG(debug) << "============\nCELL MATRIX";
 
     for (auto && x : cellIsEmpty) {
         LOG(debug) << endl;
 
-        for (auto && y : x) {
+        for (auto && y : x)
             LOG(debug) << y;
-            }
         }
 
     LOG(debug) << endl << "CellW" << endl;
 
-    for (auto && x : cellW) {
+    for (auto && x : cellW)
         LOG(debug) << x << " ; ";
-        }
 
     LOG(debug) << endl << "CellH" << endl;
 
-    for (auto && x : cellH) {
+    for (auto && x : cellH)
         LOG(debug) << x << " ; ";
-        }
 
     LOG(debug) << endl;
     }
 
-double Scanline::getLenFromIndex(const vector<double>& lengthVector,
-                                 unsigned index) const {
+double Scanline::getLenFromIndex(const vector<double>& lengthVector, unsigned index) const {
     double length = 0;
 
-    for (unsigned i = 0; i < index; ++i) {
+    for (unsigned i = 0; i < index; ++i)
         length += lengthVector[i];
-        }
 
     return length;
     }

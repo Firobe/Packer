@@ -76,8 +76,12 @@ private:
     Point& _docDim;
     Matrix _currentMatrix;
     int _toApply; //Number of recently created rings
+    static std::vector<std::string> _identifiers; //Contains all unique shape identifiers
 public:
     static std::vector<Shape> Parse(std::string, std::vector<std::string>&, Point&);
+    static const std::string& id(unsigned i) {
+        return _identifiers[i];
+    }
 
     Parser(std::vector<std::string>& i, Point& d) :
         _ids(i), _groupStack(-1), _docDim(d),

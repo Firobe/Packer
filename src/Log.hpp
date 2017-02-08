@@ -9,6 +9,6 @@ enum LogLevel { trace, debug, info, warning, error, fatal };
 //////////////////////////////////////////////////////////
 
 static std::ostream nullout(nullptr);
-#define LOG(level) (level >= LOG_LEVEL ? cerr : nullout)
+#define LOG(level) (level >= LOG_LEVEL ? std::cerr : nullout)
 
 #endif

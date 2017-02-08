@@ -58,13 +58,11 @@ void Splitter::split(Point a, Point b) {
         bg::correct(sup);
         bg::correct(inf);
 
-        if (!sup.empty()) {
+        if (!sup.empty())
             result.push_back(sup);
-        }
 
-        if (!inf.empty()) {
+        if (!inf.empty())
             result.push_back(inf);
-        }
     }
 
     _shapes = result;
@@ -76,7 +74,7 @@ vector<Shape> Splitter::getShapes() const {
 
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
         vector<Ring> tmp(1, _shapes[i]);
-        result.emplace_back(tmp, to_string(i));
+        result.emplace_back(tmp, i);
     }
 
     return result;

@@ -11,9 +11,8 @@ void TheSkyIsTheLimit::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
-    }
 }
 
 void TheSkyIsTheLimit::solveBin() {
@@ -24,9 +23,8 @@ void TheSkyIsTheLimit::solveBin() {
     }
 
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x())
             throw invalid_argument("Shape width greater than bin width");
-        }
     }
 
     double currY = _binNumber * _dimensions.y(), currX = 0, offset;
