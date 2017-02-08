@@ -85,7 +85,7 @@ int Outer::getCurrentShape(XMLElement node) const {
 
     //Find to which shape (i) the ID belongs to
     for (unsigned i = 0 ; i < _shapes.size() ; ++i)
-        if (_shapes[i].getID() == id->value()) {
+        if (_shapes[i].getIdentifier() == id->value()) {
             return i;
         }
 

@@ -218,6 +218,9 @@ void rotateToBestAngle(Shape& object) {
 }
 
 
+const std::string& Shape::getIdentifier() const {
+    return Parser::id(_id);
+}
 
 
 

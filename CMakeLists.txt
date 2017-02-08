@@ -4,7 +4,7 @@ set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
-set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
+set(FORCE_UNPACK 1) #Set to 1 to force local installation of Boost (ensure that it will take priority)
 FIND_PROGRAM( TEST_PATH fefefffefe )
 
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))

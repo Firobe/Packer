@@ -6,7 +6,6 @@
 
 #include "common.hpp"
 
-
 /**
  * Shape class. Designed to be
  * carried around by the different
@@ -23,23 +22,26 @@ private:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
     unsigned _indexP1, _indexP2;
-    std::string _id;
+    unsigned _id; //index in Parser::id()
     std::string _out;
 
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
     void setOld();
 public:
     Shape() {}
-    Shape(std::vector<Ring>& r, std::string id) : _id(id), _out() {
+    Shape(std::vector<Ring>& r, unsigned id) : _id(id), _out() {
         fillShape(r);
     }
 
-    Shape(Point P1, Point P2, unsigned i1, unsigned i2, std::string id) : _oldP1(P1),
+    Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
 
-    std::string getID() const {
+    unsigned getID() const {
         return _id;
     }
+
+    const std::string& getIdentifier() const;
+
     std::array<double, 6> getTransMatrix() const;
     const MultiPolygon& getMultiP() const {
         return _multiP;

@@ -20,6 +20,8 @@ using namespace std;
 using namespace rapidxml_ns;
 using namespace svgpp;
 
+std::vector<std::string> Parser::_identifiers;
+
 /**
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
@@ -167,7 +169,8 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             //Add the ring to _shapes only if the ID on top of the stack (its own ID)
             //is in the _ids vector (or if there is no ID specified by the user)
-            _shapes.emplace_back(tmp, _idStack.top());
+            _identifiers.push_back(_idStack.top());
+            _shapes.emplace_back(tmp, _identifiers.size() - 1);
         }
 
         _idStack.pop();
@@ -217,7 +220,8 @@ void Parser::on_exit_element() {
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
-            _shapes.emplace_back(_rings, _idStack.top());
+            _identifiers.push_back(_idStack.top());
+            _shapes.emplace_back(_rings, _identifiers.size() - 1);
         }
 
         _idStack.pop();

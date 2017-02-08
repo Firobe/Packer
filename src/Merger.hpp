@@ -23,7 +23,7 @@ public:
             _shapesInfos.emplace_back(s.getOldP1(), s.getOldP2(), s.getIndexP1(), s.getIndexP2(),
                                       s.getID());
             _shapesMerged.emplace_back(s.getMultiP().size(),
-                                       _shapesMerged.size()); //Constructor of vector initialized with size of _shapes and current index(with shapesMerged.size())
+                                       s.getID()); //Constructor of vector initialized with size of _shapes and current index(with shapesMerged.size())
         }
     }
     void merge(std::vector<std::vector<int> > shapesToMerge);

@@ -76,7 +76,7 @@ vector<Shape> Splitter::getShapes() const {
 
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
         vector<Ring> tmp(1, _shapes[i]);
-        result.emplace_back(tmp, to_string(i));
+        result.emplace_back(tmp, i);
     }
 
     return result;

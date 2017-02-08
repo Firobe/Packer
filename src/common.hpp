@@ -26,6 +26,18 @@ bool vectorContains(std::vector<T>& v, T element) {
     return std::find(v.begin(), v.end(), element) != v.end();
 }
 
+template<typename T>
+unsigned binaryFind(std::vector<T>& v, T val) {
+    auto i = std::lower_bound(v.begin(), v.end(), val);
+
+    if (i != v.end() && !(val < *i)) {
+        return static_cast<unsigned>(i - v.begin());
+    }
+    else {
+        return -1;
+    }
+}
+
 /**
  * Rotates a boost primitive by a fixed number of
  * degrees (trigonometric).

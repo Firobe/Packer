@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     }
 
     for (auto && s : shapes) {
-        toPack.push_back(s.getID());
+        toPack.push_back(s.getIdentifier());
     }
 
     //Apply a buffer to the shapes
@@ -89,16 +89,19 @@ int main(int argc, char** argv) {
     //Prepacking the shapes
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
-	for(int i = 0 ; i < 2 ; ++i)
-		merger.merge(trans.transform());
+
+    for (int i = 0 ; i < 2 ; ++i) {
+        merger.merge(trans.transform());
+    }
+
     Scanline solver(shapes, packerDim);
     solver.solve();
-	//merger.reset();
+    merger.reset();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
-    cout << solver.debugOutputSVG();
+    //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
-    //Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
-    //       docDim.y(), packerDim.y(), shapes);
+    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack,
+                 docDim.y(), packerDim.y(), shapes);
     return EXIT_SUCCESS;
 }

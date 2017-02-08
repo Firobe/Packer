@@ -20,9 +20,9 @@ int main() {
         ASSERT(shapes.size() == 3, "Invalid number of shapes");
 
         //Testing IDs
-        ASSERT(shapes[0].getID() == "path333600", "Bad ID 1");
-        ASSERT(shapes[1].getID() == "path335700", "Bad ID 2");
-        ASSERT(shapes[2].getID() == "g346500", "Bad ID 3");
+        ASSERT(shapes[0].getIdentifier() == "path333600", "Bad ID 1");
+        ASSERT(shapes[1].getIdentifier() == "path335700", "Bad ID 2");
+        ASSERT(shapes[2].getIdentifier() == "g346500", "Bad ID 3");
 
         //Testing translation of the star
         ASSERT(abs(shapes[1].getMultiP()[0].outer()[0].x() - 212.18985) < EPSILON, "Bad X translation");
