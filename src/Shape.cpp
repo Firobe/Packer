@@ -215,9 +215,10 @@ void rotateToBestAngle(Shape& object) {
     }
 
     rotate<Shape>(object, bestAngle - currAngle);
+    bg::envelope(object.getMultiP(), currBox);
 
     // To have height > width
-    if(currBox.max_corner().y()-currBox.min_corner().y() < currBox.max_corner().x()-currBox.min_corner().x()) {
+    if(abs(currBox.max_corner().y()-currBox.min_corner().y()) < abs(currBox.max_corner().x()-currBox.min_corner().x())) {
       rotate<Shape>(object, 90);
     }
 
