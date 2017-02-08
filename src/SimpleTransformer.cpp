@@ -18,11 +18,11 @@
 
 using namespace std;
 
-vector<vector<int> > SimpleTransformer::transform() {
-    vector<vector<int> > ret;
+vector<vector<unsigned> > SimpleTransformer::transform() {
+    vector<vector<unsigned> > ret;
     vector<bool> mergedV(_shapes.size(), false);
 
-    for (int i = 0 ; i < static_cast<int>(_shapes.size()) ; ++i) {
+    for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
         if (mergedV[i]) {
             continue;
         }
@@ -32,7 +32,7 @@ vector<vector<int> > SimpleTransformer::transform() {
         int bestOffset; //Best translation (see PPAP for further information)
         double bestArea; //Best area of merged couples of shapes
         unsigned j = i + 1;
-        int bestJ = j;
+    	unsigned bestJ = j;
         bestArea = 0.;
         bestAlpha = 0.;
         bestBeta = 0.;
@@ -51,7 +51,7 @@ vector<vector<int> > SimpleTransformer::transform() {
                     for (int alpha = 0; alpha < 360; alpha += ROTATESTEP) {
                         Shape shapeA, shapeB;
                         Box boxA, boxB, boxMerge;
-                        LOG(info) << "alpha " << alpha << endl;
+                        //LOG(info) << "alpha " << alpha << endl;
 
                         for (double beta = 0.; beta < 360.; beta += ROTATESTEP) {
                             for (unsigned offset = 0; offset < TRANSLATESTEPS ; ++offset) {
@@ -103,11 +103,11 @@ vector<vector<int> > SimpleTransformer::transform() {
                         mergedV[i] = true;
                         mergedV[bestJ] = true;
                         LOG(info) << "===========================> UNGH <=====================" << endl;
-                        ret.push_back({i, bestJ}); // _shapes update
+                        ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
                         bloubla(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB, bestMid);
                     }
                     else {
-                        ret.push_back({i});
+                        ret.push_back({_shapes[i].getID()});
                     }
                 } //if
     }//for i

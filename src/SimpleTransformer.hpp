@@ -10,7 +10,7 @@
 class SimpleTransformer : Transformer {
 public:
     SimpleTransformer(std::vector<Shape>& s) : Transformer(s) {}
-    std::vector<std::vector<int> > transform();
+    std::vector<std::vector<unsigned> > transform();
 };
 
 void bloubla(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box& boxA,

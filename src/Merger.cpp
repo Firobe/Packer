@@ -3,98 +3,76 @@
 
 using namespace std;
 
-void Merger::merge(vector<vector<int> > shapesToMerge) {
-    vector<int> shapesToPop;
+/**
+ * Merges the data structures of each group received in shapesToMerge
+ * shapesToMerge[i] = vector of identifiers to merge into a new shape
+ */
+void Merger::merge(vector<vector<unsigned> > shapesToMerge) {
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
         return a.getID() < b.getID();
     });
-    vector<int> ids(_shapes.size());
+    auto ids = getIds(_shapes);
 
-    for (unsigned i = 0 ; i < ids.size() ; ++i) {
-        ids[i] = _shapes[i].getID();
-    }
-
-    for (vector<int> idTab : shapesToMerge) {
-        unsigned sod = binaryFind(ids, idTab[0]);
-
+    for (vector<unsigned> idTab : shapesToMerge) {
         for (unsigned i = 1 ; i < idTab.size() ; ++i) {
-            unsigned sid = binaryFind(ids, idTab[i]);
-            mergeMultiP(_shapes[sod].getMultiP(), _shapes[sid].getMultiP());
-            shapesToPop.push_back(sid);
-
-            for (auto s : _shapesMerged[sid]) {
-                _shapesMerged[sod].push_back(s);
-            }
+			unsigned sod = binaryFind(*ids, idTab[0]);//Index in _shapes of the first identifier to merge
+            unsigned sid = binaryFind(*ids, idTab[i]);//Idem for i-th shape
+            mergeMultiP(_shapes[sod].getMultiP(), _shapes[sid].getMultiP()); //Merge polygons
+			_shapesMerged[sod] = _shapesMerged[sod] + _shapesMerged[sid]; //Concatenation
+			_shapes.erase(_shapes.begin() + sid);
+			_shapesMerged.erase(_shapesMerged.begin() + sid);
+			ids->erase(ids->begin() + sid);
         }
     }
-
-    sort(shapesToPop.begin(), shapesToPop.end(), [](const int& a, const int& b) {
-        return a < b;
-    }); // sorts shapesToPop increasingly
-
-    for (unsigned i = 0 ; i < shapesToPop.size() ; ++i) {
-        _shapes.erase(_shapes.begin() + shapesToPop[i] - i);
-        _shapesMerged.erase(_shapesMerged.begin() + shapesToPop[i] - i);
-    }
-
-    for (auto& i : _shapesMerged) {
-        cerr << endl;
-
-        for (auto& j : i) {
-            cerr << j << " ; ";
-        }
-    }
-
-    cerr << endl;
+	delete ids;
 }
 
+/**
+ * Reverse operation of merge(), unmerges previously merged shapes
+ * with the help of information stored by merge()
+ *
+ * reset() is supposed to be called after merge()
+ */
 void Merger::reset() {
-    vector<int> nbElem(_shapesInfos.size());
-    sort(_shapesInfos.begin(), _shapesInfos.end(), [](const Shape & a, const Shape & b) {
-        return a.getID() < b.getID();
-    });
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
         return a.getID() < b.getID();
     });
-    vector<int> ids(_shapesInfos.size());
-    vector<unsigned int> ids2(_shapes.size());
-
-    for (unsigned i = 0 ; i < ids.size() ; ++i) {
-        ids[i] = _shapesInfos[i].getID();
-    }
-
-    for (unsigned i = 0 ; i < ids2.size() ; ++i) {
-        ids2[i] = _shapes[i].getID();
-    }
+    auto ids = getIds(_shapesInfos);
+    auto ids2 = getIds(_shapes);
 
     for (auto& s : _shapesInfos) {
-        s.getMultiP().resize(_shapesInfos.size());
+        s.getMultiP().reserve(_shapesInfos.size());
     }
-
     for (unsigned i = 0; i < _shapes.size(); ++i) {
-        unsigned sod = binaryFind(ids2, _shapes[i].getID());
-
+        unsigned sod = binaryFind(*ids2, _shapes[i].getID());
         for (unsigned j = 0; j < _shapesMerged[sod].size(); ++j) {
-            unsigned sid = binaryFind(ids, _shapesMerged[i][j]);
-            _shapesInfos[sid].getMultiP()[nbElem[sid]++]
-                = _shapes[i].getMultiP()[j];
+            unsigned sid = binaryFind(*ids, _shapesMerged[i][j]);
+            _shapesInfos[sid].getMultiP().push_back(_shapes[i].getMultiP()[j]);
         }
     }
-
-    for (unsigned i = 0; i < nbElem.size(); ++i) {
-        _shapesInfos[i].getMultiP().resize(nbElem[i]);
-    }
-
     _shapes.clear();
-    cerr << "Shapesinfo size " << _shapesInfos.size() << endl;
-
     for (auto& s : _shapesInfos) {
         _shapes.push_back(s);
     }
+	delete ids;
+	delete ids2;
 }
 
+/**
+ * Stores all of B's polygons into A
+ */
 void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
     for (auto& b : B) {
         A.push_back(b);
     }
+}
+
+/**
+ * Creates a vector containing the IDs of the shapes in v (in the same order)
+ */
+vector<unsigned>* getIds(vector<Shape>& v){
+	auto ret = new vector<unsigned>(v.size());
+	for(unsigned i = 0 ; i < v.size() ; ++i)
+		(*ret)[i] = v[i].getID();
+	return ret;
 }
