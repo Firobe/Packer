@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <boost/geometry/algorithms/overlaps.hpp>
+#include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/algorithms/convex_hull.hpp>
@@ -22,13 +22,14 @@ using namespace std;
  * See SimpleTransformer documentation
  */
 vector<vector<unsigned> > SimpleTransformer::transform() {
-	LOG(info) << "Now merging shapes";
+    LOG(info) << "Now merging shapes";
     vector<vector<unsigned> > ret;
     vector<bool> mergedV(_shapes.size(), false);
 
     //We try to merge {0, 1}, {1, 2}, ..., {n - 1, n}
     for (unsigned i = 0 ; i < _shapes.size() - 1 ; ++i) {
-		LOG(info) << ".";
+        LOG(info) << ".";
+
         if (mergedV[i])
             continue;
 
@@ -61,7 +62,7 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
                         mid = (x2 + x1) / 2.;
                         translate<Shape>(shapeB, mid - x2, 0.);
 
-                        if (bg::overlaps(shapeA.getMultiP(), shapeB.getMultiP())) {
+                        if (bg::intersects(shapeA.getMultiP(), shapeB.getMultiP())) {
                             x1 = mid;
                             translate<Shape>(shapeB, x2 - mid, 0.);
                         }
@@ -105,7 +106,7 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             ret.push_back({_shapes[i].getID()});
     }//for i
 
-	LOG(info) << endl;
+    LOG(info) << endl;
     return ret;
 }
 
