@@ -95,7 +95,7 @@ using ProcessedAttributes =
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-vector<Shape> Parser::Parse(string path,
+vector<Shape> Parser::Parse(const string& path,
                             vector<string>& ids) { // TODO : Returns a copy, can be improved
     LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file

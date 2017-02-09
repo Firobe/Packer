@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
     ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
     ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
+    ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
@@ -85,7 +86,7 @@ int main(int argc, char** argv) {
     Merger merger(shapes);
     SimpleTransformer trans(shapes);
 
-    for (int i = 0 ; i < 2 ; ++i)
+    for (int i = 0 ; i < vm["nbMerge"].as<int>() ; ++i)
         merger.merge(trans.transform());
 
     Scanline solver(shapes);

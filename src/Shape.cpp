@@ -192,7 +192,7 @@ void rotateToBestAngle(Shape& object) {
     const double ANGLE_MAX = 90.0;
     const double ANGLE_STEP = 0.2;
     double bestAngle, currAngle;
-    double bestArea, currArea;
+    double bestArea;
     Box currBox;
     bestAngle = 0.0;
     bg::envelope(object.getMultiP(), currBox);
@@ -200,6 +200,7 @@ void rotateToBestAngle(Shape& object) {
     currAngle = 0.0;
 
     while (currAngle <= ANGLE_MAX) {
+        double currArea;
         rotate<Shape>(object, ANGLE_STEP);
         bg::envelope(object.getMultiP(), currBox);
         currArea = bg::area(currBox);

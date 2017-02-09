@@ -28,10 +28,10 @@ protected:
     int _currentShape;
     bool _stopPrinting;
 public:
-    static void Write(std::string path, bool addto, std::vector<std::string>& tp,
+    static void Write(const std::string& path, bool addto, std::vector<std::string>& tp,
                       std::vector<Shape>&);
 private:
-    Outer(std::string path, bool addto, std::vector<std::string>& tp,
+    Outer(const std::string& path, bool addto, std::vector<std::string>& tp,
           std::vector<Shape>&);
     ~Outer();
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);

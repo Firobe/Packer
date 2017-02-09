@@ -13,7 +13,7 @@ using namespace std;
 using namespace rapidxml_ns;
 using XMLElement = rapidxml_ns::xml_node<>* ;  //Defines the XMLElement type
 
-Outer::Outer(std::string path, bool addto, std::vector<std::string>& tp,
+Outer::Outer(const std::string& path, bool addto, std::vector<std::string>& tp,
              vector<Shape>& s) :
     _shapes(s),
     _ids(tp),
@@ -262,7 +262,7 @@ void Outer::groupShapes() {
  * Returns a string corresponding to the SVG file to ouput.
  * (Theoretically with the packed shapes)
  */
-void Outer::Write(std::string path, bool addto, std::vector<std::string>& tp,
+void Outer::Write(const std::string& path, bool addto, std::vector<std::string>& tp,
                   std::vector<Shape>& s) {
     Outer outer(path, addto, tp, s);
     XMLElement rootNode = outer._doc.first_node();

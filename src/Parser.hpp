@@ -74,8 +74,13 @@ private:
     int _toApply; //Number of recently created rings
     static std::vector<std::string> _identifiers; //Contains all unique shape identifiers
     static Point _binDims;
+
+    Parser(std::vector<std::string>& i) :
+        _ids(i), _groupStack(-1),
+        _currentMatrix(1, 0, 0, 1, 0, 0), _toApply(0) {
+    }
 public:
-    static std::vector<Shape> Parse(std::string, std::vector<std::string>&);
+    static std::vector<Shape> Parse(const std::string&, std::vector<std::string>&);
     static const std::string& id(unsigned i) {
         return _identifiers[i];
     }
@@ -86,10 +91,6 @@ public:
         _binDims = p;
     }
 
-    Parser(std::vector<std::string>& i) :
-        _ids(i), _groupStack(-1),
-        _currentMatrix(1, 0, 0, 1, 0, 0), _toApply(0) {
-    }
     std::vector<Shape> getShapes() {
         return _shapes;
     }

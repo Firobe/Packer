@@ -95,7 +95,7 @@ bool Interpolator::intersects(double ax, double ay, double bx, double by, double
                               double dx, double dy,
                               double distance, double& whereX, double& whereY) {
     double backAx = ax, backAy = ay; //Save the position of A
-    double frac, a, b, c, d, snorm, tx, ty, ux, uy, vx, vy;
+    double frac, a, b, c, d;
     //Take back A to the origin and translates B, C, D appropriately
     bx -= ax;
     cx -= ax;
@@ -110,6 +110,7 @@ bool Interpolator::intersects(double ax, double ay, double bx, double by, double
     for (int signe : {
                 1, -1
             }) {
+        double snorm, tx, ty, ux, uy, vx, vy;
         //Norm of the vector (AD)
         snorm = sqrt(dx * dx + dy * dy);
         tx = - dy * signe * distance / snorm;
