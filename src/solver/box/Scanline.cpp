@@ -23,15 +23,13 @@ void Scanline::preSolve() {
 }
 
 void Scanline::solveBin() {
-    // == Stopping Cases ==
-    if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > Parser::getDims().y()) {
-        // STOP, remaining pieces are too tall to fit in any way
-        throw invalid_argument("Shape height greater than bin height");
-    }
-
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().x())
-            throw invalid_argument("Shape width greater than bin width");
+        if ((_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().x()
+					&& _boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().x())
+				|| 
+				(_boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().y()
+				 && _boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().y()))
+            throw invalid_argument("Shape too big to fit");
     }
 
     // =============================================================================

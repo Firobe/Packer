@@ -101,6 +101,7 @@ public:
     void set(svgpp::tag::attribute::id, const boost::iterator_range<const char*> pId);
     void set(svgpp::tag::attribute::width, double width);
     void set(svgpp::tag::attribute::height, double height);
+ 	void set(svgpp::tag::attribute::viewBox, double, double, double, double);
     void path_move_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_line_to(double x, double y, svgpp::tag::coordinate::absolute);
     void path_cubic_bezier_to(

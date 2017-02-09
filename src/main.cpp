@@ -15,7 +15,7 @@ namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char** argv) {
-    LOG(info) << "SUPER PACKER 2000\n===================" << endl;
+    LOG(info) << "SUPER PACKER 3000\n===================" << endl;
     srand(time(0));
     //Parsing command line
     po::options_description
@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
     ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
     ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
+	("debug", po::value<bool>()->default_value(false), "Produce debug SVG instead of real one")
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
@@ -94,8 +95,10 @@ int main(int argc, char** argv) {
     merger.reset();
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
-    //cout << solver.debugOutputSVG();
     //Producing the output (sending input file and the option to duplicate
-    Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
+	if(vm["debug"].as<bool>())
+    	cout << solver.debugOutputSVG();
+	else
+		Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
     return EXIT_SUCCESS;
 }

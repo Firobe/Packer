@@ -77,6 +77,7 @@ using CustomAttributes =
     svgpp::tag::attribute::height,
     svgpp::tag::attribute::id,
     svgpp::tag::attribute::width,
+	svgpp::tag::attribute::viewBox,
     svgpp::tag::attribute::transform
     >::type;
 
@@ -293,7 +294,7 @@ void Parser::set(svgpp::tag::attribute::id,
  */
 void Parser::set(svgpp::tag::attribute::height, double height) {
     LOG(debug) << "Parsed " << height << " as doc height" << endl;
-    Parser::_binDims.set<1>(height);
+    //Parser::_binDims.set<1>(height);
 }
 
 /**
@@ -301,7 +302,7 @@ void Parser::set(svgpp::tag::attribute::height, double height) {
  */
 void Parser::set(svgpp::tag::attribute::width, double width) {
     LOG(debug) << "Parsed " << width << " as doc width" << endl;
-    Parser::_binDims.set<0>(width);
+    //Parser::_binDims.set<0>(width);
 }
 
 /**
@@ -310,4 +311,9 @@ void Parser::set(svgpp::tag::attribute::width, double width) {
 void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
     _currentMatrix = Matrix(matrix);
     LOG(debug) << "New transformation state : " << _currentMatrix << " (stack size : ";
+}
+
+void Parser::set(svgpp::tag::attribute::viewBox, double x, double y, double width, double height){
+	Parser::_binDims.set<0>(width - x);
+	Parser::_binDims.set<1>(height - y);
 }
