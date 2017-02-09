@@ -89,7 +89,7 @@ void InnerQuadTree::construct(float x1, float y1, float x2, float y2, bitmap& bm
 			int half = length/2;
 			q1 = new InnerQuadTree(x1, y1, xm, ym, bmap, offsetX, offsetY, half, depth+1); //top left
 			q2 = new InnerQuadTree(xm, y1, x2, ym, bmap, offsetX+half, offsetY, half, depth+1); //top right
-			q3 = new InnerQuadTree(xm, ym, x2, y2, bmap, offsetX+half, offsetY+half, half, depth+1); //bottom right
+			q3 = new InnerQuadTree(xm, ym, x2, y2, bmap, offsetX+half, offsetY+half, half, depth+1); //bottom right)
 			q4 = new InnerQuadTree(x1, ym, xm, y2, bmap, offsetX, offsetY+half, half, depth+1); //bottom left
 			size = q1->size + q2->size + q3->size + q4->size + 1;
 		}
@@ -198,17 +198,17 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
 	return false;
 }
 
-void InnerQuadTree::deepTranslater(float x, float y) {
+void InnerQuadTree::translater(float x, float y) {
 	x1+=x;
 	x2+=x;
 	y1+=y;
 	y2+=y;
 
 	if (q1 != nullptr) {
-		q1->deepTranslater(x, y);
-		q2->deepTranslater(x, y);
-		q3->deepTranslater(x, y);
-		q4->deepTranslater(x, y);
+		q1->translater(x, y);
+		q2->translater(x, y);
+		q3->translater(x, y);
+		q4->translater(x, y);
 	}
 }
 

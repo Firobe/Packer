@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 #include <boost/geometry.hpp>
 // Plante sans cette include pour une raison indeterminé
@@ -26,6 +27,9 @@ using namespace std;
  * @param bmap
  */
 void bitmap::copy(const bitmap &bmap) {
+	cout << "bitmap copied" << endl;
+	_offsetX=bmap._offsetX;
+	_offsetY=bmap._offsetY;
 	width = bmap.width;
 	height = bmap.height;
 	nbBlack = bmap.nbBlack;
@@ -67,36 +71,12 @@ bitmap::~bitmap() {
 }
 
 
-/**
- * @brief bitmap::bitmap generate a bitmap that is the rasterization of the boost MultiPolygon
- * @param mult MultiPolygon to rasterize
- * @param width width of the bitmap
- * @param height height of the bitmap
- */
-bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height(height) {
-
-	map = new bool[height*width];
-	for(int i=0; i<width*height; i++)
-		map[i] = false;
-
-	// Compute the shape Box envelop
-	Box envelop;
-	bg::envelope(mult, envelop);
-	bg::correct(envelop);
-	Point reference = envelop.min_corner();
-
-	// Place the shape into the (0,0) point in order to create the quadTree
-	translate<MultiPolygon>(mult, -reference.x(), -reference.y());
-	translate<Box>(envelop, -reference.x(), -reference.y());
-
-
-	double xpres = (double) envelop.max_corner().x()/width;
-	double ypres = (double) envelop.max_corner().y()/height;
+void bitmap::construct(MultiPolygon &mult, int width, float xpres, float xmax, int height, float ypres, float ymax) {
+	nbBlack = 0;
 
 	// Detect collisions with the grid on the x axis
-	int nbBlack = 0;
 	for (int y=1; y<height; y++) {
-		Line line{{0,y*ypres},{envelop.max_corner().x(), y*ypres}};
+		Line line{{0,y*ypres},{xmax, y*ypres}};
 		std::vector<Line> line_v;
 		bg::intersection(line, mult, line_v);
 		for (Line& line_r : line_v) {
@@ -125,11 +105,10 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 
 	// Detect collision with the grid on the y axis
 	for (int x=1; x<width; x++) {
-		Line line{{x*xpres,0},{x*xpres, envelop.max_corner().y()}};
+		Line line{{x*xpres,0},{x*xpres, ymax}};
 		std::vector<Line> line_v;
 		bg::intersection(line, mult, line_v);
 		for (Line& line_r : line_v) {
-			//cout << bg::wkt(line_r) << " ";
 			double y1 = line_r[0].y();
 			bool first = true;
 			for (Point& p : line_r) {
@@ -151,10 +130,73 @@ bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height
 					first = false;
 			}
 		}
-		//cout << endl;
 	}
 
-	this->nbBlack = nbBlack;
+}
+
+
+bitmap::bitmap(MultiPolygon &mult, float pres) {
+	// Compute the shape Box envelop
+	Box envelop;
+	bg::envelope(mult, envelop);
+	bg::correct(envelop);
+	Point reference = envelop.min_corner();
+
+	// Place the shape into the (0,0) point in order to create the quadTree
+	translate<MultiPolygon>(mult, -reference.x(), -reference.y());
+	translate<Box>(envelop, -reference.x(), -reference.y());
+
+	// Determine the bitmap size according to this information
+	width = ((int) envelop.max_corner().x()/pres + 1);
+	height = ((int) envelop.max_corner().y()/pres + 1);
+
+	map = new bool[height*width];
+	for(int i=0; i<width*height; i++)
+		map[i] = false;
+
+	// Determine the bitmap position
+	// Poisition is a approximation and is asumed as descritized with a pres step
+	_offsetX = (int) reference.x()/pres;
+	_offsetY = (int) reference.y()/pres;
+
+	construct(mult,
+			  width, (float) pres, envelop.max_corner().x(),
+			  height, (float) pres, envelop.max_corner().y());
+
+	// Restore shape position
+	translate<MultiPolygon>(mult, reference.x(), reference.y());
+}
+
+bitmap::bitmap(Shape &shape, float pres) : bitmap(shape.getMultiP(), pres) {}
+
+/**
+ * @brief bitmap::bitmap generate a bitmap that is the rasterization of the boost MultiPolygon
+ * @param mult MultiPolygon to rasterize
+ * @param width width of the bitmap
+ * @param height height of the bitmap
+ */
+bitmap::bitmap(MultiPolygon &mult, int width, int height) : width(width), height(height) {
+
+	map = new bool[height*width];
+	for(int i=0; i<width*height; i++)
+		map[i] = false;
+
+	// Compute the shape Box envelop
+	Box envelop;
+	bg::envelope(mult, envelop);
+	bg::correct(envelop);
+	Point reference = envelop.min_corner();
+
+	// Place the shape into the (0,0) point in order to create the quadTree
+	translate<MultiPolygon>(mult, -reference.x(), -reference.y());
+	translate<Box>(envelop, -reference.x(), -reference.y());
+
+	double xpres = (double) envelop.max_corner().x()/width;
+	double ypres = (double) envelop.max_corner().y()/height;
+
+	construct(mult,
+			  width, xpres, envelop.max_corner().x(),
+			  height, ypres, envelop.max_corner().y());
 
 	// Restore shape position
 	translate<MultiPolygon>(mult, reference.x(), reference.y());
@@ -176,6 +218,20 @@ bitmap::bitmap(const bool * nmap, int width, int height) : width(width), height(
 		if (map[i])
 			nbBlack++;
 	}
+}
+
+
+/**
+ * @brief bitmap::bitmap construct an empty bitmap
+ * @param width
+ * @param height
+ */
+bitmap::bitmap(int width, int height) : width(width), height(height) {
+	map = new bool[width*height];
+	for (int i=0; i<width*height; i++) {
+		map[i] = false;
+	}
+	nbBlack = 0;
 }
 
 
@@ -204,9 +260,95 @@ void bitmap::set(int x, int y, bool val) {
  * @param x absciss
  * @param y ordiante
  */
-bool bitmap::get(int x, int y) {
+bool bitmap::get(int x, int y) const {
+	if (x < 0 || x > width-1 || y < 0 || y > height-1)
+		return false;
 	return map[BMAP_COORD(x,y)];
 }
+
+
+bitmap *bitmap::rotate(const bitmap *bmap, float r)
+{
+	r = -r;
+
+	float w = bmap->width;
+	float h = bmap->height;
+
+	int aX = (int)ceil(w*cos(r) - h*sin(r));
+	int aY = (int)ceil(w*sin(r) + h*cos(r));
+
+	int bX = (int)ceil(-h*sin(r));
+	int bY = (int)ceil(h*cos(r));
+
+	int cX = (int)ceil(w*cos(r));
+	int cY = (int)ceil(w*sin(r));
+
+	int xMin = min(min(0, aX), min(bX, cX));
+	int xMax = max(max(0, aX), max(bX, cX));
+	int yMin = min(min(0, aY), min(bY, cY));
+	int yMax = max(max(0, aY), max(bY, cY));
+
+	int width = xMax-xMin;
+	int height = yMax-yMin;
+
+	float oldCenterX = w/2;
+	float oldCenterY = h/2;
+	float centerX = width/2;
+	float centerY = height/2;
+
+	float cosr = cos(r);
+	float sinr = sin(r);
+
+	bitmap *rotated = new bitmap(width, height);
+	for (int x=0; x<width; x++) {
+		for (int y=0; y<height; y++) {
+			int cX = round(x-centerX);
+			int cY = round(y-centerY);
+			int X = round((cosr*cX - sinr*cY) + oldCenterX);
+			int Y = round((sinr*cX + cosr*cY) + oldCenterY);
+			rotated->set(x, y, bmap->get(X, Y));
+			}
+	}
+
+	return rotated;
+}
+
+
+bitmap *bitmap::trim(const bitmap *bmp)
+{
+	bool found = false;
+	int minX=0, minY=0;
+	int maxX=0, maxY=0;
+
+	for (int x=0; x<bmp->width; x++) {
+		for (int y=0; y<bmp->height; y++) {
+			if (bmp->get(x, y)) {
+				if (!found) {
+					found = true;
+					minX = maxX = x;
+					minY = maxY = y;
+				} else {
+					if (x < minX) minX = x;
+					if (y < minY) minY = y;
+					if (x > maxX) maxX = x;
+					if (y > maxY) maxY = y;
+				}
+			}
+		}
+	}
+
+	int deltaX = maxX-minX;
+	int deltaY = maxY-minY;
+	bitmap *trimmed = new bitmap(deltaX, deltaY);
+	for (int x=0; x<deltaX; x++) {
+		for (int y=0; y<deltaY; y++) {
+			trimmed->set(x, y, bmp->get(x+minX, y+minY));
+		}
+	}
+
+	return trimmed;
+}
+
 
 
 /**
@@ -308,6 +450,26 @@ bool bitmap::hasWhite(int offsetX, int offsetY, int lengthX, int lengthY) {
  */
 bool bitmap::hasWhite(int offsetX, int offsetY, int length) {
 	return hasWhite(offsetX, offsetY, length, length);
+}
+
+bool bitmap::intersects(const bitmap& bmap) const {
+	// We first search if global size intersect or not for a faster computation
+	if (_offsetX+width < bmap._offsetX || bmap._offsetX+bmap.width  < _offsetX)
+		return false;
+	if (_offsetY+height < bmap._offsetY || bmap._offsetY+bmap.height  < _offsetY)
+		return false;
+
+	int offsetX = bmap._offsetX - _offsetX;
+	int offsetY = bmap._offsetY - _offsetY;
+
+	for (int x=0; x<width; x++) {
+		for (int y=0; y<height; y++) {
+			if (get(x, y) && bmap.get(x+offsetX, y+offsetY)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 

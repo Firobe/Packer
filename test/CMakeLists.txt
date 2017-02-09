@@ -29,6 +29,7 @@ add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree parser_lib)
 target_link_libraries(quadtree utils_lib)
 target_link_libraries(quadtree solver_lib)
+add_test(quadTreeTest quadtree)
 
 add_executable(bitmap bitmapTest.cpp)
 target_link_libraries(bitmap utils_lib)

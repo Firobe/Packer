@@ -16,15 +16,15 @@ enum color_enum {
 };
 
 /**
- * This class allow the creation of a quadTree base on a Shape
+ * This class allow the creation of a quadTree based on a Shape or MultiPolygon
  */
 class InnerQuadTree {
 private:
 	color_enum color;
-    int depth; //We will be able to translate a quadTree only if depth == 0
-	int size;    //store quadTree size (number of quadtrees)
+	int depth;
+	int size;    //stored quadTrees
 	InnerQuadTree *q1, *q2, *q3, *q4;
-	float x1, y1, x2, y2;
+	float x1, y1, x2, y2; //Tree bounding box
 
 private:
 	void copy(const InnerQuadTree&);
@@ -39,7 +39,7 @@ private:
 	friend class QuadTree;
 
 	bool intersectsRec(const InnerQuadTree&, float offsetX, float offsetY, float offsetX2, float offsetY2) const;
-	void deepTranslater(float x, float y);
+	void translater(float x, float y);
 
 	std::vector<color_enum> getLine(int i, int depth);
 

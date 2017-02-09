@@ -5,13 +5,23 @@ set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
 set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
-FIND_PROGRAM( TEST_PATH fefefffefe )
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
     enable_testing()
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O2")
+if(CMAKE_BUILD_TYPE STREQUAL "coverage")
+  SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_C_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    include(CodeCoverage)
+    setup_init_coverage()
+    coverage_all(coverage)
+  endif()
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -fopenmp -std=c++11 -O2")
 
 # Define where headers only libs and statics libs are located
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)

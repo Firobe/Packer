@@ -18,6 +18,7 @@ using namespace std;
  * @param q
  */
 void QuadTree::copy(const QuadTree &q) {
+	cout << "quadtree copied" << endl;
 	tree = new InnerQuadTree(*q.tree);
 	bmap = new bitmap(*q.bmap);
 	_offsetX=q._offsetX;
@@ -138,8 +139,84 @@ bool QuadTree::intersects(const QuadTree&q) const {
  * @param y
  */
 void QuadTree::translater(float x, float y) {
-	_offsetX+=x;
-	_offsetY+=y;
+	if (!rotated) {
+		// in this case, movement is easy to do
+		_offsetX+=x;
+		_offsetY+=y;
+		moved = true;
+	} else {
+		// in this case we need to transform the old_tr*old_rot*new_tra
+		// into a translation*rotation movement
+		float newx, newy;
+		newx = _offsetX + x*cos(_angle) + y*sin(_angle);
+		newy = _offsetY - x*sin(_angle) + y*cos(_angle);
+		_offsetX = newx;
+		_offsetY = newy;
+		moved = true;
+	}
+}
+
+/**
+ * @brief QuadTree::applyTranslation apply the stored translation
+ * @return true if something was done, false if nothing had to be done or in case of error
+ */
+bool QuadTree::applyTranslation() {
+	if (!moved)
+		return false;
+	tree->translater(_offsetX, _offsetY);
+	_offsetX = 0;
+	_offsetY = 0;
+	moved = false;
+}
+
+/**
+ * @brief QuadTree::rotate rotate a QuadTree
+ * The rotation is around the (0,0) point by default
+ * Better rotation is possible with the possibility to choose the rotation point
+ * @param angle rotation angle in degree, stored in radians
+ */
+void QuadTree::rotate(float angle) {
+	_angle += M_PI * angle / 180.0;
+	rotated = true;
+}
+
+/**
+ * @brief QuadTree::applyTranslation apply the stored rotation
+ * If translation was not before, apply it first
+ * @return true if something was done, false if nothing had to be done or in case of error
+ */
+bool QuadTree::applyRotation() {
+	// Tree position and size
+	float posx = _offsetX + tree->x1;
+	float posy = _offsetY + tree->y1;
+	float width = tree->x2 - tree->x1;
+	float height = tree->y2 - tree->y1;
+
+	// First we apply a static rotation to the bitmap as if the bitmap is at the (0,0) coordinate
+	bitmap* bmap2 = bitmap::rotate(bmap, _angle);
+	delete bmap;
+	bmap = bmap2;
+
+	// TODO : trimm with a offset calculation, so we can't trimm the bitmap now
+
+	// Determine tree max depth according to the bitmap size
+	int size = pow(2, max(ceil(log2(bmap2->getHeight())), ceil(log2(bmap2->getWidth()))));
+
+	// Compute good translation to apply to the new QuadTree creation
+	float tx = posx*cos(_angle) - posy*sin(_angle);
+	float ty = posx*sin(_angle) + posy*cos(_angle);
+
+	delete tree;
+	tree = new InnerQuadTree(tx, ty, tx+width, ty+height,*bmap, 0, 0, size, 0);
+
+	// Fresh tree, positions are reseted
+	rotated = false;
+	moved = false;
+	_offsetX = 0.0;
+	_offsetY = 0.0;
+	_angle = 0.0;
+
+	return true;
 }
 
 /**

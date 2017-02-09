@@ -18,6 +18,8 @@ private:
 	float _angle;
 	bitmap *bmap;
 	int _maxDepth;
+	bool rotated = false;
+	bool moved = true;
 
 
 private:
@@ -34,7 +36,9 @@ public:
 public:
 	bool intersects(const QuadTree&) const;
 	void translater(float x, float y);
-
+	bool applyTranslation();
+	void rotate(float angle);
+	bool applyRotation();
 
 private:
 	void saveTree(std::string filename, int depth);

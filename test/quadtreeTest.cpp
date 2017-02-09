@@ -42,31 +42,39 @@ int main() {
 		file.close();
 	}*/
 
+	auto cstart = Clock::now();
 	vector<QuadTree> quads;
+	quads.reserve(shapes.size()); //No copy of quadtress needed to place them in the vector
+
 	for (Shape& s: shapes) {
-		quads.push_back(QuadTree(s, 5));
-		cout << " - QuadTree : " << endl << quads.back() << endl;
+		quads.emplace_back(s, 10);
+		//cout << " - QuadTree : " << endl << quads.back() << endl;
 		//bitmap(s, 64, 64);
 	}
+	auto cend = Clock::now();
+	int celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
+	cout << "Qd cre : " << celapsed << " microseconds elapsed" << endl;
 
 	// Intersection accuracy verification
 	int diff = 0;
+	int crit = 0;
 	for(size_t i=0; i<quads.size(); i++) {
 		for(size_t j=i+1; j<quads.size(); j++) {
 			bool b1 = quads[i].intersects(quads[j]);
 			bool b2 = bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP());
-			cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
-			cout << "Inter : " << b1 << "-" << b2 << endl;
+			//cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
+			//cout << "Inter : " << b1 << "-" << b2 << endl;
 			if (b1 && !b2) diff++;
-			if (!b1 && b2) throw "QuadTree accuracy critical error";
+			if (!b1 && b2) crit++;
 		}
 	}
 	cout << "QuadTrees approximations errors : " << diff << endl;
+	cout << "QuadTree accuracy critical error : " << crit << endl;
 
-	bitmap bmap(shapes[1].getMultiP(), 99, 100);
+	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");
 	for (size_t i=0; i<quads.size(); i++)
-		quads[i].saveTree(shapes[i].getID());
+		quads[i].saveTree(shapes[i].getID());*/
 
 	auto start = Clock::now();
 	for (int i=0; i<REPEAT; i++)
@@ -78,8 +86,8 @@ int main() {
 	int elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "Sh int : " << elapsed << " microseconds elapsed" << endl;
 
-	for (QuadTree& s1: quads)
-			s1.translater(0.5, 0.5);
+	//for (QuadTree& s1: quads)
+	//		s1.translater(0.5, 0.5);
 
 	start = Clock::now();
 	for (int i=0; i<REPEAT; i++) {
@@ -94,7 +102,7 @@ int main() {
 	cout << "qd int : " << elapsed2 << " microseconds elapsed" << endl;
 	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
 
-	start = Clock::now();
+	/*start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)
 		for (Shape& s1: shapes)
 				translate<Shape>(s1,rand()*10-5, rand()*10-5);
@@ -108,7 +116,7 @@ int main() {
 				s1.translater(rand()*10-5, rand()*10-5);
 	end = Clock::now();
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
-	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;
+	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;*/
 
 	/*start = Clock::now();
 	for (vector<QuadTree>::size_type i=0; i<REPEAT*quads.size(); i++)
@@ -118,7 +126,7 @@ int main() {
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "qd tra : " << elapsed << " microseconds elapsed" << endl;*/
 
-	start = Clock::now();
+	/*start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)
 		for (Shape& s1: shapes)
 				rotate<Shape>(s1,6);
@@ -132,7 +140,57 @@ int main() {
 				QuadTree(s1, 10);
 	end = Clock::now();
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
-	cout << "Qd cre : " << elapsed << " microseconds elapsed" << endl;
+	cout << "Qd cre : " << elapsed << " microseconds elapsed" << endl;*/
+
+	vector<bitmap> bits;
+	bits.reserve(shapes.size());
+	for (Shape& s: shapes) {
+		bits.emplace_back(s, 64, 64);
+		//cout << "Bitmap : " << endl << bits.back() << endl;
+		bits.back().saveMap("0" + s.getID());
+	}
+
+	// Intersection accuracy verification
+	diff = 0;
+	for(size_t i=0; i<bits.size(); i++) {
+		for(size_t j=i+1; j<bits.size(); j++) {
+			bool b1 = bits[i].intersects(bits[j]);
+			bool b2 = bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP());
+			//cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
+			//cout << "Inter : " << b1 << "-" << b2 << endl;
+			if (b1 && !b2) diff++;
+			if (!b1 && b2) throw "Bitmap accuracy critical error";
+		}
+	}
+	cout << "bitmap approximations errors : " << diff << endl;
+
+	start = Clock::now();
+	for (int i=0; i<REPEAT; i++) {
+		for (bitmap& s1 : bits) {
+			for (bitmap& s2 : bits)
+				s1.intersects(s2);
+		}
+	}
+	end = Clock::now();
+	elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
+	cout << "bm int : " << elapsed2 << " microseconds elapsed" << endl;
+	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
+
+	start = Clock::now();
+	//for (int j=0; j<REPEAT; j++)
+		for (size_t i=0; i<bits.size(); i++) {
+			bitmap::trim(bitmap::rotate(&bits[i], 1))->saveMap("0" + shapes[i].getID() + "rotated");
+		}
+	end = Clock::now();
+	elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
+	cout << "bm rot : " << elapsed2 << " microseconds elapsed" << endl;
+
+	cout << endl << quads[0] << endl;
+	quads[0].rotate(45);
+	cout << quads[0] << endl;
+	quads[0].applyRotation();
+	cout << quads[0] << endl;
+	quads[0].saveTree("test-rota");
 
 	return EXIT_SUCCESS;
 }
