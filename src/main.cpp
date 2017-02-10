@@ -30,7 +30,8 @@ int main(int argc, char** argv) {
     ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
     ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
-	("debug", po::value<bool>()->default_value(false), "Produce debug SVG instead of real one")
+    ("debug", po::value<bool>()->default_value(false),
+     "Produce debug SVG instead of real one")
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
@@ -55,7 +56,6 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-
     //Will contain the IDs the solver will pack
     vector<string> toPack;
 
@@ -67,9 +67,8 @@ int main(int argc, char** argv) {
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
     LOG(debug) << "Doc dimensions " << Parser::getDims().x() << " ; " << Parser::getDims().y()
                << endl;
-
 #ifdef ENABLE_DISPLAY
-	Display::Init(shapes);
+    Display::Init(shapes);
 #endif
 
     //If nothing was selected, fill toPack with every parsed ID
@@ -99,13 +98,14 @@ int main(int argc, char** argv) {
     Scanline solver(shapes);
     solver.solve();
     merger.reset();
-
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
+
     //Producing the output (sending input file and the option to duplicate
-	if(vm["debug"].as<bool>())
-    	cout << solver.debugOutputSVG();
-	else
-		Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
+    if (vm["debug"].as<bool>())
+        cout << solver.debugOutputSVG();
+    else
+        Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
+
     return EXIT_SUCCESS;
 }

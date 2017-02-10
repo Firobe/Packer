@@ -26,10 +26,10 @@ void Scanline::preSolve() {
 void Scanline::solveBin() {
     for (auto && i : _indices) {
         if ((_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().x()
-					&& _boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().x())
-				|| 
-				(_boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().y()
-				 && _boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().y()))
+                && _boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().x())
+                ||
+                (_boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().y()
+                 && _boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().y()))
             throw invalid_argument("Shape too big to fit");
     }
 
@@ -120,6 +120,10 @@ void Scanline::solveBin() {
                 }
             }
 
+#ifdef ENABLE_DISPLAY
+            Display::Update(_shapes[*i].getID());
+            sf::sleep(sf::seconds(0.1));
+#endif
         }
     }
 }

@@ -28,9 +28,8 @@ void Merger::merge(vector<vector<unsigned> > shapesToMerge) {
     }
 
     delete ids;
-
 #ifndef ENABLE_DISPLAY
-	Display::Reset();
+    Display::Reset();
 #endif
 }
 
@@ -66,9 +65,8 @@ void Merger::reset() {
 
     delete ids;
     delete ids2;
-
 #ifndef ENABLE_DISPLAY
-	Display::Reset();
+    Display::Reset();
 #endif
 }
 

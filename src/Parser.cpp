@@ -77,7 +77,7 @@ using CustomAttributes =
     svgpp::tag::attribute::height,
     svgpp::tag::attribute::id,
     svgpp::tag::attribute::width,
-	svgpp::tag::attribute::viewBox,
+    svgpp::tag::attribute::viewBox,
     svgpp::tag::attribute::transform
     >::type;
 
@@ -313,7 +313,8 @@ void Parser::transform_matrix(const boost::array<double, 6>& matrix) {
     LOG(debug) << "New transformation state : " << _currentMatrix << " (stack size : ";
 }
 
-void Parser::set(svgpp::tag::attribute::viewBox, double x, double y, double width, double height){
-	Parser::_binDims.set<0>(width - x);
-	Parser::_binDims.set<1>(height - y);
+void Parser::set(svgpp::tag::attribute::viewBox, double x, double y, double width,
+                 double height) {
+    Parser::_binDims.set<0>(width - x);
+    Parser::_binDims.set<1>(height - y);
 }

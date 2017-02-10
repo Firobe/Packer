@@ -105,11 +105,11 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             mergedV[i] = true;
             mergedV[bestJ] = true;
 #ifdef ENABLE_DISPLAY
-			/*
-			Display::Update(_shapes[i].getID());
-			Display::Update(_shapes[bestJ].getID());
-			*/
-			Display::Reset();
+            /*
+            Display::Update(_shapes[i].getID());
+            Display::Update(_shapes[bestJ].getID());
+            */
+            Display::Reset();
 #endif
             LOG(debug) << "===========================> MERGED <=====================" << endl;
             ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update

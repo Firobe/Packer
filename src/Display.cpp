@@ -5,6 +5,7 @@
 
 #include "Display.hpp"
 #include "common.hpp"
+#include "Parser.hpp"
 #include "Log.hpp"
 
 #define FPS 60.
@@ -18,15 +19,15 @@ void Display::render() {
         _window.draw(f);
 
     _mustRender = false;
+}
+
+unsigned Display::byIdentifier(unsigned id) {
+    if (_ids.size() != _shapes.size()) {
+        LOG(warning) << "WARNING(Display) : Forced reset" << endl;
+        reset();
     }
 
-void Display::updateByIdentifier(unsigned id) {
     unsigned i;
-	if(_ids.size() != _shapes.size()){
-		LOG(warning) << "Forced reset" << endl;
-		reset();
-		return;
-	}
 
     for (i = 0 ; i < _ids.size() ; ++i)
         if (_ids[i] == id)
@@ -35,18 +36,13 @@ void Display::updateByIdentifier(unsigned id) {
     if (i == _shapes.size())
         throw runtime_error("Invalid update ID");
 
-    updateShape(i);
-    }
+    return i;
+}
 
 void Display::updateShape(unsigned i) {
-    const Ring& r = _shapes[i].getMultiP()[0].outer();
-    _toDraw[i].setPointCount(r.size());
-
-    for (unsigned j = 0 ; j < r.size() ; ++j)
-        _toDraw[i].setPoint(j, sf::Vector2f(r[j].x(), r[j].y()));
-	//_toDraw[i].move(-500, -300);
+    _toDraw[i].update();
     _mustRender = true;
-    }
+}
 
 void Display::loop() {
     sf::Event event;
@@ -59,22 +55,27 @@ void Display::loop() {
         sf::sleep(sf::seconds(1. / FPS));
         _window.pollEvent(event);
         _window.display();
-        }
     }
+}
 
 void Display::reset() {
-	_toDraw.resize(_shapes.size());
-	_ids.resize(_shapes.size());
+    _toDraw.clear();
+    _ids.resize(_shapes.size());
+
     for (unsigned i = 0 ; i < _ids.size() ; ++i)
         _ids[i] = _shapes[i].getID();
 
-    for (unsigned i = 0 ; i < _toDraw.size() ; ++i) {
+    for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
+        _toDraw.emplace_back(_shapes[i]);
         _toDraw[i].setFillColor(sf::Color::Transparent);
         _toDraw[i].setOutlineThickness(2);
         _toDraw[i].setOutlineColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
+        _toDraw[i].scale(WINDOW_WIDTH / Parser::getDims().x(),
+                         WINDOW_HEIGHT / Parser::getDims().y());
         updateShape(i);
-        }
-	_mustRender = true;
     }
+
+    _mustRender = true;
+}
 
 #endif
