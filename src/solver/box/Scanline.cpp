@@ -119,11 +119,6 @@ void Scanline::solveBin() {
                     }
                 }
             }
-
-#ifdef ENABLE_DISPLAY
-            Display::Update(_shapes[*i].getID());
-            sf::sleep(sf::seconds(0.1));
-#endif
         }
     }
 }

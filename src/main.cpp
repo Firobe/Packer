@@ -67,9 +67,7 @@ int main(int argc, char** argv) {
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
     LOG(debug) << "Doc dimensions " << Parser::getDims().x() << " ; " << Parser::getDims().y()
                << endl;
-#ifdef ENABLE_DISPLAY
     Display::Init(shapes);
-#endif
 
     //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))

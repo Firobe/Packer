@@ -1,6 +1,6 @@
-#ifdef ENABLE_DISPLAY
 #ifndef DISPLAY__HPP
 #define DISPLAY__HPP
+#ifdef ENABLE_DISPLAY
 
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -57,16 +57,6 @@ class Display {
         static Display disp(WINDOW_WIDTH, WINDOW_HEIGHT, s);
         return disp;
     }
-public:
-    static void Init(const std::vector<Shape>& s) {
-        getInstance(s);
-    }
-    static void Update(unsigned id) {
-        getInstance().updateShape(getInstance().byIdentifier(id));
-    }
-    static void Reset() {
-        getInstance().reset();
-    }
     Display(int width, int height, const std::vector<Shape>& s) :
         _window(sf::VideoMode(width, height), "PACKER3000"),
         _thread(),
@@ -85,7 +75,23 @@ public:
     }
     unsigned byIdentifier(unsigned identifier);
     void reset();
+public:
+    static void Init(const std::vector<Shape>& s) {
+        getInstance(s);
+    }
+    static void Update(unsigned id) {
+        getInstance().updateShape(getInstance().byIdentifier(id));
+    }
+    static void Reset() {
+        getInstance().reset();
+    }
 };
 
+#else
+struct Display {
+	static void Init(const std::vector<Shape>&){}
+	static void Update(unsigned){}
+	static void Reset(){}
+};
 #endif
 #endif
