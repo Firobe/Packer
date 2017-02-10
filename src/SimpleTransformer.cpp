@@ -12,6 +12,7 @@
 #include "Log.hpp"
 #include "Merger.hpp"
 #include "Parser.hpp"
+#include "Display.hpp"
 
 #define ROTATE_STEP 30 //Step used when rotating
 #define TRANSLATE_NB 15 //Number of translations test to make
@@ -103,6 +104,13 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             LOG(info) << "!";
             mergedV[i] = true;
             mergedV[bestJ] = true;
+#ifdef ENABLE_DISPLAY
+			/*
+			Display::Update(_shapes[i].getID());
+			Display::Update(_shapes[bestJ].getID());
+			*/
+			Display::Reset();
+#endif
             LOG(debug) << "===========================> MERGED <=====================" << endl;
             ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
             applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,

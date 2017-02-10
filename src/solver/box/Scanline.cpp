@@ -6,6 +6,7 @@
 #include "Scanline.hpp"
 #include "Log.hpp"
 #include "common.hpp"
+#include "Display.hpp"
 
 #define PRECISION 10e-3
 
@@ -118,6 +119,7 @@ void Scanline::solveBin() {
                     }
                 }
             }
+
         }
     }
 }

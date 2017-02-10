@@ -10,6 +10,7 @@
 #include "solver/box/ToInfinityAndBeyond.hpp"
 #include "Merger.hpp"
 #include "SimpleTransformer.hpp"
+#include "Display.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -54,6 +55,7 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+
     //Will contain the IDs the solver will pack
     vector<string> toPack;
 
@@ -65,6 +67,10 @@ int main(int argc, char** argv) {
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
     LOG(debug) << "Doc dimensions " << Parser::getDims().x() << " ; " << Parser::getDims().y()
                << endl;
+
+#ifdef ENABLE_DISPLAY
+	Display::Init(shapes);
+#endif
 
     //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))
@@ -93,6 +99,7 @@ int main(int argc, char** argv) {
     Scanline solver(shapes);
     solver.solve();
     merger.reset();
+
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
     //Producing the output (sending input file and the option to duplicate

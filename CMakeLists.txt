@@ -5,11 +5,17 @@ set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
 set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
+set(ENABLE_DISPLAY 1)
+
 FIND_PROGRAM( TEST_PATH fefefffefe )
 
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
     enable_testing()
 endif()
+
+if(${ENABLE_DISPLAY})
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENABLE_DISPLAY")
+endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O3 -fopenmp")
 
@@ -77,6 +83,10 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_executable(packer src/main.cpp)
 target_link_libraries(packer packer_lib)
+if (${ENABLE_DISPLAY})
+	find_package(SFML 2.0 REQUIRED system window graphics)
+	target_link_libraries(packer ${SFML_LIBRARIES})
+endif ()
 if (DEFINED target-os AND target-os STREQUAL "windows")
     message(STATUS "cross compilation")
     target_link_libraries(${EXE_NAME} boost_program_options-mt-s)
