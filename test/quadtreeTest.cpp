@@ -145,7 +145,7 @@ int main() {
 	vector<bitmap> bits;
 	bits.reserve(shapes.size());
 	for (Shape& s: shapes) {
-		bits.emplace_back(s, 64, 64);
+		bits.emplace_back(s, 4);
 		//cout << "Bitmap : " << endl << bits.back() << endl;
 		bits.back().saveMap("0" + s.getID());
 	}
@@ -177,16 +177,18 @@ int main() {
 	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
 
 	start = Clock::now();
+	int tx, ty;
 	//for (int j=0; j<REPEAT; j++)
 		for (size_t i=0; i<bits.size(); i++) {
-			bitmap::trim(bitmap::rotate(&bits[i], 1))->saveMap("0" + shapes[i].getID() + "rotated");
+			bitmap::trim(bitmap::rotate(&bits[i], 1, tx, ty))->saveMap("0" + shapes[i].getID() + "rotated");
 		}
 	end = Clock::now();
 	elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "bm rot : " << elapsed2 << " microseconds elapsed" << endl;
 
+	quads[0].saveTree("test-init");
 	cout << endl << quads[0] << endl;
-	quads[0].rotate(45);
+	quads[0].rotate(90);
 	cout << quads[0] << endl;
 	quads[0].applyRotation();
 	cout << quads[0] << endl;

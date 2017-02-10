@@ -267,7 +267,15 @@ bool bitmap::get(int x, int y) const {
 }
 
 
-bitmap *bitmap::rotate(const bitmap *bmap, float r)
+/**
+ * @brief bitmap::rotate
+ * @param bmap source bitmap
+ * @param r rotation angle in radians
+ * @param x position of the x origin in the new bitmap (board? effect)
+ * @param y position of the y origin in the new bitmap (board? effect)
+ * @return the bitmap rotated
+ */
+bitmap *bitmap::rotate(const bitmap *bmap, float r, int &x, int &y)
 {
 	r = -r;
 
@@ -302,13 +310,16 @@ bitmap *bitmap::rotate(const bitmap *bmap, float r)
 	bitmap *rotated = new bitmap(width, height);
 	for (int x=0; x<width; x++) {
 		for (int y=0; y<height; y++) {
-			int cX = round(x-centerX);
-			int cY = round(y-centerY);
+			int cX = (x-centerX);
+			int cY = (y-centerY);
 			int X = round((cosr*cX - sinr*cY) + oldCenterX);
 			int Y = round((sinr*cX + cosr*cY) + oldCenterY);
 			rotated->set(x, y, bmap->get(X, Y));
-			}
+		}
 	}
+
+	x = centerX - oldCenterX*cosr - oldCenterY*sinr;
+	y = centerY + oldCenterX*sinr - oldCenterY*cosr;
 
 	return rotated;
 }
