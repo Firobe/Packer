@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //Prepacking the shapes
     Merger merger(shapes);
-    SimpleTransformer trans(shapes);
+    SimpleTransformer<IntersectionCriteria> trans(shapes);
 
     for (int i = 0 ; i < vm["nbMerge"].as<int>() ; ++i)
         merger.merge(trans.transform());
