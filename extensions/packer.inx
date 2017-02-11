@@ -13,6 +13,8 @@
     </param>
     <param name="buffer" type="int" min="0" max="9999" gui-text="Distance minimale entre les objets (px): ">
     </param>
+    <param name="nbMerge" type="int" min="0" max="100" gui-text="Nombre de passes du Transformer">
+    </param>
     </page>
     </param>
 

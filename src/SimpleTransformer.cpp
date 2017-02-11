@@ -110,6 +110,8 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
             applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,
                        bestMid);
+			translate(_shapes[i], Parser::getDims().x()/2., Parser::getDims().x()/2.);
+			translate(_shapes[bestJ], Parser::getDims().x()/2., Parser::getDims().x()/2.);
             Display::Update(_shapes[i].getID());
             Display::Update(_shapes[bestJ].getID());
 			Display::Text(textBase + " : merged !");
