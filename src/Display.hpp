@@ -50,6 +50,8 @@ class Display {
     std::vector<CustomShape> _toDraw;
     std::vector<unsigned> _ids;
     bool _mustRender;
+	sf::Font _font;
+	std::string _text;
     void loop();
     void updateShape(unsigned i);
     void render();
@@ -64,9 +66,12 @@ class Display {
         _shapes(s),
         _toDraw(),
         _ids(s.size()),
-        _mustRender(true) {
+        _mustRender(true),
+		_text("DEFAULT TEXT") {
         _window.setActive(false);
         reset();
+		if(!_font.loadFromFile("./font.ttf"))
+			throw std::runtime_error("Unable to read font file");
         _thread = std::thread(&Display::loop, this);
     }
     ~Display() {
@@ -85,6 +90,10 @@ public:
     static void Reset() {
         getInstance().reset();
     }
+	static void Text(const std::string& text){
+		getInstance()._text = text;
+		getInstance()._mustRender = true;
+	}
 };
 
 #else
@@ -92,6 +101,7 @@ struct Display {
 	static void Init(const std::vector<Shape>&){}
 	static void Update(unsigned){}
 	static void Reset(){}
+	static void Text(const std::string&){}
 };
 #endif
 #endif

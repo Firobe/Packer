@@ -84,7 +84,6 @@ add_subdirectory(test)
 add_executable(packer src/main.cpp)
 target_link_libraries(packer packer_lib)
 if (${ENABLE_DISPLAY})
-	find_package(SFML 2.0 REQUIRED system window graphics)
 	target_link_libraries(packer ${SFML_LIBRARIES})
 endif ()
 if (DEFINED target-os AND target-os STREQUAL "windows")
@@ -101,8 +100,12 @@ else ()
     install(FILES ${CMAKE_BINARY_DIR}/packer.inx
             DESTINATION ~/.config/inkscape/extensions/
             PERMISSIONS OWNER_READ OWNER_WRITE)
+	install(FILES ${CMAKE_SOURCE_DIR}/font.ttf
+			DESTINATION ~/.config/inkscape/extensions/
+			PERMISSIONS OWNER_READ OWNER_WRITE)
 endif ()
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
+file(COPY ${CMAKE_SOURCE_DIR}/font.ttf DESTINATION ${CMAKE_BINARY_DIR})
 
 # Use Astyle to reformat source files
 add_custom_target(format

@@ -18,6 +18,8 @@ void Display::render() {
     for (auto && f : _toDraw)
         _window.draw(f);
 
+	sf::Text text(_text, _font, 30);
+	_window.draw(text);
     _mustRender = false;
 }
 

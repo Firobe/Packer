@@ -100,24 +100,23 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
 
         Box boxA, boxB, boxMerge;
 
+		std::string textBase = "SimpleTransformer (" + to_string(i + 1) +
+				"/" + to_string(_shapes.size() - 1) + ")";
         if (merged) {
             LOG(info) << "!";
             mergedV[i] = true;
             mergedV[bestJ] = true;
-#ifdef ENABLE_DISPLAY
-            /*
-            Display::Update(_shapes[i].getID());
-            Display::Update(_shapes[bestJ].getID());
-            */
-            Display::Reset();
-#endif
             LOG(debug) << "===========================> MERGED <=====================" << endl;
             ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
             applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,
                        bestMid);
+            Display::Update(_shapes[i].getID());
+            Display::Update(_shapes[bestJ].getID());
+			Display::Text(textBase + " : merged !");
         }
         else {
             LOG(info) << ".";
+			Display::Text(textBase + " : failed to merge !");
             ret.push_back({_shapes[i].getID()});
         }
     }//for i

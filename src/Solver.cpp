@@ -8,6 +8,7 @@
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 
 #include "Solver.hpp"
+#include "Display.hpp"
 #include "Log.hpp"
 
 using namespace std;
@@ -20,6 +21,7 @@ void Solver::solve() {
     LOG(info) << "Pre-solving..." << endl;
     preSolve();
     LOG(info) << "Solving..." << endl;
+	Display::Text("Solving...");
 
     //While there are shapes left, fill bins individually
     while (!_indices.empty()) {
