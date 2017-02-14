@@ -84,14 +84,16 @@ double IntersectionCriteria::criteria(const Shape& shapeA, const Shape& shapeB) 
 }
 
 /**
- * Returns (idem) the area of the intersection between
- * the bounding boxes of shapeA and shapeB
+ * Returns (idem) the area of the bouding box around shapeA and shapeB
  */
 double BoxCriteria::criteria(const Shape& shapeA, const Shape& shapeB) {
     Box bA, bB, inter;
     bg::envelope(shapeA.getMultiP(), bA);
     bg::envelope(shapeB.getMultiP(), bB);
-    bg::intersection(bA, bB, inter);
-    double ratio = bg::area(inter);
-    return (ratio >= RENTABILITY * (bg::area(bA) + bg::area(bB))) ? ratio : 0.;
+    Point max_corner(max(bA.max_corner().x(), bB.max_corner().x()), max(bA.max_corner().y(),
+                     bB.max_corner().y()));
+    Point min_corner(min(bA.min_corner().x(), bB.min_corner().x()), min(bA.min_corner().y(),
+                     bB.min_corner().y()));
+    double ratio = (max_corner.x() - min_corner.x()) * (max_corner.y() - min_corner.y());
+    return (ratio <= (1 - RENTABILITY) * (bg::area(bA) + bg::area(bB))) ? 1. / ratio : 0.;
 }

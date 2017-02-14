@@ -7,6 +7,7 @@
 #include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/algorithms/comparable_distance.hpp>
+#include <boost/type_index.hpp>
 
 #include "common.hpp"
 #include "SimpleTransformer.hpp"
@@ -40,7 +41,8 @@ private:
 public:
     SimpleTransformer(std::vector<Shape>& s) : Transformer(s) {}
     std::vector<std::vector<unsigned> > transform() {
-        LOG(info) << "Now merging shapes";
+        LOG(info) << "Merging shapes (" <<
+                  boost::typeindex::type_id<CriteriaClass>().pretty_name() << ")";
         std::vector<std::vector<unsigned> > ret;
         std::vector<bool> mergedV(_shapes.size(), false);
 
