@@ -59,8 +59,9 @@ int main(int argc, char** argv) {
     //Apply a buffer to the shapes
     LOG(info) << "Buffering shapes..." << endl;
 
-    for (auto && s : shapes)
-        s.bufferize(vm["buffer"].as<double>());
+#pragma omp parallel for schedule(dynamic, 1)
+    for (unsigned i = 0 ; i < shapes.size() ; ++i)
+        shapes[i].bufferize(vm["buffer"].as<double>());
 
     //If the user did not specify width, take document width for packing (idem for height)
     Parser::setDims(Point(
