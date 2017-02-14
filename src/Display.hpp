@@ -50,11 +50,12 @@ class Display {
     std::vector<CustomShape> _toDraw;
     std::vector<unsigned> _ids;
     bool _mustRender;
-	sf::Font _font;
-	std::string _text;
+    sf::Font _font;
+    std::string _text;
     void loop();
     void updateShape(unsigned i);
     void render();
+    static bool _enabled;
     static Display& getInstance(const std::vector<Shape>& s = std::vector<Shape>()) {
         static Display disp(WINDOW_WIDTH, WINDOW_HEIGHT, s);
         return disp;
@@ -67,11 +68,13 @@ class Display {
         _toDraw(),
         _ids(s.size()),
         _mustRender(true),
-		_text("DEFAULT TEXT") {
+        _text("DEFAULT TEXT") {
         _window.setActive(false);
         reset();
-		if(!_font.loadFromFile("./font.ttf"))
-			throw std::runtime_error("Unable to read font file");
+
+        if (!_font.loadFromFile("./font.ttf"))
+            throw std::runtime_error("Unable to read font file");
+
         _thread = std::thread(&Display::loop, this);
     }
     ~Display() {
@@ -82,26 +85,31 @@ class Display {
     void reset();
 public:
     static void Init(const std::vector<Shape>& s) {
+        _enabled = true;
         getInstance(s);
     }
     static void Update(unsigned id) {
-        getInstance().updateShape(getInstance().byIdentifier(id));
+        if (_enabled)
+            getInstance().updateShape(getInstance().byIdentifier(id));
     }
     static void Reset() {
-        getInstance().reset();
+        if (_enabled)
+            getInstance().reset();
     }
-	static void Text(const std::string& text){
-		getInstance()._text = text;
-		getInstance()._mustRender = true;
-	}
+    static void Text(const std::string& text) {
+        if (_enabled) {
+            getInstance()._text = text;
+            getInstance()._mustRender = true;
+        }
+    }
 };
 
 #else
 struct Display {
-	static void Init(const std::vector<Shape>&){}
-	static void Update(unsigned){}
-	static void Reset(){}
-	static void Text(const std::string&){}
+    static void Init(const std::vector<Shape>&) {}
+    static void Update(unsigned) {}
+    static void Reset() {}
+    static void Text(const std::string&) {}
 };
 #endif
 #endif

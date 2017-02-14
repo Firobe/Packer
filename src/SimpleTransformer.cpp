@@ -1,11 +1,8 @@
 #include <iostream>
 
-#include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
-#include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/algorithms/convex_hull.hpp>
 #include <boost/geometry/algorithms/centroid.hpp>
-#include <boost/geometry/algorithms/comparable_distance.hpp>
 
 #include "common.hpp"
 #include "SimpleTransformer.hpp"
@@ -13,7 +10,6 @@
 #include "Merger.hpp"
 #include "Parser.hpp"
 #include "Display.hpp"
-
 
 using namespace std;
 
@@ -42,8 +38,41 @@ void applyTrans(Shape& a, Shape& b, double alpha, double beta, unsigned offset, 
               -boxA.max_corner().y() -
               length *
               (static_cast<double>(offset) / static_cast<double>(TRANSLATE_NB)));
+}
+
+
+/**
+ * Operates a dichotomy by moving shapeB so that
+ * its as close to shapeA as possible (STACKING_EPSILON)
+ * without intersecting each other
+ * (uses precomputed boxA)
+ */
+double getClose(Shape& shapeA, Shape& shapeB, Box& boxA) {
+    //Dichotomy to find closest non-intersecting position (by translating on the x-axis)
+    double x1, x2, mid;
+    x1 = boxA.min_corner().x();
+    x2 = boxA.max_corner().x();
+    mid = (x2 + x1) / 2.;
+
+    while ((x2 - x1) > STACKING_EPSILON) {
+        mid = (x2 + x1) / 2.;
+        translate<Shape>(shapeB, mid - x2, 0.);
+
+        if (bg::intersects(shapeA.getMultiP(), shapeB.getMultiP())) {
+            x1 = mid;
+            translate<Shape>(shapeB, x2 - mid, 0.);
+        }
+        else
+            x2 = mid;
     }
 
+    return mid;
+}
+
+/**
+ * Returns (if high enough) the area of the intersection between
+ * the convex hulls of shapeA and shapeB
+ */
 double IntersectionCriteria::criteria(const Shape& shapeA, const Shape& shapeB) {
     Polygon hullA, hullB;
     MultiPolygon inter;
@@ -51,16 +80,18 @@ double IntersectionCriteria::criteria(const Shape& shapeA, const Shape& shapeB) 
     bg::convex_hull(shapeB.getMultiP(), hullB);
     bg::intersection(hullA, hullB, inter);
     double ratio = bg::area(inter);
+    return (ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))) * ratio;
+}
 
-    return (ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))) ? ratio : 0.;
-    }
-
+/**
+ * Returns (idem) the area of the intersection between
+ * the bounding boxes of shapeA and shapeB
+ */
 double BoxCriteria::criteria(const Shape& shapeA, const Shape& shapeB) {
-	Box bA, bB, inter;
-	bg::envelope(shapeA.getMultiP(), bA);
-	bg::envelope(shapeB.getMultiP(), bB);
-	bg::intersection(bA, bB, inter);
+    Box bA, bB, inter;
+    bg::envelope(shapeA.getMultiP(), bA);
+    bg::envelope(shapeB.getMultiP(), bB);
+    bg::intersection(bA, bB, inter);
     double ratio = bg::area(inter);
-
     return (ratio >= RENTABILITY * (bg::area(bA) + bg::area(bB))) ? ratio : 0.;
-    }
+}

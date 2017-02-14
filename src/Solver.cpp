@@ -21,7 +21,7 @@ void Solver::solve() {
     LOG(info) << "Pre-solving..." << endl;
     preSolve();
     LOG(info) << "Solving..." << endl;
-	Display::Text("Solving...");
+    Display::Text("Solving...");
 
     //While there are shapes left, fill bins individually
     while (!_indices.empty()) {

@@ -15,41 +15,15 @@
 namespace po = boost::program_options;
 using namespace std;
 
+void parseCommandLine(int, char**, po::variables_map&);
+
 int main(int argc, char** argv) {
     LOG(info) << "SUPER PACKER 3000\n===================" << endl;
     srand(time(0));
-    //Parsing command line
-    po::options_description
-    desc("Packer usage : ./packer [options] input-file\nAllowed options ");
-    desc.add_options()
-    ("help,h", "produce help message")
-    ("input-file,f", po::value<string>()->required(), "input file path")
-    ("dup,d", po::value<bool>()->default_value(false),
-     "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
-    ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
-    ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
-    ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
-    ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
-    ("debug", po::value<bool>()->default_value(false),
-     "Produce debug SVG instead of real one")
-    ("buffer", po::value<double>()->default_value(0.),
-     "minimal distance between packed items (px)");
     po::variables_map vm; //Parameters container
-    po::positional_options_description p; //Used to indicate input file without --input-file
-    p.add("input-file", -1);
 
     try {
-        //Effectively parse the command line
-        po::store(po::command_line_parser(argc, argv).
-                  options(desc).positional(p).allow_unregistered().run(), vm);
-
-        if (vm.count("help")) {
-            cerr << desc << endl;
-            return EXIT_SUCCESS;
-        }
-
-        //Check parsing errors (required parameters, ...)
-        po::notify(vm);
+        parseCommandLine(argc, argv, vm);
     }
     catch (exception& e) {
         LOG(fatal) << "Error : " << e.what() << endl;
@@ -65,9 +39,15 @@ int main(int argc, char** argv) {
 
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
-    LOG(debug) << "Doc dimensions " << Parser::getDims().x() << " ; " << Parser::getDims().y()
-               << endl;
-    Display::Init(shapes);
+
+    if (vm["display"].as<bool>())
+#ifdef ENABLE_DISPLAY
+        Display::Init(shapes);
+
+#else
+        LOG(warning) <<
+                     "Warning : project was not built with display support, so no display for you !"
+#endif
 
     //If nothing was selected, fill toPack with every parsed ID
     if (!vm.count("id"))
@@ -106,4 +86,38 @@ int main(int argc, char** argv) {
         Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
 
     return EXIT_SUCCESS;
+}
+
+void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
+    //Parsing command line
+    po::options_description
+    desc("Packer usage : ./packer [options] input-file\nAllowed options ");
+    desc.add_options()
+    ("help,h", "produce help message")
+    ("input-file,f", po::value<string>()->required(), "input file path")
+    ("dup,d", po::bool_switch()->default_value(false),
+     "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
+    ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
+    ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
+    ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
+    ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
+    ("debug", po::bool_switch()->default_value(false),
+     "Produce debug SVG instead of real one")
+    ("buffer", po::value<double>()->default_value(0.),
+     "minimal distance between packed items (px)")
+    ("display,D", po::bool_switch()->default_value(false),
+     "Enable real time output (project must be compiled with ENABLE_DISPLAY=1");
+    po::positional_options_description p; //Used to indicate input file without --input-file
+    p.add("input-file", -1);
+    //Effectively parse the command line
+    po::store(po::command_line_parser(argc, argv).
+              options(desc).positional(p).allow_unregistered().run(), vm);
+
+    if (vm.count("help")) {
+        cerr << desc << endl;
+        exit(EXIT_SUCCESS);
+    }
+
+    //Check parsing errors (required parameters, ...)
+    po::notify(vm);
 }
