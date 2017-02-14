@@ -97,7 +97,7 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
     desc.add_options()
     ("help,h", "produce help message")
     ("input-file,f", po::value<string>()->required(), "input file path")
-    ("dup,d", po::bool_switch()->default_value(false),
+    ("dup,d", po::value<bool>()->default_value(false),
      "choose if the packed shapes are duplicated (at the bottom of the page) or if we are overwriting the file")
     ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
     ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
@@ -107,7 +107,7 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
      "Produce debug SVG instead of real one")
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)")
-    ("display,D", po::bool_switch()->default_value(false),
+    ("display,D", po::value<bool>()->default_value(false),
      "Enable real time output (project must be compiled with ENABLE_DISPLAY=1")
     ("seed,s", po::value<unsigned>()->default_value(time(0)), "Seed used by the RNG");
     po::positional_options_description p; //Used to indicate input file without --input-file
