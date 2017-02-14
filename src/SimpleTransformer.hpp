@@ -2,6 +2,7 @@
 #define SIMPLETRANSFORMER__H
 
 #include <iostream>
+#include <algorithm>
 #include <string>
 
 #include <boost/geometry/algorithms/intersects.hpp>
@@ -45,6 +46,8 @@ public:
                   boost::typeindex::type_id<CriteriaClass>().pretty_name() << ")";
         std::vector<std::vector<unsigned> > ret;
         std::vector<bool> mergedV(_shapes.size(), false);
+        //Initial shufle
+        random_shuffle(_shapes.begin(), _shapes.end());
 
         //We try to merge {0, 1}, {1, 2}, ..., {n - 1, n}
         for (unsigned i = 0 ; i < _shapes.size() - 1 ; ++i) {

@@ -19,7 +19,6 @@ void parseCommandLine(int, char**, po::variables_map&);
 
 int main(int argc, char** argv) {
     LOG(info) << "SUPER PACKER 3000\n===================" << endl;
-    srand(time(0));
     po::variables_map vm; //Parameters container
 
     try {
@@ -30,6 +29,8 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+    srand(vm["seed"].as<unsigned>());
+    LOG(info) << "Seed : " << vm["seed"].as<unsigned>() << endl;
     //Will contain the IDs the solver will pack
     vector<string> toPack;
 
@@ -46,7 +47,7 @@ int main(int argc, char** argv) {
 
 #else
         LOG(warning) <<
-                     "Warning : project was not built with display support, so no display for you !"
+                     "Warning : project was not built with display support, so no display for you !" << endl;
 #endif
 
     //If nothing was selected, fill toPack with every parsed ID
@@ -107,7 +108,8 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
     ("buffer", po::value<double>()->default_value(0.),
      "minimal distance between packed items (px)")
     ("display,D", po::bool_switch()->default_value(false),
-     "Enable real time output (project must be compiled with ENABLE_DISPLAY=1");
+     "Enable real time output (project must be compiled with ENABLE_DISPLAY=1")
+    ("seed,s", po::value<unsigned>()->default_value(time(0)), "Seed used by the RNG");
     po::positional_options_description p; //Used to indicate input file without --input-file
     p.add("input-file", -1);
     //Effectively parse the command line
