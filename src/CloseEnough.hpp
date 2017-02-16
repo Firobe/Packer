@@ -45,6 +45,13 @@ arguments = argument | argument ',' arguments
 argument = STRING '=' primitive
 primitive = NUM | STRING
 
+Features
+=========
+Instructions séparées par ';'
+Blocs d'instructions délimités par BEGIN et END
+On peut exécuter X fois un bloc d'instruction avec DO X TIMES ...
+Une instruction consiste en : fonction(param=valeur, param2=val2, ...)
+
 Exemple
 =========
 DO 2 TIMES
