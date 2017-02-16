@@ -1,0 +1,5 @@
+DO 2 TIMES
+BEGIN
+SimpleTransformer(criteria=intersection)
+END
+ScanlineSolver()
