@@ -3,6 +3,10 @@
 
 #include <rapidxml_ns/rapidxml_ns_print.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
+#include <boost/geometry/io/svg/svg_mapper.hpp>
+#include <boost/geometry/algorithms/envelope.hpp>
+#include <boost/geometry/algorithms/area.hpp>
+#include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 
 #include "Outer.hpp"
 #include "Matrix.hpp"
@@ -271,4 +275,63 @@ void Outer::Write(const std::string& path, bool addto, std::vector<std::string>&
     LOG(info) << "Original file completely parsed..." << endl;
     outer.groupShapes();
     LOG(info) << "SVG successfully generated." << endl;
+}
+
+/**
+ * Computes the compression ratio :
+ * actual area / minimal area
+ */
+double compressionRatio(const vector<Shape>& _shapes) {
+    //Computing the total enveloppe of shapes
+    std::vector<Box> boxes(_shapes.size());
+
+    for (unsigned i = 0; i < _shapes.size(); i++)
+        bg::envelope(_shapes[i].getMultiP(), boxes[i]);
+
+    //Max x-axis point
+    auto xIt = max_element(boxes.begin(), boxes.end(),
+    [](Box & a, Box & b) {
+        return a.max_corner().x() < b.max_corner().x();
+    });
+    //Max y-axis point
+    auto yIt = max_element(boxes.begin(), boxes.end(),
+    [](Box & a, Box & b) {
+        return a.max_corner().y() < b.max_corner().y();
+    });
+    int binNumber = yIt->max_corner().y() / Parser::getDims().y();
+    //Compensate spacing between bins
+    Point maxCorner((*xIt).max_corner().x(),
+                    (*yIt).max_corner().y() - (binNumber - 1) * Parser::getDims().y() * (SPACE_COEF - 1));
+    LOG(debug) << "Max point is (" << maxCorner.x() << ", " << maxCorner.y() << ")\n";
+    LOG(debug) << "(total area : " << maxCorner.x() * maxCorner.y() << endl;
+    //Computing the sum of every shape area
+    double sum = 0.;
+
+    for (auto && s : _shapes)
+        sum += bg::area(s.getMultiP());
+
+    LOG(debug) << "Minimal area is " << sum << endl;
+    //Computing ratio
+    return (maxCorner.x() * maxCorner.y()) / sum;
+}
+
+/**
+ * Output function using the svg output methods of BOOST.
+ * Should be used for debug only.
+ * Outputs what the solver actually sees.
+ */
+string debugOutputSVG(const vector<Shape>& _shapes) {
+    stringstream ret;
+    bg::svg_mapper <Point> mapper(ret, Parser::getDims().x(), Parser::getDims().y());
+
+    for (const Shape& s : _shapes)
+        mapper.add(s.getMultiP());
+
+    for (const Shape& s : _shapes) {
+        mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
+                   to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
+    }
+
+    LOG(info) << "Debug SVG generated" << endl;
+    return ret.str() + "</svg>";
 }

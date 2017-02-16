@@ -47,8 +47,6 @@ protected:
 public:
     Solver(std::vector<Shape>& s) : _shapes(s), _binNumber(0) {}
     void solve();
-    double compressionRatio() const;
-    std::string debugOutputSVG() const;
 };
 
 /**

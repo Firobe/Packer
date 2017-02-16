@@ -103,9 +103,13 @@ else ()
 	install(FILES ${CMAKE_SOURCE_DIR}/font.ttf
 			DESTINATION ~/.config/inkscape/extensions/
 			PERMISSIONS OWNER_READ OWNER_WRITE)
+	install(FILES ${CMAKE_SOURCE_DIR}/conf/default.ce
+			DESTINATION ~/.config/inkscape/extensions/
+			PERMISSIONS OWNER_READ OWNER_WRITE)
 endif ()
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
 file(COPY ${CMAKE_SOURCE_DIR}/font.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/conf/default.ce DESTINATION ${CMAKE_BINARY_DIR})
 
 # Use Astyle to reformat source files
 add_custom_target(format

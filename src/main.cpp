@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <boost/program_options.hpp>
 
@@ -11,6 +12,7 @@
 #include "Merger.hpp"
 #include "SimpleTransformer.hpp"
 #include "Display.hpp"
+#include "CloseEnough.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -31,6 +33,15 @@ int main(int argc, char** argv) {
 
     srand(vm["seed"].as<unsigned>());
     LOG(info) << "Seed : " << vm["seed"].as<unsigned>() << endl;
+    string toDo;
+
+    if (vm.count("confString"))
+        toDo = vm["confString"].as<string>();
+    else {
+        ifstream f(vm["conf"].as<string>());
+        toDo.assign((istreambuf_iterator<char>(f)), (istreambuf_iterator<char>()));
+    }
+
     //Will contain the IDs the solver will pack
     vector<string> toPack;
 
@@ -69,21 +80,20 @@ int main(int argc, char** argv) {
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //Prepacking the shapes
-    Merger merger(shapes);
-    SimpleTransformer<IntersectionCriteria> trans(shapes);
+    CE_Parser<string::iterator> parser(shapes);
+    bool success = phrase_parse(toDo.begin(), toDo.end(), parser, space);
 
-    for (int i = 0 ; i < vm["nbMerge"].as<int>() ; ++i)
-        merger.merge(trans.transform());
+    if (success)
+        LOG(info) << "CloseEnough successfully processed !" << endl;
+    else
+        throw runtime_error("CloseEnough configuration is invalid !");
 
-    Scanline solver(shapes);
-    solver.solve();
-    merger.reset();
     //Evaluating the quality
-    LOG(info) << "Compression rate achieved : " << solver.compressionRatio() << endl;
+    LOG(info) << "Compression rate achieved : " << compressionRatio(shapes) << endl;
 
     //Producing the output (sending input file and the option to duplicate
     if (vm["debug"].as<bool>())
-        cout << solver.debugOutputSVG();
+        cout << debugOutputSVG(shapes);
     else
         Outer::Write(vm["input-file"].as<string>(), vm["dup"].as<bool>(), toPack, shapes);
 
@@ -102,7 +112,9 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
     ("width,W", po::value<int>()->default_value(0), "width of the packing space (px)")
     ("height,H", po::value<int>()->default_value(0), "height of the packing space (px)")
     ("id", po::value<vector<string>>(), "ID of a specific element to be packed")
-    ("nbMerge", po::value<int>()->default_value(2), "Number of merge steps")
+    ("conf,c", po::value<string>()->default_value("default.ce"),
+     "CloseEnough configuration file (refer to documentation)")
+    ("confString,cs", po::value<string>(), "CloseEnough string (used instead of file)")
     ("debug", po::bool_switch()->default_value(false),
      "Produce debug SVG instead of real one")
     ("buffer", po::value<double>()->default_value(0.),

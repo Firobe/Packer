@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Solver.hpp"
+#include "Outer.hpp"
 #include "Splitter.hpp"
 
 using namespace std;
@@ -14,5 +15,5 @@ int main() {
 
     vector<Shape> ss = splitter.getShapes();
     Solver solver(ss);
-    cout << solver.debugOutputSVG();
+    cout << debugOutputSVG(ss);
     }

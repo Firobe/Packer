@@ -8,6 +8,7 @@
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "Splitter.hpp"
 #include "Parser.hpp"
+#include "Outer.hpp"
 
 #define RANGE 10000
 
@@ -24,7 +25,7 @@ void testSolver(vector<Shape> shapes) {
     auto end = Clock::now();
     int elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
     cerr << elapsed << " microseconds elapsed" << endl;
-    cerr << "COMPRESSION RATIO : " << s.compressionRatio() << endl << endl;;
+    cerr << "COMPRESSION RATIO : " << compressionRatio(shapes) << endl << endl;;
     }
 
 int main() {

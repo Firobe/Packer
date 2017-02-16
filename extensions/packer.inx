@@ -5,19 +5,20 @@
     <dependency type="executable" location="extensions">@EXE_NAME_PLUGIN@</dependency>
     <param name="tab" type="notebook">
     <page name = "size" _gui-text="Dimensions Plaque">
-    <param name="width" type="int" min="0" max="9999" gui-text="Largeur plaque : ">
+    <param name="width" type="int" min="0" max="99999" gui-text="Largeur plaque : ">
     </param>
-    <param name="height" type="int" min="0" max="9999" gui-text="Hauteur plaque : ">
+    <param name="height" type="int" min="0" max="99999" gui-text="Hauteur plaque : ">
     </param>
     <param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
     </param>
-    <param name="buffer" type="int" min="0" max="9999" gui-text="Distance minimale entre les objets (px): ">
-    </param>
-    <param name="nbMerge" type="int" min="0" max="100" gui-text="Nombre de passes du Transformer">
+    <param name="buffer" type="int" min="0" max="99999" gui-text="Distance minimale entre les objets (px): ">
     </param>
     <param name="display" type="boolean" gui-text="Activation de l'affichage temps-réel (si disponible)">
     </param>
     </page>
+	<page name="conf" _gui-text="Configuration">
+	<param name="conf" type="string" gui-text="Fichier configuration CloseEnough">default.ce</param>
+	</page>
     </param>
 
     <effect>

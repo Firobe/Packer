@@ -42,4 +42,6 @@ private:
     void groupShapes();
 };
 
+double compressionRatio(const std::vector<Shape>& _shapes);
+std::string debugOutputSVG(const std::vector<Shape>& _shapes);
 #endif
