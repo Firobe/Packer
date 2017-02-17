@@ -87,8 +87,7 @@ int main(int argc, char** argv) {
     if (success and begin == end)
         LOG(info) << "CloseEnough successfully processed !" << endl;
     else
-        throw runtime_error("CloseEnough configuration is invalid : remaining\n" + string(begin,
-                            end));
+        throw runtime_error("CloseEnough configuration is invalid (see parsing error for details)");
 
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << compressionRatio(shapes) << endl;

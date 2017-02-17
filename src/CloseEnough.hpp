@@ -10,44 +10,52 @@ namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace phoenix = boost::phoenix;
 
-/*
-Grammar definition (double_ and int_ already defined)
-=====================================================
-    string_ 			[^",()= ]
-    value = 			double_
-                        | string_
-    parameter =			string_ '=' value
-    parameter_list =	parameter | parameter ',' parameter_list | eps
-    transformer = 		"SimpleTransformer"
-                        | "Reset"
-    solver = 			"ScanlineSolver"
-                        | "TheSkyIsTheLimitSolver"
-    function_ =			transformer
-                        | solver
-	instruction =		function_ '(' parameter_list ')' ';'
-    instruction_list =	(instruction)*
-    block =				instruction
-                        | "BEGIN" instruction_list "END"
-    big_block = 		block
-                        | "DO" int_ "TIMES" block
-    start = 			(big_block)*
-
-Language usage
-===============
-An instruction have the following pattern : function(param1=value1, param2=value2, ...);
-Instructions must be followed by a semicolon
-Multiple-instruction blocks are between a BEGIN and a END
-Instruction blocks can be executed multiple times using DO X TIMES <block>
-
-Example
-=========
-DO 2 TIMES
-BEGIN
-SimpleTransformer(criteria=intersection);
-SimpleTransformer(criteria=box);
-END
-ScanlineSolver();
-*/
+/**
+ *
+ * CloseEnough scripting language
+ * ==============================
+ * A very simple DSL to facilitate the combination of
+ * the different packing algorithms without having to rebuild.
+ *
+ * Features : function calls with parameters, ability to repeat instruction blocks
+ *
+ * Grammar definition (double_ and int_ already defined)
+ * =====================================================
+ *     string_ 			[^",()= ]
+ *     value = 			double_
+ *                         | string_
+ *     parameter =			string_ '=' value
+ *     parameter_list =	parameter | parameter ',' parameter_list | epsilon
+ *     transformer = 		"SimpleTransformer"
+ *                         | "Reset"
+ *     solver = 			"ScanlineSolver"
+ *                         | "TheSkyIsTheLimitSolver"
+ *     function_ =			transformer
+ *                         | solver
+ * 		instruction =		function_ '(' parameter_list ')' ';'
+ *     instruction_list =	(instruction)*
+ *     block =				instruction
+ *                         | "BEGIN" instruction_list "END"
+ *     big_block = 		block
+ *                         | "DO" int_ "TIMES" block
+ *     start = 			(big_block)*
+ * 
+ * Language usage
+ * ===============
+ * An instruction have the following pattern : function(param1=value1, param2=value2, ...);
+ * Instructions must be followed by a semicolon
+ * Multiple-instruction blocks are between a BEGIN and a END
+ * Instruction blocks can be executed multiple times using DO X TIMES <block>
+ * 
+ * Example
+ * =========
+ * DO 2 TIMES
+ * BEGIN
+ * SimpleTransformer(criteria=intersection);
+ * SimpleTransformer(criteria=box);
+ * END
+ * ScanlineSolver();
+ */
 
 /**
  * Struct used for parameter values
