@@ -57,15 +57,7 @@ namespace phoenix = boost::phoenix;
  * ScanlineSolver();
  */
 
-/**
- * Struct used for parameter values
- * Can be a double or a string. isNum is set accordingly
- */
-struct Value {
-    bool isNum;
-    double number;
-    std::string str;
-};
+using Value = boost::variant<int, double, std::string>;
 
 /**
  * Struct used for functions  calls.
@@ -76,6 +68,26 @@ struct Parameter {
     Value value;
 };
 
+/**
+ * Get the value of the parameter named <key>
+ * in a list of parameters and checks wether it
+ * is of the required type.
+ */
+template<typename Required>
+bool getParameter(std::vector<Parameter> p, std::string key, Required& value) {
+	Value v;
+	bool b = getParameter(p, key, v);
+	if(b and v.type() == typeid(Required))
+		value = boost::get<Required>(v);
+	else return false;
+	return true;
+}
+
+/**
+ * Value specialization of getParameter
+ */
+template<>
+bool getParameter(std::vector<Parameter> p, std::string key, Value& value);
 
 /**
  * Struct used for functions

@@ -36,10 +36,29 @@ using phoenix::push_back;
 using namespace std;
 
 /**
+ * Given a list of parameters and a key string,
+ * returns if such a key is found and fills value with its value
+ * if found
+ */
+template<>
+bool getParameter(std::vector<Parameter> p, std::string key, Value& value) {
+    auto it = std::find_if(p.begin(), p.end(), [key](const Parameter & p) {
+        return p.name == key;
+    });
+
+    if (it == p.end())
+        return false;
+
+    value = it->value;
+    return true;
+}
+
+/**
  * Stream operator for Value
  */
 ostream& operator<< (ostream& os, const Value& c) {
-    os << (c.isNum ? to_string(c.number) : c.str);
+    //os << (c.isNum ? to_string(c.number) : c.str);
+	os << c;
     return os;
 }
 
@@ -61,12 +80,6 @@ ostream& operator<< (ostream& os, const Call& call) {
  * Helper functions to create structs
  * with the appropriate parameters
  */
-Value makeNumberValue(double d) {
-    return {true, d, ""};
-}
-Value makeStringValue(string s) {
-    return {false, 0., s};
-}
 Parameter makeParameter(string s, Value v) {
     return {s, v};
 }
@@ -90,39 +103,6 @@ void callEverything(vector<Call> block, int n, vector<Shape>* shapes) {
 }
 
 /**
- * Given a list of parameters and a key string,
- * returns if such a key is found and fills value with its value
- * if found
- * (string overload)
- */
-bool getParameter(vector<Parameter> p, string key, string& value) {
-    auto it = find_if(p.begin(), p.end(), [key](const Parameter & p) {
-        return p.name == key;
-    });
-
-    if (it == p.end() || it->value.isNum)
-        return false;
-
-    value = it->value.str;
-    return true;
-}
-
-/**
- * Idem, double overload
- */
-bool getParameter(vector<Parameter> p, string key, double& value) {
-    auto it = find_if(p.begin(), p.end(), [key](const Parameter & p) {
-        return p.name == key;
-    });
-
-    if (it == p.end() || !it->value.isNum)
-        return false;
-
-    value = it->value.number;
-    return true;
-}
-
-/**
  * Given a Call struct, make the appropriate
  * function calls with appropriate parameters
  */
@@ -136,7 +116,7 @@ void Call::operator()(vector<Shape>& shapes) {
             string criteria, mergeP;
 
             if (!getParameter(params, "criteria", criteria))
-                throw runtime_error("Please specify a criteria for the transformer");
+                throw runtime_error("Please specify a correct criteria for the transformer");
 
             if (!getParameter(params, "merge", mergeP))
                 mergeP = "true";
@@ -170,7 +150,6 @@ void Call::operator()(vector<Shape>& shapes) {
         throw runtime_error("Unknown type function");
 }
 
-
 /**
  * Definition of the actual grammar
  * using Boost.Spirit.Qi syntax
@@ -180,8 +159,8 @@ void Call::operator()(vector<Shape>& shapes) {
 CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program start") {
     //GRAMMAR BEGIN
     string_			   %= lexeme[+(char_ - '"' - ',' - '(' - ')' - '=')];
-    value				= double_[_val = bind(makeNumberValue, _1)]
-                          | string_[_val = bind(makeStringValue, _1)];
+    value				= double_[_val = _1]
+                          | string_[_val = _1];
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
     transformer		   %= qi::string("SimpleTransformer")
