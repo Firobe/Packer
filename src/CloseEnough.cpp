@@ -162,8 +162,9 @@ void Call::operator()(vector<Shape>& shapes) {
 CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program start") {
     //GRAMMAR BEGIN
     string_			   %= lexeme[+(char_ - '"' - ',' - '(' - ')' - '=')];
-    value				= double_[_val = _1]
-                          | string_[_val = _1];
+    value			   %= int_
+                          | double_
+                          | string_;
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
     transformer		   %= qi::string("SimpleTransformer")

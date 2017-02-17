@@ -1,14 +1,15 @@
 #ifndef CLOSE_ENOUGH__HPP
 #define CLOSE_ENOUGH__HPP
 
+#include <string>
+#include <iostream>
+
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/phoenix/bind/bind_function.hpp>
 #include <boost/phoenix/object/new.hpp>
 #include <boost/phoenix.hpp>
 #include <boost/function.hpp>
-
-#include <string>
 
 #include "Shape.hpp"
 #include "common.hpp"

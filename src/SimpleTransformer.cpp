@@ -24,7 +24,7 @@ using namespace std;
  * b is translated by mid on the x-axis (if start, else by the width of a)
  * b is translated relatively to offset on the y-axis
  */
-void applyTrans(Shape& a, Shape& b, double alpha, double beta, unsigned offset, Box& boxA,
+void applyTrans(Shape& a, Shape& b, double alpha, double beta, double offset, Box& boxA,
                 Box& boxB, double mid, bool start) {
     Point ptA(0, 0);
     rotate(a, alpha);
@@ -40,7 +40,7 @@ void applyTrans(Shape& a, Shape& b, double alpha, double beta, unsigned offset, 
               (1 - start) * STACKING_EPSILON,
               -boxA.max_corner().y() -
               length *
-              (static_cast<double>(offset) / static_cast<double>(TRANSLATE_NB)));
+              offset);
 }
 
 
@@ -94,16 +94,17 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
         bool merged = false; //Check if a merge occured
         #pragma omp parallel for schedule(dynamic, 1) collapse(3)
 
-        for (int alpha = 0; alpha < 360; alpha += ROTATE_STEP) { //Rotate first shape
-            for (int beta = 0.; beta < 360 ; beta += ROTATE_STEP) { //Rotate second shape
-                for (unsigned offset = 0; offset < TRANSLATE_NB ; ++offset) { //Trying different offsets
+        for (int alpha = 0; alpha < 360; alpha += _rotateStep) { //Rotate first shape
+            for (int beta = 0.; beta < 360 ; beta += _rotateStep) { //Rotate second shape
+                for (unsigned offset = 0; offset < _translateNb ; ++offset) { //Trying different offsets
                     Box boxA, boxB;
                     Shape shapeA, shapeB;
                     shapeA = _shapes[i];
                     shapeB = _shapes[j];
-                    applyTrans(shapeA, shapeB, alpha, beta, offset, boxA, boxB, 0, true);
+                    applyTrans(shapeA, shapeB, alpha, beta, static_cast<double>(offset) / _translateNb, boxA,
+                               boxB, 0, true);
                     double mid = getClose(shapeA, shapeB, boxA);
-                    double ratio = _criteria(shapeA, shapeB);
+                    double ratio = _criteria(shapeA, shapeB, _rentability);
                     mergeMultiP(shapeA.getMultiP(), shapeB.getMultiP());
                     bg::envelope(shapeA.getMultiP(), boxA);
                     bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() <
@@ -134,7 +135,8 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             mergedV[i] = true;
             mergedV[bestJ] = true;
             ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
-            applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,
+            applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta,
+                       static_cast<double>(bestOffset) / _translateNb, boxA, boxB,
                        bestMid);
             translate(_shapes[i], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
             translate(_shapes[bestJ], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
@@ -157,20 +159,21 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
  * Returns (if high enough) the area of the intersection between
  * the convex hulls of shapeA and shapeB
  */
-double intersectionCriteria(const Shape& shapeA, const Shape& shapeB) {
+double intersectionCriteria(const Shape& shapeA, const Shape& shapeB,
+                            double rentability) {
     Polygon hullA, hullB;
     MultiPolygon inter;
     bg::convex_hull(shapeA.getMultiP(), hullA);
     bg::convex_hull(shapeB.getMultiP(), hullB);
     bg::intersection(hullA, hullB, inter);
     double ratio = bg::area(inter);
-    return (ratio >= RENTABILITY * (bg::area(hullA) + bg::area(hullB))) * ratio;
+    return (ratio >= rentability * (bg::area(hullA) + bg::area(hullB))) * ratio;
 }
 
 /**
  * Returns (idem) the area of the bouding box around shapeA and shapeB
  */
-double boxCriteria(const Shape& shapeA, const Shape& shapeB) {
+double boxCriteria(const Shape& shapeA, const Shape& shapeB, double rentability) {
     Box bA, bB, inter;
     bg::envelope(shapeA.getMultiP(), bA);
     bg::envelope(shapeB.getMultiP(), bB);
@@ -179,5 +182,5 @@ double boxCriteria(const Shape& shapeA, const Shape& shapeB) {
     Point min_corner(min(bA.min_corner().x(), bB.min_corner().x()), min(bA.min_corner().y(),
                      bB.min_corner().y()));
     double ratio = (max_corner.x() - min_corner.x()) * (max_corner.y() - min_corner.y());
-    return (ratio <= (1 - RENTABILITY) * (bg::area(bA) + bg::area(bB))) ? 1. / ratio : 0.;
+    return (ratio <= (1 - rentability) * (bg::area(bA) + bg::area(bB))) ? 1. / ratio : 0.;
 }
