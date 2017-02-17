@@ -275,7 +275,7 @@ bool bitmap::get(int x, int y) const {
  * @param y position of the y origin in the new bitmap (board? effect)
  * @return the bitmap rotated
  */
-bitmap *bitmap::rotate(const bitmap *bmap, float r, int &x, int &y)
+bitmap *bitmap::rotate(const bitmap *bmap, float r, int &xres, int &yres)
 {
 	r = -r;
 
@@ -318,14 +318,14 @@ bitmap *bitmap::rotate(const bitmap *bmap, float r, int &x, int &y)
 		}
 	}
 
-	x = centerX - oldCenterX*cosr - oldCenterY*sinr;
-	y = centerY + oldCenterX*sinr - oldCenterY*cosr;
+	xres = centerX - oldCenterX*cosr - oldCenterY*sinr;
+	yres = centerY + oldCenterX*sinr - oldCenterY*cosr;
 
 	return rotated;
 }
 
 
-bitmap *bitmap::trim(const bitmap *bmp)
+bitmap *bitmap::trim(const bitmap *bmp, int &xres, int &yres)
 {
 	bool found = false;
 	int minX=0, minY=0;
@@ -357,6 +357,9 @@ bitmap *bitmap::trim(const bitmap *bmp)
 		}
 	}
 
+	xres = minX;
+	yres = minY;
+
 	return trimmed;
 }
 
@@ -377,24 +380,24 @@ bool bitmap::hasBlack(int offsetX, int offsetY, int lengthX, int lengthY) {
 	// We don't use get to accelerate the processing (especially to facilitate memoty caching of lines)
 
 	// Two loop for memory caching
-	int offset = offsetY*width;
+	//int offset = offsetY*width;
 	for (int x = offsetX; x < offsetX+lengthX; x++) {
-		if (map[offset + x])
+		if (get(x,offsetY))
 			return true;
 	}
 
-	offset = (offsetY+lengthY-1)*width;
+	//offset = (offsetY+lengthY-1)*width;
 	for (int x = offsetX; x < offsetX+lengthX; x++) {
-		if (map[offset + x])
+		if (get(x,offsetY+lengthY-1))
 			return true;
 	}
 
 	// Now we try other values
 	// We iterate throught x first because of the memory placement of elements in the map
 	for (int y = offsetY+1; y < offsetY+lengthY-1; y++) {
-		offset = y*width;
+		//offset = y*width;
 		for (int x = offsetX; x < offsetX+lengthX; x++) {
-			if (map[offset+x])
+			if (get(x,y))
 				return true;
 		}
 	}
@@ -425,24 +428,24 @@ bool bitmap::hasBlack(int offsetX, int offsetY, int length) {
  */
 bool bitmap::hasWhite(int offsetX, int offsetY, int lengthX, int lengthY) {
 	// Two loop for memory caching
-	int offset = offsetY*width;
+	//int offset = offsetY*width;
 	for (int x = offsetX; x < offsetX+lengthX; x++) {
-		if (!map[offset + x])
+		if (!get(x,offsetY))
 			return true;
 	}
 
-	offset = (offsetY+lengthY-1)*width;
+	//offset = (offsetY+lengthY-1)*width;
 	for (int x = offsetX; x < offsetX+lengthX; x++) {
-		if (!map[offset + x])
+		if (!get(x,offsetY+lengthY-1))
 			return true;
 	}
 
 	// Now we try other values
 	// We iterate throught x first because of the memory placement of elements in the map
 	for (int y = offsetY+1; y < offsetY+lengthY-1; y++) {
-		offset = y*width;
+		//offset = y*width;
 		for (int x = offsetX; x < offsetX+lengthX; x++) {
-			if (!map[offset+x])
+			if (!get(x,y))
 				return true;
 		}
 	}

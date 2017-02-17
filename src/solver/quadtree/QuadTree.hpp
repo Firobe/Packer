@@ -14,12 +14,13 @@ class QuadTree
 {
 private:
 	InnerQuadTree *tree;
-	float _offsetX, _offsetY;
-	float _angle;
+	float _currentX, _currentY, _currentAngle;
+	float _totalX, _totalY, _totalAngle;
 	bitmap *bmap;
+	MultiPolygon multiP;
 	int _maxDepth;
-	bool rotated = false;
-	bool moved = true;
+	bool rotated, moved;
+	float precision;
 
 
 private:
@@ -37,7 +38,7 @@ public:
 	bool intersects(const QuadTree&) const;
 	void translater(float x, float y);
 	bool applyTranslation();
-	void rotate(float angle);
+	void rotater(float angle);
 	bool applyRotation();
 
 private:

@@ -180,19 +180,23 @@ int main() {
 	int tx, ty;
 	//for (int j=0; j<REPEAT; j++)
 		for (size_t i=0; i<bits.size(); i++) {
-			bitmap::trim(bitmap::rotate(&bits[i], 1, tx, ty))->saveMap("0" + shapes[i].getID() + "rotated");
+			bitmap::trim(bitmap::rotate(&bits[i], 1, tx, ty), tx, ty)->saveMap("0" + shapes[i].getID() + "rotated");
 		}
 	end = Clock::now();
 	elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "bm rot : " << elapsed2 << " microseconds elapsed" << endl;
 
-	quads[0].saveTree("test-init");
-	cout << endl << quads[0] << endl;
-	quads[0].rotate(90);
+	quads[1].saveTree("test-init");
+	cout << endl << quads[1] << endl;
+	quads[1].rotater(90);
+	cout << quads[1] << endl;
+	quads[1].applyRotation();
+/*	cout << quads[0] << endl;
+	quads[0].rotater(45);
 	cout << quads[0] << endl;
-	quads[0].applyRotation();
-	cout << quads[0] << endl;
-	quads[0].saveTree("test-rota");
+	quads[0].applyRotation();  */
+	cout << quads[1] << endl;
+	quads[1].saveTree("test-rota");
 
 	return EXIT_SUCCESS;
 }

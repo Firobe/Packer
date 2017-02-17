@@ -41,8 +41,8 @@ public:
 	int getWidth() { return width; }
 	int getHeight() { return height; }
 
-	static bitmap *rotate(const bitmap *other, float r, int &x, int &y);
-	static bitmap *trim(const bitmap *bmp);
+	static bitmap *rotate(const bitmap *other, float r, int &xres, int &yres);
+	static bitmap *trim(const bitmap *bmp, int &xres, int &yres);
 
 	bool hasBlack(int offsetX, int offsetY, int length);
 	bool hasBlack(int offsetX, int offsetY, int lengthX, int lengthY);
