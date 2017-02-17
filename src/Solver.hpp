@@ -10,6 +10,7 @@
 
 #include "Parser.hpp"
 #include "Shape.hpp"
+#include "common.hpp"
 
 #define SPACE_COEF (1.2) //Spacing between bins
 
@@ -45,7 +46,7 @@ protected:
     }
 
 public:
-    Solver(std::vector<Shape>& s) : _shapes(s), _binNumber(0) {}
+    Solver(std::vector<Shape>& s, std::vector<Parameter>) : _shapes(s), _binNumber(0) {}
     void solve();
 };
 

@@ -1,5 +1,8 @@
 #include <iostream>
 
+#include <boost/geometry/algorithms/intersects.hpp>
+#include <boost/geometry/algorithms/area.hpp>
+#include <boost/geometry/algorithms/comparable_distance.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
 #include <boost/geometry/algorithms/convex_hull.hpp>
 #include <boost/geometry/algorithms/centroid.hpp>
@@ -69,11 +72,92 @@ double getClose(Shape& shapeA, Shape& shapeB, Box& boxA) {
     return mid;
 }
 
+vector<vector<unsigned> > SimpleTransformer::transform() {
+    LOG(info) << "Merging shapes";
+    vector<vector<unsigned> > ret;
+    vector<bool> mergedV(_shapes.size(), false);
+    //Initial shufle
+    random_shuffle(_shapes.begin(), _shapes.end());
+
+    //We try to merge {0, 1}, {1, 2}, ..., {n - 1, n}
+    for (unsigned i = 0 ; i < _shapes.size() - 1 ; ++i) {
+        if (mergedV[i])
+            continue;
+
+        LOG(debug) << "SimpleTransformer : i = " << i << endl;
+        double bestAlpha = 0., bestBeta = 0., bestMid = 0; //Best rotations
+        int bestOffset = 0.; //Best translation
+        double bestArea = 0.; //Best area of merged couples of shapes
+        unsigned j = i + 1;
+        unsigned bestJ = j;
+        //Move shapes
+        bool merged = false; //Check if a merge occured
+        #pragma omp parallel for schedule(dynamic, 1) collapse(3)
+
+        for (int alpha = 0; alpha < 360; alpha += ROTATE_STEP) { //Rotate first shape
+            for (int beta = 0.; beta < 360 ; beta += ROTATE_STEP) { //Rotate second shape
+                for (unsigned offset = 0; offset < TRANSLATE_NB ; ++offset) { //Trying different offsets
+                    Box boxA, boxB;
+                    Shape shapeA, shapeB;
+                    shapeA = _shapes[i];
+                    shapeB = _shapes[j];
+                    applyTrans(shapeA, shapeB, alpha, beta, offset, boxA, boxB, 0, true);
+                    double mid = getClose(shapeA, shapeB, boxA);
+                    double ratio = _criteria(shapeA, shapeB);
+                    mergeMultiP(shapeA.getMultiP(), shapeB.getMultiP());
+                    bg::envelope(shapeA.getMultiP(), boxA);
+                    bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() <
+                                     Parser::getDims().x() and boxA.max_corner().y() -
+                                     boxA.min_corner().y() < Parser::getDims().y();
+
+                    //Computes intersection efficiency
+                    //Store the best candidate
+                    if (ratio > bestArea and withinBin) {
+                        merged = true;
+                        bestArea = ratio;
+                        bestAlpha = alpha;
+                        bestBeta = beta;
+                        bestOffset = offset;
+                        bestMid = mid;
+                        bestJ = j;
+                    }
+                }
+            }
+        }
+
+        string textBase = "SimpleTransformer (" + to_string(i + 1) +
+                          "/" + to_string(_shapes.size() - 1) + ")";
+        Box boxA, boxB;
+
+        if (merged) {
+            LOG(info) << "!";
+            mergedV[i] = true;
+            mergedV[bestJ] = true;
+            ret.push_back({_shapes[i].getID(), _shapes[bestJ].getID()}); // _shapes update
+            applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta, bestOffset, boxA, boxB,
+                       bestMid);
+            translate(_shapes[i], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
+            translate(_shapes[bestJ], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
+            Display::Update(_shapes[i].getID());
+            Display::Update(_shapes[bestJ].getID());
+            Display::Text(textBase + " : merged !");
+        }
+        else {
+            LOG(info) << ".";
+            Display::Text(textBase + " : failed to merge !");
+            ret.push_back({_shapes[i].getID()});
+        }
+    }//for i
+
+    LOG(info) << endl;
+    return ret;
+}
+
 /**
  * Returns (if high enough) the area of the intersection between
  * the convex hulls of shapeA and shapeB
  */
-double IntersectionCriteria::criteria(const Shape& shapeA, const Shape& shapeB) {
+double intersectionCriteria(const Shape& shapeA, const Shape& shapeB) {
     Polygon hullA, hullB;
     MultiPolygon inter;
     bg::convex_hull(shapeA.getMultiP(), hullA);
@@ -86,7 +170,7 @@ double IntersectionCriteria::criteria(const Shape& shapeA, const Shape& shapeB) 
 /**
  * Returns (idem) the area of the bouding box around shapeA and shapeB
  */
-double BoxCriteria::criteria(const Shape& shapeA, const Shape& shapeB) {
+double boxCriteria(const Shape& shapeA, const Shape& shapeB) {
     Box bA, bB, inter;
     bg::envelope(shapeA.getMultiP(), bA);
     bg::envelope(shapeB.getMultiP(), bB);

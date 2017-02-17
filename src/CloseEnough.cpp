@@ -13,6 +13,7 @@
 #include "SimpleTransformer.hpp"
 #include "solver/box/Scanline.hpp"
 #include "solver/box/TheSkyIsTheLimit.hpp"
+#include "solver/box/ToInfinityAndBeyond.hpp"
 
 using qi::double_;
 using qi::int_;
@@ -36,6 +37,26 @@ using phoenix::push_back;
 using namespace std;
 
 /**
+ * Specialisation of Registry to Transformers
+ */
+struct TransformerRegistry : public Registry<Transformer> {
+    TransformerRegistry() {
+        reg<SimpleTransformer>("SimpleTransformer");
+    }
+};
+
+/**
+ * Specialisation of Registry to Solvers
+ */
+struct SolverRegistry : public Registry<Solver> {
+    SolverRegistry() {
+        reg<Scanline>("ScanlineSolver");
+        reg<TheSkyIsTheLimit>("TheSkyIsTheLimitSolver");
+        reg<ToInfinityAndBeyond>("ToInfinityAndBeyondSolver");
+    }
+};
+
+/**
  * Given a list of parameters and a key string,
  * returns if such a key is found and fills value with its value
  * if found
@@ -57,8 +78,7 @@ bool getParameter(std::vector<Parameter> p, std::string key, Value& value) {
  * Stream operator for Value
  */
 ostream& operator<< (ostream& os, const Value& c) {
-    //os << (c.isNum ? to_string(c.number) : c.str);
-	os << c;
+    os << c;
     return os;
 }
 
@@ -108,42 +128,25 @@ void callEverything(vector<Call> block, int n, vector<Shape>* shapes) {
  */
 void Call::operator()(vector<Shape>& shapes) {
     static Merger merge(shapes);
+    static TransformerRegistry tReg;
+    static SolverRegistry sReg;
 
     if (func.cat == FUNC_TRANSFORMER) {
         vector<vector<unsigned>> transformed;
+        string mergeP;
 
-        if (func.name == "SimpleTransformer") {
-            string criteria, mergeP;
+        if (!getParameter(params, "merge", mergeP))
+            mergeP = "true";
 
-            if (!getParameter(params, "criteria", criteria))
-                throw runtime_error("Please specify a correct criteria for the transformer");
+        Transformer* t = tReg.instanciate(func.name, shapes, params);
+        transformed = t->transform();
 
-            if (!getParameter(params, "merge", mergeP))
-                mergeP = "true";
-
-            if (criteria == "intersection") {
-                SimpleTransformer<IntersectionCriteria> st(shapes);
-                transformed = st.transform();
-            }
-            else if (criteria == "box") {
-                SimpleTransformer<BoxCriteria> st(shapes);
-                transformed = st.transform();
-            }
-
-            if (mergeP == "true")
-                merge.merge(transformed);
-        }
+        if (mergeP == "true")
+            merge.merge(transformed);
     }
     else if (func.cat == FUNC_SOLVER) {
-        if (func.name == "ScanlineSolver") {
-            Scanline solver(shapes);
-            solver.solve();
-        }
-        else if (func.name == "TheSkyIsTheLimitSolver") {
-            TheSkyIsTheLimit solver(shapes);
-            solver.solve();
-        }
-
+        Solver* s = sReg.instanciate(func.name, shapes, params);
+        s->solve();
         merge.reset();
     }
     else
@@ -166,7 +169,8 @@ CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program st
     transformer		   %= qi::string("SimpleTransformer")
                           | qi::string("Reset");
     solver			   %= qi::string("ScanlineSolver")
-                          | qi::string("TheSkyIsTheLimitSolver");
+                          | qi::string("TheSkyIsTheLimitSolver")
+                          | qi::string("ToInfinityAndBeyondSolver");
     function_			= transformer[_val = bind(makeTransFunction, _1)]
                           | solver[_val = bind(makeSolverFunction, _1)];
     instruction			= (function_ > '(' > parameter_list > ')')

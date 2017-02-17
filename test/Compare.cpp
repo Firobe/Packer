@@ -19,7 +19,7 @@ template <typename T>
 void testSolver(vector<Shape> shapes) {
 	Parser::setDims(Point(RANGE * 3, RANGE * 3));
     cerr << "Testing : " << boost::typeindex::type_id<T>().pretty_name() << endl;
-    T s(shapes);
+    T s(shapes, {});
     auto start = Clock::now();
     s.solve();
     auto end = Clock::now();

@@ -10,6 +10,7 @@
 #include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/strategies/transform/matrix_transformers.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
+#include <boost/variant.hpp>
 
 namespace bg = boost::geometry;
 using Point = bg::model::d2::point_xy<double>; //Defines the Point type
@@ -100,4 +101,14 @@ static bool floatZero(T a, T epsilon = std::numeric_limits<T>::epsilon()) {
     return std::fabs(a) <= epsilon;
 }
 
+using Value = boost::variant<int, double, std::string>;
+
+/**
+ * Struct used for functions  calls.
+ * Every parameter has a name and a value : name=value
+ */
+struct Parameter {
+    std::string name;
+    Value value;
+};
 #endif

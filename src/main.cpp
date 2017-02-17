@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
     Parser::setDims(Point(
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
-    //Prepacking the shapes
+    //MAIN PROCESSING
     CE_Parser parser(shapes);
     auto begin = toDo.begin(), end = toDo.end();
     bool success = phrase_parse(begin, end, parser, ascii::space);

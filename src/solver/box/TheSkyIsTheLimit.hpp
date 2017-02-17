@@ -12,13 +12,11 @@
 class TheSkyIsTheLimit : public Solver {
 private:
     std::vector<Box> _boxes;
-
     void preSolve() override;
-
     void solveBin() override;
-
 public:
-    TheSkyIsTheLimit(std::vector<Shape>& v) : Solver(v), _boxes(v.size()) {}
+    TheSkyIsTheLimit(std::vector<Shape>& v, std::vector<Parameter> p) : Solver(v, p),
+        _boxes(v.size()) {}
 };
 
 #endif

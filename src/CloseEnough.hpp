@@ -2,9 +2,16 @@
 #define CLOSE_ENOUGH__HPP
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix_core.hpp>
+#include <boost/phoenix/bind/bind_function.hpp>
+#include <boost/phoenix/object/new.hpp>
+#include <boost/phoenix.hpp>
+#include <boost/function.hpp>
+
 #include <string>
 
 #include "Shape.hpp"
+#include "common.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -39,14 +46,14 @@ namespace phoenix = boost::phoenix;
  *     big_block = 		block
  *                         | "DO" int_ "TIMES" block
  *     start = 			(big_block)*
- * 
+ *
  * Language usage
  * ===============
  * An instruction have the following pattern : function(param1=value1, param2=value2, ...);
  * Instructions must be followed by a semicolon
  * Multiple-instruction blocks are between a BEGIN and a END
  * Instruction blocks can be executed multiple times using DO X TIMES <block>
- * 
+ *
  * Example
  * =========
  * DO 2 TIMES
@@ -57,17 +64,6 @@ namespace phoenix = boost::phoenix;
  * ScanlineSolver();
  */
 
-using Value = boost::variant<int, double, std::string>;
-
-/**
- * Struct used for functions  calls.
- * Every parameter has a name and a value : name=value
- */
-struct Parameter {
-    std::string name;
-    Value value;
-};
-
 /**
  * Get the value of the parameter named <key>
  * in a list of parameters and checks wether it
@@ -75,12 +71,14 @@ struct Parameter {
  */
 template<typename Required>
 bool getParameter(std::vector<Parameter> p, std::string key, Required& value) {
-	Value v;
-	bool b = getParameter(p, key, v);
-	if(b and v.type() == typeid(Required))
-		value = boost::get<Required>(v);
-	else return false;
-	return true;
+    Value v;
+    bool b = getParameter(p, key, v);
+
+    if (b and v.type() == typeid(Required))
+        value = boost::get<Required>(v);
+    else return false;
+
+    return true;
 }
 
 /**
@@ -109,6 +107,33 @@ struct Call {
     Function func;
     std::vector<Parameter> params;
     void operator()(std::vector<Shape>& shapes);
+};
+
+/**
+ * Base template for a registry class
+ * used as a hash table to instanciate child classes from a base classes
+ * with only their name.
+ * The child classes must be registered, and then they can be instanciated.
+ *
+ * Here every instanciated class must have a constructor taking a vector of shapes
+ * and a vector of parameters
+ */
+template<typename BaseClass>
+class Registry {
+    std::map<std::string, boost::function<BaseClass* (std::vector<Shape>&, std::vector<Parameter>)>>
+            _fact;
+public:
+    //Usage : reg<ClassToRegister>();
+    template<typename DerivedClass>
+    void reg(std::string name) {
+        _fact[name] = phoenix::new_<DerivedClass>(phoenix::placeholders::arg1,
+                      phoenix::placeholders::arg2);
+    }
+    //Usage : instanciate("className", shapes, parameters); Returns a BaseClass pointer
+    BaseClass* instanciate(std::string name, std::vector<Shape>& s,
+                           std::vector<Parameter> p) {
+        return _fact.at(name)(s, p);
+    }
 };
 
 /**

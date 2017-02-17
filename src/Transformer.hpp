@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Shape.hpp"
+#include "common.hpp"
 
 /**
  * Abstract class for transformers.
@@ -16,7 +17,7 @@ class Transformer {
 protected:
     std::vector<Shape>& _shapes; // Contains parsed shapes
 public:
-    Transformer(std::vector<Shape>& s) : _shapes(s) {}
+    Transformer(std::vector<Shape>& s, std::vector<Parameter>) : _shapes(s) {}
     virtual std::vector<std::vector<unsigned> > transform() = 0;
 };
 
