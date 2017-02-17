@@ -13,6 +13,7 @@ add_library(packer_lib STATIC
   Interpolator.cpp
   SimpleTransformer.cpp
   Display.cpp
+  CloseEnough.cpp
   )
 
 if (${ENABLE_DISPLAY})

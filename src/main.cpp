@@ -80,13 +80,15 @@ int main(int argc, char** argv) {
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //Prepacking the shapes
-    CE_Parser<string::iterator> parser(shapes);
-    bool success = phrase_parse(toDo.begin(), toDo.end(), parser, space);
+    CE_Parser parser(shapes);
+    auto begin = toDo.begin(), end = toDo.end();
+    bool success = phrase_parse(begin, end, parser, ascii::space);
 
-    if (success)
+    if (success and begin == end)
         LOG(info) << "CloseEnough successfully processed !" << endl;
     else
-        throw runtime_error("CloseEnough configuration is invalid !");
+        throw runtime_error("CloseEnough configuration is invalid : remaining\n" + string(begin,
+                            end));
 
     //Evaluating the quality
     LOG(info) << "Compression rate achieved : " << compressionRatio(shapes) << endl;
