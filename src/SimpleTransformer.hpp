@@ -13,10 +13,11 @@
 #define STACKING_EPSILON 1. //Stacking precision : shapes stop when dist <= this
 #define RENTABILITY 0.05 //Threshold of needed stacking efficiency
 
-using SimpleTransformerCriteria = std::function<double(const Shape&, const Shape&)> ;
+using SimpleTransformerCriteria =
+    std::function<double(const Shape&, const Shape&, double)> ;
 
-double intersectionCriteria(const Shape&, const Shape&);
-double boxCriteria(const Shape&, const Shape&);
+double intersectionCriteria(const Shape&, const Shape&, double);
+double boxCriteria(const Shape&, const Shape&, double);
 
 /**
  * Dirty bruteforce : tries arbritrary high number of rotations on two
@@ -29,6 +30,8 @@ double boxCriteria(const Shape&, const Shape&);
 class SimpleTransformer : public Transformer {
 private:
     SimpleTransformerCriteria _criteria;
+    double _rentability;
+    int _rotateStep,  _translateNb;
 public:
     SimpleTransformer(std::vector<Shape>& s, std::vector<Parameter> params) :
         Transformer(s, params) {
@@ -41,11 +44,20 @@ public:
             _criteria = intersectionCriteria;
         else if (criteria == "box")
             _criteria = boxCriteria;
+
+        if (!getParameter(params, "rotate_step", _rotateStep))
+            _rotateStep = ROTATE_STEP;
+
+        if (!getParameter(params, "translate_nb", _translateNb))
+            _translateNb = TRANSLATE_NB;
+
+        if (!getParameter(params, "rentability", _rentability))
+            _rentability = RENTABILITY;
     }
     std::vector<std::vector<unsigned> > transform();
 };
 
-void applyTrans(Shape&, Shape&, double, double, unsigned, Box&, Box&, double,
+void applyTrans(Shape&, Shape&, double, double, double, Box&, Box&, double,
                 bool = false);
 double getClose(Shape& a, Shape& b, Box&);
 

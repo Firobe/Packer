@@ -1,5 +1,5 @@
 DO 2 TIMES
 BEGIN
-SimpleTransformer(criteria=intersection);
+SimpleTransformer(rotate_step=25,criteria=intersection);
 END
 ScanlineSolver();
