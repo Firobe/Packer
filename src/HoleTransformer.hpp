@@ -9,12 +9,12 @@
 #include "CloseEnough.hpp"
 
 /**
- * Dirty bruteforce : tries arbritrary high number of rotations on two
- * objects, and with each configuration tries a fixed number of translation in
- * order to test different offsets between the shapes.
+ * This transformer intends to fill every hole of every shape with another 
+ * existing shape. 
+ * For now, shapes are only translated and undergo no rotation to fill holes.
+ * This is a first fit algorithm, we choose the first shape that goes into the
+ * hole without collision. The test is made on smallest shapes (area criteria) first.
  *
- * Keeps the configuration when the intersection between the convex hulls of
- * the two shapes is the highest.
  */
 class HoleTransformer : public Transformer {
 public:
