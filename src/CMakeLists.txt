@@ -4,6 +4,7 @@ add_library(packer_lib STATIC
   Solver.cpp
   solver/box/ToInfinityAndBeyond.cpp
   solver/box/TheSkyIsTheLimit.cpp
+  solver/box/Freeze.cpp
   solver/quadtree/quadTree.cpp
   Outer.cpp
   Matrix.cpp

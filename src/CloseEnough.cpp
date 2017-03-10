@@ -12,6 +12,7 @@
 #include "Merger.hpp"
 #include "SimpleTransformer.hpp"
 #include "solver/box/Scanline.hpp"
+#include "solver/box/Freeze.hpp"
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
 
@@ -53,6 +54,7 @@ struct SolverRegistry : public Registry<Solver> {
         reg<Scanline>("ScanlineSolver");
         reg<TheSkyIsTheLimit>("TheSkyIsTheLimitSolver");
         reg<ToInfinityAndBeyond>("ToInfinityAndBeyondSolver");
+        reg<Freeze>("FreezeSolver");
     }
 };
 
@@ -171,7 +173,8 @@ CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program st
                           | qi::string("Reset");
     solver			   %= qi::string("ScanlineSolver")
                           | qi::string("TheSkyIsTheLimitSolver")
-                          | qi::string("ToInfinityAndBeyondSolver");
+                          | qi::string("ToInfinityAndBeyondSolver")
+                          | qi::string("FreezeSolver");
     function_			= transformer[_val = bind(makeTransFunction, _1)]
                           | solver[_val = bind(makeSolverFunction, _1)];
     instruction			= (function_ > '(' > parameter_list > ')')
