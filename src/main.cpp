@@ -53,6 +53,7 @@ int main(int argc, char** argv) {
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
     vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
 
+
     if (vm["display"].as<bool>())
 #ifdef ENABLE_DISPLAY
         Display::Init(shapes);
@@ -81,7 +82,10 @@ int main(int argc, char** argv) {
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //MAIN PROCESSING
+    for (auto && s : shapes)
+      LOG(debug) << "New inners' size :" << s.getMultiP().back().inners().size() << endl;
     CE_Parser parser(shapes);
+    
     auto begin = toDo.begin(), end = toDo.end();
     bool success = phrase_parse(begin, end, parser, ascii::space);
 

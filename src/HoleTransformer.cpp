@@ -26,16 +26,16 @@ vector<vector<unsigned> > HoleTransformer::transform() {
 
   //Initial sort by global shape area, decreasing order
   sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
-      return bg::area(a.getMultiP()) < bg::area(b.getMultiP());
+      return bg::area(a.getMultiP()) > bg::area(b.getMultiP());
     });
-    
   //Try to put small shapes in other shapes' holes
   for (unsigned i = 0 ; i < _shapes.size() ; ++i) { //for each shape, starting with the biggest
     merge = false;
     for (unsigned p = 0 ; p < _shapes[i].getMultiP().size() ; ++p){
       for (unsigned j = 0 ; j < _shapes[i].getMultiP()[p].inners().size() ; ++j) { //for each hole (if there is any)
-	h_area = bg::area(_shapes[i].getMultiP()[p].inners()[j]);
-	bg::centroid(_shapes[i].getMultiP()[p].inners()[j], h_center);
+	Ring & hole = _shapes[i].getMultiP()[p].inners()[j];
+	h_area = bg::area(hole);
+	bg::centroid(hole, h_center);
 	for (unsigned k = _shapes.size() - 1 ; k > i ; --k) { //for each shape, starting with the smallest
 	  if (bg::area(_shapes[k].getMultiP()) < h_area && !mergedV[k]) { 
 	    bg::centroid(_shapes[k].getMultiP(), s_center);
@@ -44,9 +44,12 @@ vector<vector<unsigned> > HoleTransformer::transform() {
 	      mergedV[k] = true;
 	      merge = true;
 	      ret.push_back({_shapes[i].getID(), _shapes[k].getID()});
+	      LOG(info) << "!";
+	      break;
 	    }
 	  }
 	}
+	LOG(info) << ".";
       }
       if (merge == false){
 	ret.push_back({_shapes[i].getID()});

@@ -1,6 +1,2 @@
-DO 2 TIMES
-BEGIN
-	HoleTransformer();
-END
-
+HoleTransformer();
 ScanlineSolver();
