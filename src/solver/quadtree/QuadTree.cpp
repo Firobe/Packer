@@ -201,6 +201,7 @@ void QuadTree::rotater(float angle) {
  * @return true if something was done, false if nothing had to be done or in case of error
  */
 bool QuadTree::applyRotation() {
+
 	// Compute the tree position
 	float newX = cos(_totalAngle)*_totalX - sin(_totalAngle)*_totalY;
 	float newY = sin(_totalAngle)*_totalX + cos(_totalAngle)*_totalY;
@@ -236,6 +237,7 @@ bool QuadTree::applyRotation() {
 	// Create the bitmap that will be used in order to create the quadTree
 	_maxDepth = maxDepth;
 	int size = pow(2, maxDepth);
+	delete bmap;
 	bmap = new bitmap(newP,size,size);
 
 	// QuadTree size is shape envelop size
@@ -245,7 +247,7 @@ bool QuadTree::applyRotation() {
 
 	// Refresh tree, positions are reseted
 	rotated = false;
-	moved = true;
+	moved = false;
 	_currentX = 0.0;
 	_currentY = 0.0;
 	_currentAngle = 0.0;

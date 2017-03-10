@@ -120,7 +120,7 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
 		return false;
 	if (q.y2+offsetY2 < y1+offsetY1)
 		return false;
-*/
+	*/
 
 	Box b1{{x1+offsetX1,y1+offsetY1},{x2+offsetX1,y2+offsetY1}};
 	Box b2{{q.x1+offsetX2,q.y1+offsetY2},{q.x2+offsetX2,q.y2+offsetY2}};
@@ -148,13 +148,13 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
 	}
 
 	if (color == grey && q.color == black) {
-		if (q.intersectsRec(*q1, offsetX1, offsetY1, offsetX2, offsetY2))
+		if (q1->intersectsRec(q, offsetX1, offsetY1, offsetX2, offsetY2))
 			return true;
-		if (q.intersectsRec(*q2, offsetX1, offsetY1, offsetX2, offsetY2))
+		if (q2->intersectsRec(q, offsetX1, offsetY1, offsetX2, offsetY2))
 			return true;
-		if (q.intersectsRec(*q3, offsetX1, offsetY1, offsetX2, offsetY2))
+		if (q3->intersectsRec(q, offsetX1, offsetY1, offsetX2, offsetY2))
 			return true;
-		if (q.intersectsRec(*q4, offsetX1, offsetY1, offsetX2, offsetY2))
+		if (q4->intersectsRec(q, offsetX1, offsetY1, offsetX2, offsetY2))
 			return true;
 		return false;
 	}
@@ -215,6 +215,7 @@ void InnerQuadTree::translater(float x, float y) {
 
 std::ostream& operator<<(std::ostream& s, const InnerQuadTree& q) {
 	s << "Boundind box : (" << q.x1 << "," << q.y1 << ") (" << q.x2 << "," << q.y2 << ")" << endl;
+	s << "Size : " << q.x2 - q.x1 << ":"  << q.y2 - q.y1 << endl;
 	s << "Size : " << q.size << endl;
 	return s;
 }

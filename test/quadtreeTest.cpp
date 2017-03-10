@@ -26,7 +26,7 @@ using namespace std;
 int main() {
 	srand(time(0));
 
-    //Will contain the IDs the solver will pack
+	//Will contain the IDs the solver will pack
     vector<string> toPack;
 
     Point docDim; //Container for the document dimensions
@@ -47,7 +47,7 @@ int main() {
 	quads.reserve(shapes.size()); //No copy of quadtress needed to place them in the vector
 
 	for (Shape& s: shapes) {
-		quads.emplace_back(s, 10);
+		quads.emplace_back(s, 5);
 		//cout << " - QuadTree : " << endl << quads.back() << endl;
 		//bitmap(s, 64, 64);
 	}
@@ -76,7 +76,7 @@ int main() {
 	for (size_t i=0; i<quads.size(); i++)
 		quads[i].saveTree(shapes[i].getID());*/
 
-	auto start = Clock::now();
+	/*auto start = Clock::now();
 	for (int i=0; i<REPEAT; i++)
 		for (Shape& s1: shapes) {
 			for (Shape& s2 : shapes)
@@ -100,7 +100,7 @@ int main() {
 	end = Clock::now();
 	int elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "qd int : " << elapsed2 << " microseconds elapsed" << endl;
-	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;
+	cout << "  - ratio : " << (double) elapsed/elapsed2 << endl;*/
 
 	/*start = Clock::now();
 	for (vector<Shape>::size_type i=0; i<REPEAT*shapes.size(); i++)
@@ -142,11 +142,10 @@ int main() {
 	elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
 	cout << "Qd cre : " << elapsed << " microseconds elapsed" << endl;*/
 
-	vector<bitmap> bits;
+	/*vector<bitmap> bits;
 	bits.reserve(shapes.size());
 	for (Shape& s: shapes) {
 		bits.emplace_back(s, 4);
-		//cout << "Bitmap : " << endl << bits.back() << endl;
 		bits.back().saveMap("0" + s.getID());
 	}
 
@@ -184,18 +183,48 @@ int main() {
 		}
 	end = Clock::now();
 	elapsed2 = chrono::duration_cast<chrono::microseconds>(end - start).count();
-	cout << "bm rot : " << elapsed2 << " microseconds elapsed" << endl;
+	cout << "bm rot : " << elapsed2 << " microseconds elapsed" << endl;*/
+
+
+	/*ofstream file;
+	file.open("rotater.svg");
+	int pos = 0;
+	for (QuadTree &quad : quads) {
+		quad.rotater(45);
+		quad.applyRotation();
+		quad.saveTree("rot" + shapes[pos].getID());
+
+		rotate<Shape>(shapes[pos],45);
+
+		pos++;
+	}
+
+	// Intersection accuracy verification
+	diff = 0;
+	crit = 0;
+	for(size_t i=0; i<quads.size(); i++) {
+		for(size_t j=i+1; j<quads.size(); j++) {
+			bool b1 = quads[i].intersects(quads[j]);
+			bool b2 = bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP());
+			//cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
+			//cout << "Inter : " << b1 << "-" << b2 << endl;
+			if (b1 && !b2) diff++;
+			if (!b1 && b2) crit++;
+		}
+	}
+	cout << "QuadTrees approximations errors : " << diff << endl;
+	cout << "QuadTree accuracy critical error : " << crit << endl;*/
 
 	quads[1].saveTree("test-init");
 	cout << endl << quads[1] << endl;
-	quads[1].rotater(90);
-	cout << quads[1] << endl;
-	quads[1].applyRotation();
-/*	cout << quads[0] << endl;
-	quads[0].rotater(45);
-	cout << quads[0] << endl;
-	quads[0].applyRotation();  */
-	cout << quads[1] << endl;
+
+	for (int i=0; i<1; i++) {
+		quads[1].rotater(100);
+		cout << quads[1] << endl;
+		quads[1].applyRotation();
+		cout << quads[1] << endl;
+	}
+
 	quads[1].saveTree("test-rota");
 
 	return EXIT_SUCCESS;
