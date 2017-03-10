@@ -1,5 +1,6 @@
 DO 2 TIMES
 BEGIN
-SimpleTransformer(rotate_step=25,criteria=intersection);
+	HoleTransformer();
 END
+
 ScanlineSolver();

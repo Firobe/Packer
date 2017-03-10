@@ -12,6 +12,7 @@ add_library(packer_lib STATIC
   Merger.cpp
   Interpolator.cpp
   SimpleTransformer.cpp
+  HoleTransformer.cpp
   Display.cpp
   CloseEnough.cpp
   )

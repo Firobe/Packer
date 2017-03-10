@@ -10,6 +10,7 @@
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
 #include "Merger.hpp"
+#include "HoleTransformer.hpp"
 #include "SimpleTransformer.hpp"
 #include "Display.hpp"
 #include "CloseEnough.hpp"

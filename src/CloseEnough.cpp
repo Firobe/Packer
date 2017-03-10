@@ -11,6 +11,7 @@
 #include "CloseEnough.hpp"
 #include "Merger.hpp"
 #include "SimpleTransformer.hpp"
+#include "HoleTransformer.hpp"
 #include "solver/box/Scanline.hpp"
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
@@ -42,6 +43,7 @@ using namespace std;
 struct TransformerRegistry : public Registry<Transformer> {
     TransformerRegistry() {
         reg<SimpleTransformer>("SimpleTransformer");
+        reg<HoleTransformer>("HoleTransformer");
     }
 };
 
@@ -168,6 +170,7 @@ CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program st
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
     transformer		   %= qi::string("SimpleTransformer")
+      | qi::string("HoleTransformer")
                           | qi::string("Reset");
     solver			   %= qi::string("ScanlineSolver")
                           | qi::string("TheSkyIsTheLimitSolver")
