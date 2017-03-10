@@ -16,11 +16,16 @@
 
 using namespace std;
 
+/**
+ * HoleTransformer : basic algorithm to
+ * fill holes in polygons with other shapes.
+ * Will sort holes and shapes by decreasing area and
+ * for each hole, try to insert each shape until one is found.
+ */
 vector<vector<unsigned> > HoleTransformer::transform() {
   LOG(info) << "Filling holes";
   vector<vector<unsigned> > ret; //List of shapes' index to merge
   vector<bool> mergedV(_shapes.size(), false);
-  bool merge;
   int h_area; //Hole area
   Point h_center, s_center;
 
@@ -28,37 +33,55 @@ vector<vector<unsigned> > HoleTransformer::transform() {
   sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
       return bg::area(a.getMultiP()) > bg::area(b.getMultiP());
     });
-  //Try to put small shapes in other shapes' holes
-  for (unsigned i = 0 ; i < _shapes.size() ; ++i) { //for each shape, starting with the biggest
-    merge = false;
-    for (unsigned p = 0 ; p < _shapes[i].getMultiP().size() ; ++p){
-      for (unsigned j = 0 ; j < _shapes[i].getMultiP()[p].inners().size() ; ++j) { //for each hole (if there is any)
-	Ring & hole = _shapes[i].getMultiP()[p].inners()[j];
-	h_area = bg::area(hole);
-	bg::centroid(hole, h_center);
-	for (unsigned k = _shapes.size() - 1 ; k > i ; --k) { //for each shape, starting with the smallest
-	  if (bg::area(_shapes[k].getMultiP()) < h_area && !mergedV[k]) { 
-	    bg::centroid(_shapes[k].getMultiP(), s_center);
-	    translate(_shapes[k], h_center.x()-s_center.x(), h_center.y()-s_center.y() );
-	    if (!bg::intersects(_shapes[i].getMultiP(), _shapes[k].getMultiP())) {
-	      mergedV[k] = true;
-	      merge = true;
-	      ret.push_back({_shapes[i].getID(), _shapes[k].getID()});
-	      LOG(info) << "!";
+  //Put the holes in decreasing order, with the id of the owner shape into a vector
+  struct HoleOwner {
+    HoleOwner(Ring* r, unsigned u) : hole(r), sID(u) {}
+    Ring* hole;
+    unsigned sID; //shapeID
+  };
+  vector<HoleOwner> holes;
+  for(auto && shape : _shapes)
+    for(auto && polygon : shape.getMultiP())
+      for(auto && hole : polygon.inners())
+	holes.push_back( {&hole, shape.getID()} );
+  sort(holes.begin(), holes.end(), [](const HoleOwner& a, const HoleOwner& b) {
+      return bg::area(*a.hole) > bg::area(*b.hole);
+    });
+  //Try to put shapes in every hole
+  for(HoleOwner & hole : holes){
+    h_area = bg::area(*hole.hole);
+    bg::centroid(*hole.hole, h_center);
+    for (unsigned k = 0 ; k < _shapes.size() ; ++k) { //For each shape, starting with the largest
+      if (bg::area(_shapes[k].getMultiP()) < h_area && !mergedV[k]) {
+	bg::centroid(_shapes[k].getMultiP(), s_center);
+	//Translate the shape's centroid on the hole's centroid
+	translate(_shapes[k], h_center.x()-s_center.x(), h_center.y()-s_center.y() );
+	//If the shape fits, then merge
+	if (!bg::overlaps(*hole.hole, _shapes[k].getMultiP())) {
+	  mergedV[k] = true; //Will not use this shape again
+	  
+	  /*Fill the ret vector accordingly
+	  (find set containing hole.sID and add the shape into it,
+	  create the set if not found)*/
+	  bool found = false;
+	  for(auto && e : ret){
+	    if(!e.empty() && e[0] == hole.sID){
+	      found = true;
+	      e.push_back(_shapes[k].getID());
 	      break;
 	    }
 	  }
+	  if(!found)
+	    ret.push_back({hole.sID, _shapes[k].getID()}); //Do NOT change the order
+	  LOG(info) << "!";
+	  break;
 	}
-	LOG(info) << ".";
-      }
-      if (merge == false){
-	ret.push_back({_shapes[i].getID()});
       }
     }
+    LOG(info) << ".";
   }
-  
   LOG(info) << endl;
   return ret;
 }
 
-  
+
