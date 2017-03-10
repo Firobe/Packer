@@ -19,7 +19,6 @@
 #define PHYSICS_ALL_TIME			(PHYSICS_GRAVITY_TIME + PHYSICS_STABILIZATION_TIME)
 #define GRAVITY_STEP                10.
 #define BOUNCE_STEP                 1.
-#define REPEL_STEP_MULTIPLE			5.
 
 
 using namespace std;
@@ -67,8 +66,6 @@ void Freeze::solveBin(){
 						} else{
 							bounceRight(_shapes[*i]);
 						}
-							
-                        //bounceShape(_shapes[*i],_shapes[j]);
                     }
                 }
 
@@ -137,9 +134,9 @@ void Freeze::gravityMoveDown(Shape& shape){
 void Freeze::wiggle(Shape& shape){
 	float randomX, randomY, randomAngle;
 	
-	// First bin randoms can be: -1,0,1
-	// Then the shape can fly upwards
 	randomX = rand()%101 - 50.;
+	// First bin randomY can be: -1,0,1
+	// Then the shape starts flying upwards
 	randomY = rand()%3 - 1. - (_binNumber/5.);
 	randomAngle = rand()%3 -1.;
 	
@@ -162,20 +159,5 @@ void Freeze::bounceRight(Shape& shape){
     translate<Shape>(shape, BOUNCE_STEP, 0.);
     wiggle(shape);
 }
-
-void Freeze::bounceShape(Shape& shapeMove, Shape& shapeStill){
-    Box boxM, boxS;
-
-    bg::envelope(shapeMove.getMultiP(), boxM);
-    bg::envelope(shapeStill.getMultiP(), boxS);
-
-    int diffX = (boxS.max_corner().x() - boxS.min_corner().x())/2 - (boxM.max_corner().x() - boxM.min_corner().x())/2;
-    int diffY = (boxS.max_corner().y() - boxS.min_corner().y())/2 - (boxM.max_corner().y() - boxM.min_corner().y())/2;
-
-    translate<Shape>(shapeMove, -REPEL_STEP_MULTIPLE*diffX, -REPEL_STEP_MULTIPLE*diffY);
-    
-    wiggle(shapeMove);
-}
-
 
 

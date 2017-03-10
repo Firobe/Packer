@@ -17,7 +17,6 @@ private:
     void bounceUp(Shape& shape);
     void bounceLeft(Shape& shape);
     void bounceRight(Shape& shape);
-    void bounceShape(Shape& shapeMove, Shape& shapeStill);
     
 public:
     Freeze(std::vector<Shape>& v, std::vector<Parameter> p) : Solver(v, p) {}
