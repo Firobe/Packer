@@ -9,8 +9,8 @@
 #include "CloseEnough.hpp"
 
 /**
- * This transformer intends to fill every hole of every shape with another 
- * existing shape. 
+ * This transformer intends to fill every hole of every shape with another
+ * existing shape.
  * For now, shapes are only translated and undergo no rotation to fill holes.
  * This is a first fit algorithm, we choose the first shape that goes into the
  * hole without collision. The test is made on smallest shapes (area criteria) first.

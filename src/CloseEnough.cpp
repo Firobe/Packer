@@ -37,26 +37,19 @@ using phoenix::push_back;
 
 using namespace std;
 
-/**
- * Specialisation of Registry to Transformers
- */
-struct TransformerRegistry : public Registry<Transformer> {
-    TransformerRegistry() {
-        reg<SimpleTransformer>("SimpleTransformer");
-        reg<HoleTransformer>("HoleTransformer");
-    }
-};
+using TransformerRegistry = Registry<Transformer,
+      boost::mpl::set<
+      SimpleTransformer,
+      HoleTransformer
+      >::type>;
 
-/**
- * Specialisation of Registry to Solvers
- */
-struct SolverRegistry : public Registry<Solver> {
-    SolverRegistry() {
-        reg<Scanline>("ScanlineSolver");
-        reg<TheSkyIsTheLimit>("TheSkyIsTheLimitSolver");
-        reg<ToInfinityAndBeyond>("ToInfinityAndBeyondSolver");
-    }
-};
+using SolverRegistry = Registry<Solver,
+      boost::mpl::set<
+      Scanline,
+      TheSkyIsTheLimit,
+      ToInfinityAndBeyond
+      >::type>;
+
 
 /**
  * Given a list of parameters and a key string,
@@ -130,8 +123,6 @@ void callEverything(vector<Call> block, int n, vector<Shape>* shapes) {
  */
 void Call::operator()(vector<Shape>& shapes) {
     static Merger merge(shapes);
-    static TransformerRegistry tReg;
-    static SolverRegistry sReg;
 
     if (func.cat == FUNC_TRANSFORMER) {
         vector<vector<unsigned>> transformed;
@@ -140,19 +131,32 @@ void Call::operator()(vector<Shape>& shapes) {
         if (!getParameter(params, "merge", mergeP))
             mergeP = "true";
 
-        Transformer* t = tReg.instanciate(func.name, shapes, params);
+        Transformer* t = TransformerRegistry::instanciate(func.name, shapes, params);
         transformed = t->transform();
 
         if (mergeP == "true")
             merge.merge(transformed);
     }
     else if (func.cat == FUNC_SOLVER) {
-        Solver* s = sReg.instanciate(func.name, shapes, params);
+        Solver* s = SolverRegistry::instanciate(func.name, shapes, params);
         s->solve();
         merge.reset();
     }
     else
         throw runtime_error("Unknown type function");
+}
+
+template<typename Reg>
+auto makeRule() { // -> decltype(kek) {
+    auto m = Reg::_fact;
+    qi::rule<string::iterator, string> r = qi::string(string("caca"));
+
+    for (auto && p : m) {
+        r = r | qi::string(string(p.first));
+        cerr << "Adding " << p.first << endl;
+    }
+
+    return r;//qi::string(string("HoleTransformer")) | qi::string(string("Caca"));
 }
 
 /**
@@ -162,6 +166,8 @@ void Call::operator()(vector<Shape>& shapes) {
  * and error handler
  */
 CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program start") {
+    TransformerRegistry::init();
+    SolverRegistry::init();
     //GRAMMAR BEGIN
     string_			   %= lexeme[+(char_ - '"' - ',' - '(' - ')' - '=')];
     value			   %= int_
@@ -169,12 +175,8 @@ CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program st
                           | string_;
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
-    transformer		   %= qi::string("SimpleTransformer")
-      | qi::string("HoleTransformer")
-                          | qi::string("Reset");
-    solver			   %= qi::string("ScanlineSolver")
-                          | qi::string("TheSkyIsTheLimitSolver")
-                          | qi::string("ToInfinityAndBeyondSolver");
+    transformer		   %= makeRule<TransformerRegistry>();
+    solver			   %= makeRule<SolverRegistry>();
     function_			= transformer[_val = bind(makeTransFunction, _1)]
                           | solver[_val = bind(makeSolverFunction, _1)];
     instruction			= (function_ > '(' > parameter_list > ')')
