@@ -146,6 +146,8 @@ struct RegistryFunctor {
  *
  * Here every instanciated class must have a constructor taking a vector of shapes
  * and a vector of parameters
+ *
+ * Warning : template wizardry
  */
 template<typename BaseClass, typename RegisterList>
 struct Registry {

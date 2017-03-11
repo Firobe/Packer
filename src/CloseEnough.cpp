@@ -37,6 +37,8 @@ using phoenix::push_back;
 
 using namespace std;
 
+//Define registries : each type will be added as its name in the grammar
+//and will be instanciated when parsed
 using TransformerRegistry = Registry<Transformer,
       boost::mpl::set<
       SimpleTransformer,
@@ -146,17 +148,16 @@ void Call::operator()(vector<Shape>& shapes) {
         throw runtime_error("Unknown type function");
 }
 
+/**
+ * Generates a grammara rule based
+ * on a registry.
+ */
 template<typename Reg>
-auto makeRule() { // -> decltype(kek) {
+void makeRule(qi::rule<std::string::iterator, std::string(), ascii::space_type>& r) {
     auto m = Reg::_fact;
-    qi::rule<string::iterator, string> r = qi::string(string("caca"));
 
-    for (auto && p : m) {
-        r = r | qi::string(string(p.first));
-        cerr << "Adding " << p.first << endl;
-    }
-
-    return r;//qi::string(string("HoleTransformer")) | qi::string(string("Caca"));
+    for (auto && p : m)
+        r %= r.copy() | qi::string(string(p.first));
 }
 
 /**
@@ -175,8 +176,8 @@ CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program st
                           | string_;
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
-    transformer		   %= makeRule<TransformerRegistry>();
-    solver			   %= makeRule<SolverRegistry>();
+    makeRule<TransformerRegistry>(transformer);
+    makeRule<SolverRegistry>(solver);
     function_			= transformer[_val = bind(makeTransFunction, _1)]
                           | solver[_val = bind(makeSolverFunction, _1)];
     instruction			= (function_ > '(' > parameter_list > ')')
