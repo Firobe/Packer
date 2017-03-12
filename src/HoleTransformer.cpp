@@ -27,7 +27,7 @@ vector<vector<unsigned> > HoleTransformer::transform() {
     vector<vector<unsigned> > ret; //List of shapes' index to merge
     vector<bool> mergedV(_shapes.size(), false);
     int h_area; //Hole area
-    Point h_center, s_center;
+    Point h_center(0., 0.), s_center(0., 0.);
     //Initial sort by global shape area, decreasing order
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
         return bg::area(a.getMultiP()) > bg::area(b.getMultiP());
