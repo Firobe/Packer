@@ -17,7 +17,7 @@ if(${ENABLE_DISPLAY})
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENABLE_DISPLAY")
 endif ()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++14 -O3 -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O3 -fopenmp")
 
 # Define where headers only libs and statics libs are located
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)
@@ -98,6 +98,9 @@ else ()
             DESTINATION ~/.config/inkscape/extensions/
             PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
     install(FILES ${CMAKE_BINARY_DIR}/packer.inx
+            DESTINATION ~/.config/inkscape/extensions/
+            PERMISSIONS OWNER_READ OWNER_WRITE)
+    install(FILES ${CMAKE_BINARY_DIR}/packer.py
             DESTINATION ~/.config/inkscape/extensions/
             PERMISSIONS OWNER_READ OWNER_WRITE)
 	install(FILES ${CMAKE_SOURCE_DIR}/font.ttf

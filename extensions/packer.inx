@@ -2,12 +2,16 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <_name>Packer</_name>
     <id>com.nerdson.packer</id>
-    <dependency type="executable" location="extensions">@EXE_NAME_PLUGIN@</dependency>
+    <dependency type="executable" location="extensions">packer</dependency>
     <param name="tab" type="notebook">
     <page name = "size" _gui-text="Dimensions Plaque">
-    <param name="width" type="int" min="0" max="99999" gui-text="Largeur plaque : ">
+    <param name="defWidth" type="boolean" gui-text="Utiliser la largeur du canvas">
     </param>
-    <param name="height" type="int" min="0" max="99999" gui-text="Hauteur plaque : ">
+    <param name="width" type="int" min="1" max="99999" gui-text="Largeur plaque : ">
+    </param>
+    <param name="defHeight" type="boolean" gui-text="Utiliser la longueur du canvas">
+    </param>
+    <param name="height" type="int" min="1" max="99999" gui-text="Hauteur plaque : ">
     </param>
     <param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
     </param>
@@ -28,6 +32,6 @@
 		</effects-menu>
     </effect>
     <script>
-        <command reldir="extensions">@EXE_NAME_PLUGIN@</command>
+        <command reldir="extensions" interpreter="python">packer.py</command>
     </script>
 </inkscape-extension>
