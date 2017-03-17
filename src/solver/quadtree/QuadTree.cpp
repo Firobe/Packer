@@ -78,7 +78,7 @@ QuadTree::~QuadTree() {
  */
 QuadTree::QuadTree(Shape &s, float precision) :
 	QuadTree(s.getMultiP(), precision) {
-	bmap->saveMap(s.getID());
+	bmap->saveMap(s.getIdentifier());
 }
 
 
