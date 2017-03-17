@@ -7,11 +7,11 @@
     <page name = "size" _gui-text="Dimensions Plaque">
     <param name="defWidth" type="boolean" gui-text="Utiliser la largeur du canvas">
     </param>
-    <param name="width" type="int" min="1" max="99999" gui-text="Largeur plaque : ">
+    <param name="width" type="string" gui-text="Largeur plaque (px, mm, cm, in, ...) : ">
     </param>
     <param name="defHeight" type="boolean" gui-text="Utiliser la longueur du canvas">
     </param>
-    <param name="height" type="int" min="1" max="99999" gui-text="Hauteur plaque : ">
+    <param name="height" type="string" gui-text="Hauteur plaque (px, mm, cm, in, ...) : ">
     </param>
     <param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
     </param>

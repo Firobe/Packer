@@ -112,6 +112,7 @@ else ()
 endif ()
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
 file(COPY ${CMAKE_SOURCE_DIR}/font.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/extensions/packer.py DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/conf/default.ce DESTINATION ${CMAKE_BINARY_DIR})
 
 # Use Astyle to reformat source files
