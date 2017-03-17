@@ -7,8 +7,6 @@ set(EXE_NAME "packer")
 set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
 set(ENABLE_DISPLAY 0)
 
-FIND_PROGRAM( TEST_PATH fefefffefe )
-
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
     enable_testing()
 endif()
