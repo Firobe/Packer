@@ -46,7 +46,7 @@ protected:
     }
 
 public:
-    Solver(std::vector<Shape>& s, std::vector<Parameter>) : _shapes(s), _binNumber(0) {}
+    Solver(std::vector<Shape>& s, const std::vector<Parameter>&) : _shapes(s), _binNumber(0) {}
     void solve();
 };
 

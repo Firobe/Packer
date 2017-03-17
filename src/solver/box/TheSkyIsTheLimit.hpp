@@ -15,7 +15,7 @@ private:
     void preSolve() override;
     void solveBin() override;
 public:
-    TheSkyIsTheLimit(std::vector<Shape>& v, std::vector<Parameter> p) : Solver(v, p),
+    TheSkyIsTheLimit(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p),
         _boxes(v.size()) {}
 };
 

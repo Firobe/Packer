@@ -150,7 +150,7 @@ void Call::operator()(vector<Shape>& shapes) {
 }
 
 /**
- * Generates a grammara rule based
+ * Generates a grammar rule based
  * on a registry.
  */
 template<typename Reg>

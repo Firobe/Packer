@@ -33,7 +33,7 @@ private:
     double _rentability;
     int _rotateStep,  _translateNb;
 public:
-    SimpleTransformer(std::vector<Shape>& s, std::vector<Parameter> params) :
+    SimpleTransformer(std::vector<Shape>& s, const std::vector<Parameter>& params) :
         Transformer(s, params) {
         std::string criteria;
 
