@@ -14,6 +14,7 @@
 #include "Shape.hpp"
 #include "Log.hpp"
 #include "Parser.hpp"
+#include "Interpolator.hpp"
 
 using namespace std;
 
