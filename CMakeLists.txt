@@ -5,7 +5,7 @@ set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
 set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
-set(ENABLE_DISPLAY 1)
+set(ENABLE_DISPLAY 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 
