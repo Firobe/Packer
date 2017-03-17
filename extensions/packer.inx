@@ -2,7 +2,7 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <_name>Packer</_name>
     <id>com.nerdson.packer</id>
-    <dependency type="executable" location="extensions">packer</dependency>
+    <dependency type="executable" location="extensions">@EXE_NAME_PLUGIN@</dependency>
     <param name="tab" type="notebook">
     <page name = "size" _gui-text="Dimensions Plaque">
     <param name="defWidth" type="boolean" gui-text="Utiliser la largeur du canvas">
