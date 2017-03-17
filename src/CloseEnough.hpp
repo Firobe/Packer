@@ -10,6 +10,8 @@
 #include <boost/phoenix/object/new.hpp>
 #include <boost/phoenix.hpp>
 #include <boost/function.hpp>
+#include <boost/type_index.hpp>
+#include <boost/mpl/for_each.hpp>
 
 #include "Shape.hpp"
 #include "common.hpp"
@@ -111,6 +113,32 @@ struct Call {
 };
 
 /**
+ * Returns the string
+ * describing the type of the template
+ */
+template <typename T>
+std::string typeString() {
+    return boost::typeindex::type_id<T>().pretty_name();
+}
+
+template<typename T>
+std::string typeString(T) {
+    return typeString<T>();
+}
+
+/**
+ * Template wizardry
+ */
+template<typename Reg>
+struct RegistryFunctor {
+    //Register type using its name
+    template<typename Registered>
+    void operator()(boost::type<Registered>) {
+        Reg::template reg<Registered>(typeString<Registered>());
+    }
+};
+
+/**
  * Base template for a registry class
  * used as a hash table to instanciate child classes from a base classes
  * with only their name.
@@ -118,24 +146,35 @@ struct Call {
  *
  * Here every instanciated class must have a constructor taking a vector of shapes
  * and a vector of parameters
+ *
+ * Warning : template wizardry
  */
-template<typename BaseClass>
-class Registry {
-    std::map<std::string, boost::function<BaseClass* (std::vector<Shape>&, std::vector<Parameter>)>>
+template<typename BaseClass, typename RegisterList>
+struct Registry {
+    static std::map<std::string, boost::function<BaseClass* (std::vector<Shape>&, std::vector<Parameter>)>>
             _fact;
-public:
     //Usage : reg<ClassToRegister>();
     template<typename DerivedClass>
-    void reg(std::string name) {
+    static void reg(std::string name) {
         _fact[name] = phoenix::new_<DerivedClass>(phoenix::placeholders::arg1,
                       phoenix::placeholders::arg2);
     }
     //Usage : instanciate("className", shapes, parameters); Returns a BaseClass pointer
-    BaseClass* instanciate(std::string name, std::vector<Shape>& s,
-                           std::vector<Parameter> p) {
+    static BaseClass* instanciate(std::string name, std::vector<Shape>& s,
+                                  std::vector<Parameter> p) {
         return _fact.at(name)(s, p);
     }
+    //Register every type from RegisterList
+    static void init() {
+        boost::mpl::for_each<RegisterList, boost::type<boost::mpl::_>>
+                (RegistryFunctor<Registry<BaseClass, RegisterList>>());
+    }
 };
+
+//Allocate static map for each created template
+template<typename T, typename U>
+std::map<std::string, boost::function<T* (std::vector<Shape>&, std::vector<Parameter>)>>
+        Registry<T, U>::_fact;
 
 /**
  * The struct used to define the

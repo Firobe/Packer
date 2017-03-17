@@ -96,7 +96,6 @@ void Freeze::solveBin(){
 		}
 		
 		if(stabilized == true){
-			LOG(info) << "Packed : " << *i << endl;
 			markPacked(i);
 		}
 		

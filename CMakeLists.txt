@@ -4,7 +4,7 @@ set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
-set(FORCE_UNPACK 1) #Set to 1 to force local installation of Boost (ensure that it will take priority)
+set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
 set(ENABLE_DISPLAY 0)
 
 FIND_PROGRAM( TEST_PATH fefefffefe )
@@ -100,6 +100,9 @@ else ()
     install(FILES ${CMAKE_BINARY_DIR}/packer.inx
             DESTINATION ~/.config/inkscape/extensions/
             PERMISSIONS OWNER_READ OWNER_WRITE)
+    install(FILES ${CMAKE_BINARY_DIR}/packer.py
+            DESTINATION ~/.config/inkscape/extensions/
+            PERMISSIONS OWNER_READ OWNER_WRITE)
 	install(FILES ${CMAKE_SOURCE_DIR}/font.ttf
 			DESTINATION ~/.config/inkscape/extensions/
 			PERMISSIONS OWNER_READ OWNER_WRITE)
@@ -109,6 +112,7 @@ else ()
 endif ()
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
 file(COPY ${CMAKE_SOURCE_DIR}/font.ttf DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/extensions/packer.py DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/conf/default.ce DESTINATION ${CMAKE_BINARY_DIR})
 
 # Use Astyle to reformat source files

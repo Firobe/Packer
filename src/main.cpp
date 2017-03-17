@@ -10,6 +10,7 @@
 #include "solver/box/TheSkyIsTheLimit.hpp"
 #include "solver/box/ToInfinityAndBeyond.hpp"
 #include "Merger.hpp"
+#include "HoleTransformer.hpp"
 #include "SimpleTransformer.hpp"
 #include "Display.hpp"
 #include "CloseEnough.hpp"
@@ -18,6 +19,7 @@ namespace po = boost::program_options;
 using namespace std;
 
 void parseCommandLine(int, char**, po::variables_map&);
+void signalHandler(int);
 
 int main(int argc, char** argv) {
     LOG(info) << "SUPER PACKER 3000\n===================" << endl;
@@ -79,6 +81,8 @@ int main(int argc, char** argv) {
     Parser::setDims(Point(
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
+
+	//signal(SIGINT, signalHandler);
     //MAIN PROCESSING
     CE_Parser parser(shapes);
     auto begin = toDo.begin(), end = toDo.end();
@@ -136,4 +140,8 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
 
     //Check parsing errors (required parameters, ...)
     po::notify(vm);
+}
+
+void signalHandler(int){
+	cout << "User interruption received. Will stop as soon as possible" << endl;
 }

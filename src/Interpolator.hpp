@@ -6,6 +6,10 @@
 
 #include "common.hpp"
 
+//Maximal deviation in bezier interpolation
+//A smaller value means more points (and more computations) but shapes will be closer to each other
+#define BEZIER_TOLERANCE 1.
+
 namespace Interpolator {
 std::vector<std::complex<double>> cubicRotos(double a, double b, double c, double d);
 bool intersects(double ax, double ay, double bx, double by, double cx, double cy,

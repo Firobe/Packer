@@ -14,6 +14,7 @@
 #include "Shape.hpp"
 #include "Log.hpp"
 #include "Parser.hpp"
+#include "Interpolator.hpp"
 
 using namespace std;
 
@@ -142,6 +143,14 @@ void Shape::bufferize(double buffer) {
     bg::buffer(_multiP, result,
                distance_strategy, side_strategy,
                join_strategy, end_strategy, circle_strategy);
+
+    for (unsigned i = 0 ; i < result.size() ; ++i) {
+        result[i].inners().resize(_multiP[i].inners().size());
+
+        for (unsigned j = 0 ; j < result[i].inners().size() ; ++j)
+            result[i].inners()[j] = _multiP[i].inners()[j];
+    }
+
     _multiP = result;
     LOG(debug) << "Number of points : " << bg::num_points(_multiP) << endl;
     setOld();

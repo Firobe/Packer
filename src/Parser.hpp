@@ -15,10 +15,6 @@
 #include "Matrix.hpp"
 #include "Shape.hpp"
 
-//Maximal deviation in bezier interpolation
-//A smaller value means more points (and more computations) but shapes will be closer to each other
-#define BEZIER_TOLERANCE 0.1
-
 class Shape;
 
 /**
