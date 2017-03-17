@@ -23,18 +23,16 @@ static float pi = boost::math::constants::pi<float>();
  */
 void QuadTree::copy(const QuadTree &q) {
 	cout << "quadtree copied" << endl;
-	tree = new InnerQuadTree(*q.tree);
+	trees.reserve(quadsNumber);
+	for (InnerQuadTree* quad : q.trees)
+		trees.push_back(new InnerQuadTree(*quad));
+	treesOffset = q.treesOffset;
+
 	bmap = new bitmap(*q.bmap);
-	_currentX=q._currentX;
-	_currentY=q._currentY;
-	_currentAngle=q._currentAngle;
 	_totalX = q._totalX;
 	_totalY = q._totalY;
-	_totalAngle = q._totalAngle;
 	_maxDepth=q._maxDepth;
 	multiP = q.multiP;
-	rotated = q.rotated;
-	moved = q.moved;
 	precision = q.precision;
 }
 
@@ -63,8 +61,11 @@ QuadTree &QuadTree::operator=(const QuadTree &q) {
  * @brief destructor
  */
 QuadTree::~QuadTree() {
-	if (tree != nullptr) delete tree;
-	tree = nullptr;
+	for (InnerQuadTree* quad : trees) {
+		if (quad != nullptr)
+			delete quad;
+		quad = nullptr;
+	}
 	if (bmap != nullptr) delete bmap;
 	bmap = nullptr;
 }
@@ -74,12 +75,9 @@ QuadTree::~QuadTree() {
  * @param s shape that will be used for the construction
  * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
    than precision can be detected by the quadtree
- * @param offsetX is optional and allow to translate the initial X position of the QuadTree
- * @param offsetY is optional and allow to translate the initial Y position of the QuadTree
- * @param angle is optional and allow to rotate the initial angle of the QuadTree
  */
-QuadTree::QuadTree(Shape &s, float precision, float offsetX, float offsetY, float angle) :
-	QuadTree(s.getMultiP(), precision, offsetX, offsetY, angle) {
+QuadTree::QuadTree(Shape &s, float precision) :
+	QuadTree(s.getMultiP(), precision) {
 	bmap->saveMap(s.getID());
 }
 
@@ -90,51 +88,69 @@ QuadTree::QuadTree(Shape &s, float precision, float offsetX, float offsetY, floa
  * @param mult is the MultiPolygon that will be transformed into a QuadTree
  * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
    than precision can be detected by the quadtree
- * @param offsetX is optional and allow to translate the initial X position of the QuadTree
- * @param offsetY is optional and allow to translate the initial Y position of the QuadTree
- * @param angle is optional and allow to rotate the initial angle of the QuadTree
  */
-QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float offsetY, float angle) :
-	tree(nullptr), multiP(mult), precision(precision) {
+QuadTree::QuadTree(MultiPolygon &mult, float precision) :
+	multiP(mult), precision(precision) {
 
-	// Compute the shape Box envelop
-	Box envelop;
-	bg::envelope(multiP, envelop);
-	bg::correct(envelop);
-	Point reference = envelop.min_corner();
-	_totalX = reference.x() + offsetX;
-	_totalY = reference.y() + offsetY;
-	_totalAngle = angle;
-	_currentX = 0.0;
-	_currentY = 0.0;
-	_currentAngle = 0.0; //TODO : apply rotation to the MultiP
-	moved = rotated = false;
+	float rotationAngle = 360.f / quadsNumber;
+	float currentAngle = 0.f;
+	trees.reserve(quadsNumber);
+	treesOffset.reserve(quadsNumber);
+
+	// Put the shape at the (0,0) point
+	Box preEnvelop;
+	bg::envelope(multiP, preEnvelop);
+	bg::correct(preEnvelop);
+	Point preReference = preEnvelop.min_corner();
 
 	// Place the shape into the (0,0) point in order to create the quadTree
-	translate<MultiPolygon>(multiP, -reference.x(), -reference.y());
-	translate<Box>(envelop, -reference.x(), -reference.y());
+	translate<MultiPolygon>(multiP, -preReference.x(), -preReference.y());
+	translate<Box>(preEnvelop, -preReference.x(), -preReference.y());
 
-	// We determine maxDepth thanks to the precision
-	// If the deaper quadTree width and height need to be smaller than precision
-	int maxDepth = 0;
-	float width = envelop.max_corner().x();
-	float height = envelop.max_corner().y();
-	while (width > precision || height > precision) {
-		width/=2;
-		height/=2;
-		maxDepth++;
+	_totalX = preReference.x();
+	_totalY = preReference.y();
+
+	for (unsigned i=0; i<quadsNumber; i++) {
+
+		// Rotate the MultiPolygon
+		MultiPolygon newP;
+		bg::strategy::transform::rotate_transformer<bg::degree, float, 2, 2> rotator(currentAngle);
+		currentAngle+=rotationAngle;
+		bg::transform(multiP, newP, rotator);
+
+		// Compute the shape Box envelop
+		Box envelop;
+		bg::envelope(newP, envelop);
+		bg::correct(envelop);
+		Point reference = envelop.min_corner();
+
+		// Place the shape into the (0,0) point in order to create the quadTree
+		translate<MultiPolygon>(newP, -reference.x(), -reference.y());
+		translate<Box>(envelop, -reference.x(), -reference.y());
+
+		treesOffset.push_back(reference);
+
+		// We determine maxDepth thanks to the precision
+		// If the deaper quadTree width and height need to be smaller than precision
+		int maxDepth = 0;
+		float width = envelop.max_corner().x();
+		float height = envelop.max_corner().y();
+		while (width > precision || height > precision) {
+			width/=2;
+			height/=2;
+			maxDepth++;
+		}
+
+		// Create the bitmap that will be used in order to create the quadTree
+		_maxDepth = maxDepth;
+		int size = pow(2, maxDepth);
+		bmap = new bitmap(mult,size,size);
+
+		// QuadTree size is shape envelop size
+		trees.push_back(new InnerQuadTree(envelop.min_corner().x()+_totalX, envelop.min_corner().y()+_totalY,
+				 envelop.max_corner().x()+_totalX, envelop.max_corner().y()+_totalY,
+				 *bmap, 0, 0, size, 0));
 	}
-
-	// Create the bitmap that will be used in order to create the quadTree
-	_maxDepth = maxDepth;
-	int size = pow(2, maxDepth);
-	bmap = new bitmap(mult,size,size);
-
-	// QuadTree size is shape envelop size
-	tree = new InnerQuadTree(envelop.min_corner().x()+_totalX, envelop.min_corner().y()+_totalY,
-			 envelop.max_corner().x()+_totalX, envelop.max_corner().y()+_totalY,
-			 *bmap, 0, 0, size, 0);
-
 }
 
 /**
@@ -143,7 +159,7 @@ QuadTree::QuadTree(MultiPolygon &mult, float precision, float offsetX, float off
  * @return
  */
 bool QuadTree::intersects(const QuadTree&q) const {
-	return tree->intersectsRec(*q.tree, _currentX, _currentY, q._currentX, q._currentY);
+	return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY, q._totalX, q._totalY);
 }
 
 /**
@@ -152,35 +168,8 @@ bool QuadTree::intersects(const QuadTree&q) const {
  * @param y
  */
 void QuadTree::translater(float x, float y) {
-	// we need to transform the old_tr*old_rot*new_tra
-	// into a translation*rotation movement
-	float newx, newy;
-	newx = _currentX + x*cos(_currentAngle) + y*sin(_currentAngle);
-	newy = _currentY - x*sin(_currentAngle) + y*cos(_currentAngle);
-	_currentX = newx;
-	_currentY = newy;
-
-	// Global translation computation
-	newx = _totalX + x*cos(_totalAngle) + y*sin(_totalAngle);
-	newy = _totalY - x*sin(_totalAngle) + y*cos(_totalAngle);
-	_totalX = newx;
-	_totalY = newy;
-
-	moved = true;
-}
-
-/**
- * @brief QuadTree::applyTranslation apply the stored translation
- * @return true if something was done, false if nothing had to be done or in case of error
- */
-bool QuadTree::applyTranslation() {
-	if (!moved)
-		return false;
-	tree->translater(_currentX, _currentY);
-	_currentX = 0;
-	_currentY = 0;
-	moved = false;
-	return true;
+	_totalX+=x;
+	_totalY+=y;
 }
 
 /**
@@ -190,69 +179,17 @@ bool QuadTree::applyTranslation() {
  * @param angle rotation angle in degree, stored in radians
  */
 void QuadTree::rotater(float angle) {
-	_currentAngle += pi * angle / 180.0;
-	_totalAngle += pi * angle / 180.0;
-	rotated = true;
-}
-
-/**
- * @brief QuadTree::applyTranslation apply the stored rotation
- * If translation was not before, apply it first
- * @return true if something was done, false if nothing had to be done or in case of error
- */
-bool QuadTree::applyRotation() {
+	unsigned newQuad = (int) round(angle * quadsNumber / 360) % quadsNumber;
+	float newAngle = pi * angle / 180.f;
 
 	// Compute the tree position
-	float newX = cos(_totalAngle)*_totalX - sin(_totalAngle)*_totalY;
-	float newY = sin(_totalAngle)*_totalX + cos(_totalAngle)*_totalY;
+	float newX = cos(newAngle)*_totalX - sin(newAngle)*_totalY;
+	float newY = sin(newAngle)*_totalX + cos(newAngle)*_totalY;
 
-	// Rotate the MultiPolygon
-	MultiPolygon newP;
-	bg::strategy::transform::rotate_transformer<bg::radian, float, 2, 2> rotator(_totalAngle);
-	bg::transform(multiP, newP, rotator);
+	newX += treesOffset[newQuad].x();
+	newY += treesOffset[newQuad].y();
 
-	// Get it to the (0,0) point in order to create the QuadTree
-	Box envelop;
-	bg::envelope(newP, envelop);
-	bg::correct(envelop);
-	Point reference = envelop.min_corner();
-	translate<MultiPolygon>(newP, -reference.x(), -reference.y());
-	translate<Box>(envelop, -reference.x(), -reference.y());
-
-	// Compute additional translation
-	newX += reference.x();
-	newY += reference.y();
-
-	// We determine maxDepth thanks to the precision
-	// If the deaper quadTree width and height need to be smaller than precision
-	int maxDepth = 0;
-	float width = envelop.max_corner().x();
-	float height = envelop.max_corner().y();
-	while (width > precision || height > precision) {
-		width/=2;
-		height/=2;
-		maxDepth++;
-	}
-
-	// Create the bitmap that will be used in order to create the quadTree
-	_maxDepth = maxDepth;
-	int size = pow(2, maxDepth);
-	delete bmap;
-	bmap = new bitmap(newP,size,size);
-
-	// QuadTree size is shape envelop size
-	tree = new InnerQuadTree(envelop.min_corner().x()+newX, envelop.min_corner().y()+newY,
-			 envelop.max_corner().x()+newX, envelop.max_corner().y()+newY,
-			 *bmap, 0, 0, size, 0);
-
-	// Refresh tree, positions are reseted
-	rotated = false;
-	moved = false;
-	_currentX = 0.0;
-	_currentY = 0.0;
-	_currentAngle = 0.0;
-
-	return true;
+	currentTree = newQuad;
 }
 
 /**
@@ -261,12 +198,10 @@ bool QuadTree::applyRotation() {
  * @param q
  */
 std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
-	s << "Absolute Position : (" << q._totalX << "," << q._totalY << ") " << endl;//std::boolalpha << q.moved << std::endl;
-	s << "Absolute angle : " << q._totalAngle << endl;
-	s << "Relative position : (" << q._currentX << "," << q._currentY << ")" << endl;
-	s << "Relative angle : " << q._currentAngle << endl;
-	s << "Angle : " << q._currentAngle <<  " " << std::boolalpha << q.rotated << std::endl;
-	s << " - Tree : " << std::endl << *q.tree;
+	s << "Absolute Position : (" << q._totalX << "," << q._totalY << ") " << endl;
+	s << " - Trees : " << std::endl;
+	for(InnerQuadTree * quad : q.trees)
+	  s << *quad << std::endl;
 	s << " - bitmap : " << std::endl << *q.bmap;
 	return s;
 }
@@ -286,7 +221,7 @@ void QuadTree::saveTree(std::string filename, int depth) {
 	file << "2" << endl;
 
 	for (int i=0; i<size; i++) {
-		std::vector<color_enum> vec = tree->getLine(i, depth);
+		std::vector<color_enum> vec = trees[0]->getLine(i, depth);
 		//cout << vec.size() << " - " << size << endl;
 		for (color_enum color : vec) {
 			switch (color) {

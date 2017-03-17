@@ -55,7 +55,7 @@ int main() {
 	int celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
 	cout << "Qd cre : " << celapsed << " microseconds elapsed" << endl;
 
-	// Intersection accuracy verification
+	/*// Intersection accuracy verification
 	int diff = 0;
 	int crit = 0;
 	for(size_t i=0; i<quads.size(); i++) {
@@ -69,7 +69,7 @@ int main() {
 		}
 	}
 	cout << "QuadTrees approximations errors : " << diff << endl;
-	cout << "QuadTree accuracy critical error : " << crit << endl;
+	cout << "QuadTree accuracy critical error : " << crit << endl;*/
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");
@@ -215,17 +215,15 @@ int main() {
 	cout << "QuadTrees approximations errors : " << diff << endl;
 	cout << "QuadTree accuracy critical error : " << crit << endl;*/
 
-	quads[1].saveTree("test-init");
+	//quads[1].saveTree("test-init");
 	cout << endl << quads[1] << endl;
 
 	for (int i=0; i<1; i++) {
 		quads[1].rotater(100);
 		cout << quads[1] << endl;
-		quads[1].applyRotation();
-		cout << quads[1] << endl;
 	}
 
-	quads[1].saveTree("test-rota");
+	//quads[1].saveTree("test-rota");
 
 	return EXIT_SUCCESS;
 }

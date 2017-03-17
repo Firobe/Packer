@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include "InnerQuadTree.hpp"
 #include "common.hpp"
@@ -13,13 +14,15 @@ class bitmap;
 class QuadTree
 {
 private:
-	InnerQuadTree *tree;
-	float _currentX, _currentY, _currentAngle;
-	float _totalX, _totalY, _totalAngle;
+	static constexpr unsigned quadsNumber = 12; //30 degree angle
+	std::vector<InnerQuadTree*> trees;
+	std::vector<Point> treesOffset;
+	unsigned currentTree = 0;
+
+	float _totalX, _totalY;
 	bitmap *bmap;
 	MultiPolygon multiP;
 	int _maxDepth;
-	bool rotated, moved;
 	float precision;
 
 
@@ -31,15 +34,13 @@ public:
 	~QuadTree();
 
 public:
-	QuadTree(Shape &, float precision, float offsetX=0.0, float offsetY=0.0, float angle=0.0);
-	QuadTree(MultiPolygon &mult, float precision, float offsetX=0.0, float offsetY=0.0, float angle=0.0);
+	QuadTree(Shape &, float precision);
+	QuadTree(MultiPolygon &mult, float precision);
 
 public:
 	bool intersects(const QuadTree&) const;
 	void translater(float x, float y);
-	bool applyTranslation();
 	void rotater(float angle);
-	bool applyRotation();
 
 private:
 	void saveTree(std::string filename, int depth);
