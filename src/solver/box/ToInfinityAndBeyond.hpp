@@ -14,7 +14,8 @@ private:
     void solveBin() override;
 
 public:
-    ToInfinityAndBeyond(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p) {}
+    ToInfinityAndBeyond(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
+                p) {}
 };
 
 #endif

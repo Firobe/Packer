@@ -81,8 +81,7 @@ int main(int argc, char** argv) {
     Parser::setDims(Point(
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
-
-	//signal(SIGINT, signalHandler);
+    //signal(SIGINT, signalHandler);
     //MAIN PROCESSING
     CE_Parser parser(shapes);
     auto begin = toDo.begin(), end = toDo.end();
@@ -142,6 +141,6 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
     po::notify(vm);
 }
 
-void signalHandler(int){
-	cout << "User interruption received. Will stop as soon as possible" << endl;
+void signalHandler(int) {
+    cout << "User interruption received. Will stop as soon as possible" << endl;
 }

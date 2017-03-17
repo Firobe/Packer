@@ -12,6 +12,7 @@
 #include "Matrix.hpp"
 #include "Solver.hpp"
 #include "Log.hpp"
+#include "Shape.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;

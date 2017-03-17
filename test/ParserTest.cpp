@@ -10,8 +10,8 @@ using namespace std;
 
 int main() {
     try {
-        vector<string> toPack;
-        vector<Shape> shapes = Parser::Parse(TEST_DIR + "test.svg", toPack);
+		vector<string> toPack;
+		vector<Shape> shapes = Parser::Parse("test.svg", toPack);
 
         //Testing base
         ASSERT(Parser::getDims().x() == 500, "Bad doc width");

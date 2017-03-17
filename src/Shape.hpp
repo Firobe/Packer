@@ -70,8 +70,7 @@ public:
         return _indexP2;
     }
 
-
-
+    std::string debugOutputSVG() const;
 };
 
 template <>

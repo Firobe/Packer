@@ -12,18 +12,16 @@
 using namespace std;
 
 void Scanline::preSolve() {
-	/*
+    /*
     for (unsigned i = 0; i < _shapes.size(); ++i) {
         rotateToBestAngle(_shapes[i]);
     }
     */
-
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
-    for (unsigned i = 0; i < _shapes.size(); ++i) {
+    for (unsigned i = 0; i < _shapes.size(); ++i)
         bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
-    }
 }
 
 void Scanline::solveBin() {
@@ -34,9 +32,8 @@ void Scanline::solveBin() {
     }
 
     for (auto && i : _indices) {
-        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x()) {
+        if (_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > _dimensions.x())
             throw invalid_argument("Shape width greater than bin width");
-        }
     }
 
     // =============================================================================
@@ -66,43 +63,44 @@ void Scanline::solveBin() {
         // scan column by column, top to bottom and left to right
         for (unsigned iX = 0; iX < cellW.size() && keepLooking; ++iX) {
             for (unsigned iY = 0; iY < cellH.size() && keepLooking; ++iY) {
-				clounk = false;
-				
+                clounk = false;
+
                 if (cellIsEmpty[iX][iY]) { // First test is to see if the top-left cell is empty
                     lastX = getLast(cellW, iX, shapeWidth, lastW);
                     lastY = getLast(cellH, iY, shapeHeight, lastH);
 
-                    if (lastX == -1) { // piece goes off the frame (right side)
+                    if (lastX == -1)   // piece goes off the frame (right side)
                         continue;
-                    }
-                    
+
                     if (lastY == -1) { // piece goes off the frame (bottom side)
-						// Shape rotated by 90°
+                        // Shape rotated by 90°
                         lastX = getLast(cellW, iX, shapeHeight, lastW);
-						lastY = getLast(cellH, iY, shapeWidth, lastH);
-                        
-                        if (lastX == -1 || lastY == -1) { // piece goes off the frame even after rotation
-							continue;
-						} else { /// I know, this else is not needed but I have standards
-							clounk = true;
-						}
-						
+                        lastY = getLast(cellH, iY, shapeWidth, lastH);
+
+                        if (lastX == -1 || lastY == -1)   // piece goes off the frame even after rotation
+                            continue;
+
+                        else   /// I know, this else is not needed but I have standards
+                            clounk = true;
                     }
-                    
-                    if (allCellsEmpty(cellIsEmpty, iX, lastX, iY, lastY)) { // If all cells are free to store the box
+
+                    if (allCellsEmpty(cellIsEmpty, iX, lastX, iY,
+                                      lastY)) { // If all cells are free to store the box
                         // == Division ==
-                        if (lastW > PRECISION && cellW[lastX] - lastW > PRECISION) { // If it perfectly fits, no need for division
-							lastW += PRECISION;
-                            cellIsEmpty.insert(cellIsEmpty.begin() + lastX + 1, cellIsEmpty[lastX]); // Column copy (with new column same as old)
+                        if (lastW > PRECISION &&
+                                cellW[lastX] - lastW > PRECISION) { // If it perfectly fits, no need for division
+                            lastW += PRECISION;
+                            cellIsEmpty.insert(cellIsEmpty.begin() + lastX + 1,
+                                               cellIsEmpty[lastX]); // Column copy (with new column same as old)
                             cellW.insert(cellW.begin() + lastX + 1, cellW[lastX] - lastW);
                             cellW[lastX] = lastW;          // Width division between the two daughter cells
                         }
 
                         if (lastH > PRECISION && cellH[lastY] - lastH > PRECISION) {
-							lastH += PRECISION;
-                            for (unsigned j = 0; j < cellIsEmpty.size(); j++) {
+                            lastH += PRECISION;
+
+                            for (unsigned j = 0; j < cellIsEmpty.size(); j++)
                                 cellIsEmpty[j].insert(cellIsEmpty[j].begin() + lastY + 1, cellIsEmpty[j][lastY]);
-                            }
 
                             cellH.insert(cellH.begin() + lastY + 1, cellH[lastY] - lastH);
                             cellH[lastY] = lastH;
@@ -110,17 +108,16 @@ void Scanline::solveBin() {
 
                         // == Filling cells ==
                         for (int jx = iX; jx <= lastX; ++jx) {
-                            for (int jy = iY; jy <= lastY; ++jy) {
+                            for (int jy = iY; jy <= lastY; ++jy)
                                 cellIsEmpty[jx][jy] = false;
-                            }
                         }
 
                         // == rotation/translation ==
-                        if(clounk) {
-							rotate<Shape>(_shapes[*i], 90);
-							bg::envelope(_shapes[*i].getMultiP(), _boxes[*i]);
-						}
-                        
+                        if (clounk) {
+                            rotate<Shape>(_shapes[*i], 90);
+                            bg::envelope(_shapes[*i].getMultiP(), _boxes[*i]);
+                        }
+
                         translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
                                          getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + _dimensions.y() * _binNumber *
                                          SPACE_COEF);
@@ -143,9 +140,8 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
         length -= cells[i];
         i++;
 
-        if (i >= cells.size()) { // piece goes off the frame
+        if (i >= cells.size())   // piece goes off the frame
             return -1;
-        }
     }
 
     plast = length; // Last width/height is kept (to divide the cell)
@@ -157,9 +153,8 @@ bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned i
                              int lastY) const {
     for (int x = iX; x <= lastX; ++x) {
         for (int y = iY; y <= lastY; ++y) {
-            if (cellIsEmpty[x][y] == false) {
+            if (cellIsEmpty[x][y] == false)
                 return false;
-            }
         }
     }
 
@@ -173,22 +168,19 @@ void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
     for (auto && x : cellIsEmpty) {
         LOG(debug) << endl;
 
-        for (auto && y : x) {
+        for (auto && y : x)
             LOG(debug) << y;
-        }
     }
 
     LOG(debug) << endl << "CellW" << endl;
 
-    for (auto && x : cellW) {
+    for (auto && x : cellW)
         LOG(debug) << x << " ; ";
-    }
 
     LOG(debug) << endl << "CellH" << endl;
 
-    for (auto && x : cellH) {
+    for (auto && x : cellH)
         LOG(debug) << x << " ; ";
-    }
 
     LOG(debug) << endl;
 }
@@ -197,9 +189,8 @@ double Scanline::getLenFromIndex(const vector<double>& lengthVector,
                                  unsigned index) const {
     double length = 0;
 
-    for (unsigned i = 0; i < index; ++i) {
+    for (unsigned i = 0; i < index; ++i)
         length += lengthVector[i];
-    }
 
     return length;
 }

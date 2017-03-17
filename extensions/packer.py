@@ -69,7 +69,7 @@ class Packer(inkex.Effect):
             else:
                 t += [a];
         #Call packer with parameters
-        call(["@EXE_NAME_PLUGIN@"] + t)
+        call(["./@EXE_NAME_PLUGIN@"] + t)
 
 if __name__ == '__main__':
     e = Packer()

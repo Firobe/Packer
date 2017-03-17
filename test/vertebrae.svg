@@ -13,7 +13,7 @@
    id="svg2"
    inkscape:version="0.91 r13725"
    viewBox="0 0 1728 1728"
-   sodipodi:docname="trex1.cdr">
+   sodipodi:docname="vertebrae.svg">
   <metadata
      id="metadata36">
     <rdf:RDF>
@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -42,8 +42,8 @@
      id="namedview32"
      showgrid="false"
      inkscape:zoom="0.27314815"
-     inkscape:cx="1963.6073"
-     inkscape:cy="1002.1825"
+     inkscape:cx="1061.1666"
+     inkscape:cy="709.30115"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"

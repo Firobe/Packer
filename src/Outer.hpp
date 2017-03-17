@@ -9,6 +9,7 @@
 
 #include "Shape.hpp"
 
+
 // Node from svg tree
 enum NodeType { hasChild, hasValue, noChild };
 

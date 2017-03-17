@@ -18,6 +18,8 @@ using Ring = bg::model::ring<Point>; //Defines the Ring type
 using Polygon = bg::model::polygon<Point>; //Defines the Polygon type
 using MultiPolygon = bg::model::multi_polygon<Polygon>; //Defines the MultiPolygon type
 using Box = bg::model::box<Point>; //Defines the Box type
+using Line = bg::model::linestring<Point>; //Defines the Line model
+using MultiLine = bg::model::multi_linestring<Line>; //Defines the MultiLine model
 
 /**
  * Utilitary function to check if a vector contains an element.
