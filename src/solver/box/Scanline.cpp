@@ -1,8 +1,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include <boost/geometry/algorithms/envelope.hpp>
-
 #include "Scanline.hpp"
 #include "Log.hpp"
 #include "common.hpp"
@@ -20,7 +18,7 @@ void Scanline::preSolve() {
 
     // Create the sorted bounding _boxes by decreasing height
     for (unsigned i = 0; i < _shapes.size(); ++i)
-        bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
+        _shapes[i].envelope(_boxes[i]);
 }
 
 void Scanline::solveBin() {
@@ -100,14 +98,14 @@ void Scanline::solveBin() {
 
                             // == rotation/translation ==
                             if (clounk == 1) {
-                                rotate<Shape>(_shapes[*i], 90);
-                                bg::envelope(_shapes[*i].getMultiP(), _boxes[*i]);
+                                _shapes[*i].rotate(90);
+                                _shapes[*i].envelope(_boxes[*i]);
                             }
 
-                            translate<Shape>(_shapes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
-                                             getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + Parser::getDims().y() *
-                                             _binNumber *
-                                             SPACE_COEF);
+                            _shapes[*i].translate(getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
+                                                  getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + Parser::getDims().y() *
+                                                  _binNumber *
+                                                  SPACE_COEF);
                             translate<Box>(_boxes[*i], getLenFromIndex(cellW, iX) - _boxes[*i].min_corner().x(),
                                            getLenFromIndex(cellH, iY) - _boxes[*i].min_corner().y() + Parser::getDims().y() *
                                            _binNumber *

@@ -6,8 +6,6 @@
 #include <list>
 #include <sstream>
 
-#include <boost/geometry/algorithms/envelope.hpp>
-
 #include "Parser.hpp"
 #include "Shape.hpp"
 #include "common.hpp"
@@ -63,10 +61,9 @@ inline bool boxHeightLess(const Box& a, const Box& b) {
  * Defines a comparator for Shapes (height of the enveloppe)
  */
 inline bool shapeHeightLess(const Shape& a, const Shape& b) {
-    Box ea {};
-    bg::envelope(a.getMultiP(), ea);
-    Box eb {};
-    bg::envelope(b.getMultiP(), eb);
+    Box ea, eb;
+    a.envelope(ea);
+    b.envelope(eb);
     return boxHeightLess(ea, eb);
 }
 

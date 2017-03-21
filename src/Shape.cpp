@@ -11,6 +11,9 @@
 #include <boost/geometry/strategies/agnostic/relate.hpp>
 #include <boost/geometry/io/svg/svg_mapper.hpp>
 #include <boost/geometry/algorithms/num_points.hpp>
+#include <boost/geometry/algorithms/overlaps.hpp>
+#include <boost/geometry/algorithms/centroid.hpp>
+#include <boost/geometry/algorithms/convex_hull.hpp>
 
 #include "Shape.hpp"
 #include "Log.hpp"
@@ -34,6 +37,13 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
     return os;
 }
 
+/**
+ * Stores all of B's polygons into A
+ */
+void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
+    for (auto& b : B)
+        A.push_back(b);
+}
 
 /**
  * Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
@@ -177,19 +187,69 @@ void Shape::setOld() {
 }
 
 /**
- * Specialisation for Shape.
+ * Merge another Shape into the current one
  */
-template <>
-void rotate <Shape> (Shape& object, double angle) {
-    rotate<MultiPolygon> (object.getMultiP(), angle);
+void Shape::mergeWith(const Shape& s) {
+    mergeMultiP(_multiP, s._multiP);
 }
 
 /**
- * Specialisation for Shape.
+ * Rotate a shape by <angle> degrees
  */
-template <>
-void translate <Shape> (Shape& object, double x, double y) {
-    translate<MultiPolygon> (object.getMultiP(), x, y);
+void Shape::rotate(double angle) {
+    ::rotate<MultiPolygon> (_multiP, angle);
+}
+
+/**
+ * Translate a shape by (x, y)
+ */
+void Shape::translate(double x, double y) {
+    ::translate<MultiPolygon> (_multiP, x, y);
+}
+
+/**
+ * Compute the rectangular envelope
+ * as a Box, in place
+ */
+void Shape::envelope(Box& b) const {
+    bg::envelope(_multiP, b);
+}
+
+/**
+ * Returns the area of the Shape
+ */
+int Shape::area() const {
+    return bg::area(_multiP);
+}
+
+/**
+ * Returns the centroid of the Shape
+ */
+Point Shape::centroid() const {
+    Point p;
+    bg::centroid(_multiP, p);
+    return p;
+}
+
+/**
+ * Check if the Shape intersects with another
+ */
+bool Shape::intersectsWith(const Shape& s) const {
+    return bg::overlaps(_multiP, s._multiP);
+}
+
+/**
+ * Check if the Shape intersects with a Ring
+ */
+bool Shape::intersectsWith(const Ring& s) const {
+    return bg::overlaps(_multiP, s);
+}
+
+/**
+ * Generates the convex hull of the Shape into a polygon
+ */
+void Shape::convexHull(Polygon& p) const {
+    bg::convex_hull(_multiP, p);
 }
 
 /**
@@ -218,15 +278,15 @@ void rotateToBestAngle(Shape& object) {
     double bestAngle, currAngle;
     double bestArea;
     Box currBox;
+    object.envelope(currBox);
     bestAngle = 0.0;
-    bg::envelope(object.getMultiP(), currBox);
     bestArea = bg::area(currBox);
     currAngle = 0.0;
 
     while (currAngle <= ANGLE_MAX) {
         double currArea;
-        rotate<Shape>(object, ANGLE_STEP);
-        bg::envelope(object.getMultiP(), currBox);
+        object.rotate(ANGLE_STEP);
+        object.envelope(currBox);
         currArea = bg::area(currBox);
 
         if (currArea < bestArea) {
@@ -237,13 +297,13 @@ void rotateToBestAngle(Shape& object) {
         currAngle += ANGLE_STEP;
     }
 
-    rotate<Shape>(object, bestAngle - currAngle);
-    bg::envelope(object.getMultiP(), currBox);
+    object.rotate(bestAngle - currAngle);
+    object.envelope(currBox);
 
     // To have height > width
     if (abs(currBox.max_corner().y() - currBox.min_corner().y()) < abs(
                 currBox.max_corner().x() - currBox.min_corner().x()))
-        rotate<Shape>(object, 90);
+        object.rotate(90);
 }
 
 

@@ -4,9 +4,6 @@
 #include <rapidxml_ns/rapidxml_ns_print.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 #include <boost/geometry/io/svg/svg_mapper.hpp>
-#include <boost/geometry/algorithms/envelope.hpp>
-#include <boost/geometry/algorithms/area.hpp>
-#include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 
 #include "Outer.hpp"
 #include "Matrix.hpp"
@@ -238,8 +235,8 @@ NodeType Outer::identNode(XMLElement node) const {
 void Outer::groupShapes() {
     //Sort shapes by final height of first point
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
-        return a.getMultiP()[0].outer()[0].y() <
-               b.getMultiP()[0].outer()[0].y();
+        return a.getNthPoly(0).outer()[0].y() <
+               b.getNthPoly(0).outer()[0].y();
     });
     unsigned i = 0;
     double curBottom = 0;
@@ -250,7 +247,7 @@ void Outer::groupShapes() {
 
         //Loop on elements of a single bin
         while (i < _shapes.size() and
-                _shapes[i].getMultiP()[0].outer()[0].y() - curBottom < Parser::getDims().y()) {
+                (_shapes[i].getNthPoly(0).outer()[0].y() - curBottom) < Parser::getDims().y()) {
             cout << _shapes[i].getOut();
             ++i;
         }
@@ -287,7 +284,7 @@ double compressionRatio(const vector<Shape>& _shapes) {
     std::vector<Box> boxes(_shapes.size());
 
     for (unsigned i = 0; i < _shapes.size(); i++)
-        bg::envelope(_shapes[i].getMultiP(), boxes[i]);
+        _shapes[i].envelope(boxes[i]);
 
     //Max x-axis point
     auto xIt = max_element(boxes.begin(), boxes.end(),
@@ -309,7 +306,7 @@ double compressionRatio(const vector<Shape>& _shapes) {
     double sum = 0.;
 
     for (auto && s : _shapes)
-        sum += bg::area(s.getMultiP());
+        sum += s.area();
 
     LOG(debug) << "Minimal area is " << sum << endl;
     //Computing ratio
@@ -326,10 +323,10 @@ string debugOutputSVG(const vector<Shape>& _shapes) {
     bg::svg_mapper <Point> mapper(ret, Parser::getDims().x(), Parser::getDims().y());
 
     for (const Shape& s : _shapes)
-        mapper.add(s.getMultiP());
+        mapper.add(s._multiP);
 
     for (const Shape& s : _shapes) {
-        mapper.map(s.getMultiP(), "fill:rgb(" + to_string(rand() % 256) + "," +
+        mapper.map(s._multiP, "fill:rgb(" + to_string(rand() % 256) + "," +
                    to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
     }
 

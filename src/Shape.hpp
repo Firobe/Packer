@@ -39,16 +39,33 @@ public:
     unsigned getID() const {
         return _id;
     }
+    void addNthPolygon(const Shape& s, unsigned n) {
+        _multiP.push_back(s._multiP[n]);
+    }
+    void mergeWith(const Shape&);
+    void reserve(int nbPoly) {
+        _multiP.reserve(nbPoly);
+    }
+    //Informations on Shape
+    unsigned polyNumber() const {
+        return _multiP.size();
+    }
+    Polygon getNthPoly(unsigned i) const {
+        return _multiP[i];
+    }
+    //Adaptation of boost algorithms
+    void rotate(double degrees);
+    void translate(double Tx, double Ty);
+    void envelope(Box&) const;
+    Point centroid() const;
+    int area() const;
+    bool intersectsWith(const Shape&) const;
+    bool intersectsWith(const Ring& s) const;
+    void convexHull(Polygon&) const;
 
     const std::string& getIdentifier() const;
 
     std::array<double, 6> getTransMatrix() const;
-    const MultiPolygon& getMultiP() const {
-        return _multiP;
-    }
-    MultiPolygon& getMultiP() {
-        return _multiP;
-    }
     void bufferize(double buffer);
     void appendOut(const std::string& s) {
         _out += s;
@@ -71,13 +88,8 @@ public:
     }
 
     std::string debugOutputSVG() const;
+    friend std::string debugOutputSVG(const std::vector<Shape>&);
 };
-
-template <>
-void rotate <Shape> (Shape& object, double angle);
-
-template <>
-void translate <Shape> (Shape& object, double x, double y);
 
 void rotateToBestAngle(Shape& object);
 

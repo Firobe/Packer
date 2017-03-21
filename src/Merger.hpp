@@ -32,7 +32,7 @@ public:
             _shapesInfos.emplace_back(s.getOldP1(), s.getOldP2(), s.getIndexP1(), s.getIndexP2(),
                                       s.getID());
             //Initially, _shapesMerge = { {1}, {2}, ..., {n} }
-            _shapesMerged.emplace_back(s.getMultiP().size(),
+            _shapesMerged.emplace_back(s.polyNumber(),
                                        s.getID()); //Constructor of vector initialized with size of _shapes and current index(with shapesMerged.size())
         }
 

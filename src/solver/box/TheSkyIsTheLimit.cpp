@@ -1,7 +1,5 @@
 #include <vector>
 
-#include <boost/geometry/algorithms/envelope.hpp>
-
 #include "TheSkyIsTheLimit.hpp"
 #include "common.hpp"
 
@@ -12,7 +10,7 @@ void TheSkyIsTheLimit::preSolve() {
 
     // Create the sorted bounding _boxes by decreasing height
     for (unsigned i = 0; i < _shapes.size(); ++i)
-        bg::envelope(_shapes[i].getMultiP(), _boxes[i]);
+        _shapes[i].envelope(_boxes[i]);
 }
 
 void TheSkyIsTheLimit::solveBin() {
@@ -47,8 +45,8 @@ void TheSkyIsTheLimit::solveBin() {
             }
         }
 
-        translate<Shape>(_shapes[*i], currX - _boxes[*i].min_corner().x(),
-                         currY - _boxes[*i].min_corner().y());
+        _shapes[*i].translate(currX - _boxes[*i].min_corner().x(),
+                              currY - _boxes[*i].min_corner().y());
         translate<Box>(_boxes[*i], currX - _boxes[*i].min_corner().x(),
                        currY - _boxes[*i].min_corner().y());
         currX += _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();

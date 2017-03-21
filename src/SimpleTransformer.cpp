@@ -1,11 +1,8 @@
 #include <iostream>
 
-#include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/algorithms/comparable_distance.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
-#include <boost/geometry/algorithms/convex_hull.hpp>
-#include <boost/geometry/algorithms/centroid.hpp>
 
 #include "common.hpp"
 #include "SimpleTransformer.hpp"
@@ -27,20 +24,20 @@ using namespace std;
 void applyTrans(Shape& a, Shape& b, double alpha, double beta, double offset, Box& boxA,
                 Box& boxB, double mid, bool start) {
     Point ptA(0, 0);
-    rotate(a, alpha);
-    rotate(b, beta);
-    bg::centroid(a.getMultiP(), ptA);
-    translate(a, -ptA.x(), -ptA.y());
-    bg::envelope(a.getMultiP(), boxA);
-    bg::envelope(b.getMultiP(), boxB);
+    a.rotate(alpha);
+    b.rotate(beta);
+    ptA = a.centroid();
+    a.translate(-ptA.x(), -ptA.y());
+    a.envelope(boxA);
+    b.envelope(boxB);
     double length = abs(boxA.max_corner().y() - boxA.min_corner().y()) +
                     abs(boxB.max_corner().y() - boxB.min_corner().y());
-    translate(b,
-              -boxB.min_corner().x() + (start ? boxA.max_corner().x() : mid) +
-              (1 - start) * STACKING_EPSILON,
-              -boxA.max_corner().y() -
-              length *
-              offset);
+    b.translate(
+        -boxB.min_corner().x() + (start ? boxA.max_corner().x() : mid) +
+        (1 - start) * STACKING_EPSILON,
+        -boxA.max_corner().y() -
+        length *
+        offset);
 }
 
 
@@ -59,11 +56,11 @@ double getClose(Shape& shapeA, Shape& shapeB, Box& boxA) {
 
     while ((x2 - x1) > STACKING_EPSILON) {
         mid = (x2 + x1) / 2.;
-        translate<Shape>(shapeB, mid - x2, 0.);
+        shapeB.translate(mid - x2, 0.);
 
-        if (bg::intersects(shapeA.getMultiP(), shapeB.getMultiP())) {
+        if (shapeA.intersectsWith(shapeB)) {
             x1 = mid;
-            translate<Shape>(shapeB, x2 - mid, 0.);
+            shapeB.translate(x2 - mid, 0.);
         }
         else
             x2 = mid;
@@ -105,8 +102,8 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
                                boxB, 0, true);
                     double mid = getClose(shapeA, shapeB, boxA);
                     double ratio = _criteria(shapeA, shapeB, _rentability);
-                    mergeMultiP(shapeA.getMultiP(), shapeB.getMultiP());
-                    bg::envelope(shapeA.getMultiP(), boxA);
+                    shapeA.mergeWith(shapeB);
+                    shapeA.envelope(boxA);
                     bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() <
                                      Parser::getDims().x() and boxA.max_corner().y() -
                                      boxA.min_corner().y() < Parser::getDims().y();
@@ -138,8 +135,8 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             applyTrans(_shapes[i], _shapes[bestJ], bestAlpha, bestBeta,
                        static_cast<double>(bestOffset) / _translateNb, boxA, boxB,
                        bestMid);
-            translate(_shapes[i], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
-            translate(_shapes[bestJ], Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
+            _shapes[i].translate(Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
+            _shapes[bestJ].translate(Parser::getDims().x() / 2., Parser::getDims().x() / 2.);
             Display::Update(_shapes[i].getID());
             Display::Update(_shapes[bestJ].getID());
             Display::Text(textBase + " : merged !");
@@ -163,8 +160,8 @@ double intersectionCriteria(const Shape& shapeA, const Shape& shapeB,
                             double rentability) {
     Polygon hullA, hullB;
     MultiPolygon inter;
-    bg::convex_hull(shapeA.getMultiP(), hullA);
-    bg::convex_hull(shapeB.getMultiP(), hullB);
+    shapeA.convexHull(hullA);
+    shapeB.convexHull(hullB);
     bg::intersection(hullA, hullB, inter);
     double ratio = bg::area(inter);
     return (ratio >= rentability * (bg::area(hullA) + bg::area(hullB))) * ratio;
@@ -175,8 +172,8 @@ double intersectionCriteria(const Shape& shapeA, const Shape& shapeB,
  */
 double boxCriteria(const Shape& shapeA, const Shape& shapeB, double rentability) {
     Box bA, bB, inter;
-    bg::envelope(shapeA.getMultiP(), bA);
-    bg::envelope(shapeB.getMultiP(), bB);
+    shapeA.envelope(bA);
+    shapeB.envelope(bB);
     Point max_corner(max(bA.max_corner().x(), bB.max_corner().x()), max(bA.max_corner().y(),
                      bB.max_corner().y()));
     Point min_corner(min(bA.min_corner().x(), bB.min_corner().x()), min(bA.min_corner().y(),

@@ -3,14 +3,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test.svg ${CMAKE_CURRENT_BINARY_DIR}/
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple.svg ${CMAKE_CURRENT_BINARY_DIR}/simple.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lots.svg ${CMAKE_CURRENT_BINARY_DIR}/lots.svg @ONLY)
 
-add_custom_target(run_ToInfinityAndBeyondSolver
-        COMMAND packer --dup=false ${CMAKE_SOURCE_DIR}/examples/vertebrae.svg > output.svg
-        COMMAND firefox output.svg)
-
-#add_test(NAME test_ToInfinityAndBeyondSolver
-#        COMMAND packer ${CMAKE_SOURCE_DIR}/examples/vertebrae.svg > output.svg
-#        )
-
 add_executable(splitter SplitterTest.cpp)
 target_link_libraries(splitter packer_lib)
 add_test(SplitterTest splitter)
@@ -22,17 +14,17 @@ add_test(ParserTest parser)
 add_executable(compare Compare.cpp)
 target_link_libraries(compare packer_lib)
 
-add_executable(quadtree quadtreeTest.cpp)
-target_link_libraries(quadtree packer_lib)
-add_test(quadTreeTest quadtree)
+#add_executable(quadtree quadtreeTest.cpp)
+#target_link_libraries(quadtree packer_lib)
+#add_test(quadTreeTest quadtree)
 
 add_executable(interpolator interpolatorTest.cpp)
 target_link_libraries(interpolator packer_lib)
 add_test(InterpolatorTest interpolator)
 
 
-add_executable(bitmap bitmapTest.cpp)
-target_link_libraries(bitmap packer_lib)
-add_test(bitmapTest bitmap)
+#add_executable(bitmap bitmapTest.cpp)
+#target_link_libraries(bitmap packer_lib)
+#add_test(bitmapTest bitmap)
 # add_executable(openmp openmp.cpp)
 

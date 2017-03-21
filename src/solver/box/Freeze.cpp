@@ -2,14 +2,6 @@
 #include <vector>
 #include <numeric>
 
-#include <boost/geometry/algorithms/envelope.hpp>
-#include <boost/geometry/algorithms/intersects.hpp>
-#include <boost/geometry/algorithms/area.hpp>
-#include <boost/geometry/algorithms/comparable_distance.hpp>
-#include <boost/geometry/algorithms/intersection.hpp>
-#include <boost/geometry/algorithms/convex_hull.hpp>
-#include <boost/geometry/algorithms/centroid.hpp>
-
 #include "Freeze.hpp"
 #include "Log.hpp"
 #include "common.hpp"
@@ -46,26 +38,22 @@ void Freeze::solveBin() {
         wiggle(_shapes[*i]);
 
         for (unsigned t = 0 ; t < PHYSICS_ALL_TIME ; ++t) {
-            bg::envelope(_shapes[*i].getMultiP(), box);
+            _shapes[*i].envelope(box);
 
             if (box.max_corner().y() > (_binNumber + 1) * Parser::getDims().y()) {
                 bounceUp(_shapes[*i]); // Move up + random slight rotation
             }
             else if (box.min_corner().x() < 0)
                 bounceRight(_shapes[*i]);
-
             else if (box.max_corner().x() > Parser::getDims().x())
                 bounceLeft(_shapes[*i]);
-
             else {
                 for (auto && j : indiceCopy) {
-                    if (j < *i && bg::intersects(_shapes[*i].getMultiP(), _shapes[j].getMultiP())) {
+                    if (j < *i && _shapes[*i].intersectsWith(_shapes[j])) {
                         if (rand() % 3 == 0)
                             bounceUp(_shapes[*i]);
-
                         else if (rand() % 2 == 0)
                             bounceLeft(_shapes[*i]);
-
                         else
                             bounceRight(_shapes[*i]);
                     }
@@ -78,7 +66,7 @@ void Freeze::solveBin() {
 
         // Checking if stabilization worked, else shape is sent to next bin
         bool stabilized = true;
-        bg::envelope(_shapes[*i].getMultiP(), box);
+        _shapes[*i].envelope(box);
 
         if (box.min_corner().x() < 0 || box.max_corner().x() > Parser::getDims().x() ||
                 box.min_corner().y() < _binNumber * Parser::getDims().y() ||
@@ -87,7 +75,7 @@ void Freeze::solveBin() {
 
         if (stabilized != false) {
             for (auto && j : indiceCopy) {
-                if (j < *i && bg::intersects(_shapes[*i].getMultiP(), _shapes[j].getMultiP())) {
+                if (j < *i && _shapes[*i].intersectsWith(_shapes[j])) {
                     stabilized = false;
                     break;
                 }
@@ -102,25 +90,25 @@ void Freeze::solveBin() {
 
 void Freeze::awayStartingPoint(Shape& shape) {
     Box box;
-    bg::envelope(shape.getMultiP(), box);
+    shape.envelope(box);
     // Translation above
-    translate<Shape>(shape, -box.min_corner().x() - Parser::getDims().x() * SPACE_COEF,
-                     -box.min_corner().y());
+    shape.translate(-box.min_corner().x() - Parser::getDims().x() * SPACE_COEF,
+                    -box.min_corner().y());
 }
 
 void Freeze::randomStartingPoint(Shape& shape) {
     Box box;
-    bg::envelope(shape.getMultiP(), box);
+    shape.envelope(box);
     // Translation to bin origin
-    translate<Shape>(shape, -box.min_corner().x() + Parser::getDims().x() / 2,
-                     -box.min_corner().y() + Parser::getDims().y() * _binNumber * SPACE_COEF);
+    shape.translate(-box.min_corner().x() + Parser::getDims().x() / 2,
+                    -box.min_corner().y() + Parser::getDims().y() * _binNumber * SPACE_COEF);
 }
 
 
 
 
 void Freeze::gravityMoveDown(Shape& shape) {
-    translate<Shape>(shape, 0., GRAVITY_STEP);
+    shape.translate(0., GRAVITY_STEP);
 }
 
 void Freeze::wiggle(Shape& shape) {
@@ -130,23 +118,23 @@ void Freeze::wiggle(Shape& shape) {
     // Then the shape starts flying upwards
     randomY = rand() % 3 - 1. - (_binNumber / 5.);
     randomAngle = rand() % 3 - 1.;
-    translate<Shape>(shape, randomX, randomY);
-    rotate<Shape>(shape, randomAngle);
+    shape.translate(randomX, randomY);
+    shape.rotate(randomAngle);
 }
 
 
 void Freeze::bounceUp(Shape& shape) {
-    translate<Shape>(shape, 0., -BOUNCE_STEP);
+    shape.translate(0., -BOUNCE_STEP);
     wiggle(shape);
 }
 
 void Freeze::bounceLeft(Shape& shape) {
-    translate<Shape>(shape, -BOUNCE_STEP, 0.);
+    shape.translate(-BOUNCE_STEP, 0.);
     wiggle(shape);
 }
 
 void Freeze::bounceRight(Shape& shape) {
-    translate<Shape>(shape, BOUNCE_STEP, 0.);
+    shape.translate(BOUNCE_STEP, 0.);
     wiggle(shape);
 }
 

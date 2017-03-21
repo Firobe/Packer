@@ -10,9 +10,9 @@ add_library(packer_lib STATIC
     HoleTransformer.cpp
     Display.cpp
     CloseEnough.cpp
-    solver/quadtree/QuadTree.cpp
+	#solver/quadtree/QuadTree.cpp
     solver/quadtree/InnerQuadTree.cpp
-    solver/quadtree/bitmap.cpp
+	#solver/quadtree/bitmap.cpp
     Solver.cpp
     solver/box/ToInfinityAndBeyond.cpp
     solver/box/TheSkyIsTheLimit.cpp

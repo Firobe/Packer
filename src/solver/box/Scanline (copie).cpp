@@ -79,7 +79,6 @@ void Scanline::solveBin() {
 
                         if (lastX == -1 || lastY == -1)   // piece goes off the frame even after rotation
                             continue;
-
                         else   /// I know, this else is not needed but I have standards
                             clounk = true;
                     }

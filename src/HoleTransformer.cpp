@@ -3,8 +3,6 @@
 #include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/algorithms/comparable_distance.hpp>
-#include <boost/geometry/algorithms/intersection.hpp>
-#include <boost/geometry/algorithms/convex_hull.hpp>
 #include <boost/geometry/algorithms/centroid.hpp>
 
 #include "common.hpp"
@@ -30,38 +28,41 @@ vector<vector<unsigned> > HoleTransformer::transform() {
     Point h_center(0., 0.), s_center(0., 0.);
     //Initial sort by global shape area, decreasing order
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
-        return bg::area(a.getMultiP()) > bg::area(b.getMultiP());
+        return a.area() > b.area();
     });
     //Put the holes in decreasing order, with the id of the owner shape into a vector
     struct HoleOwner {
-        HoleOwner(Ring* r, unsigned u) : hole(r), sID(u) {}
-        Ring* hole;
+        Ring hole;
         unsigned sID; //shapeID
     };
     vector<HoleOwner> holes;
 
     for (auto && shape : _shapes)
-        for (auto && polygon : shape.getMultiP())
+        for (unsigned i = 0 ; i < shape.polyNumber() ; ++i) {
+            Polygon polygon = shape.getNthPoly(i);
+
             for (auto && hole : polygon.inners())
-                holes.push_back({&hole, shape.getID()});
+                holes.push_back({hole, shape.getID()});
+        }
+
     sort(holes.begin(), holes.end(), [](const HoleOwner & a, const HoleOwner & b) {
-        return bg::area(*a.hole) > bg::area(*b.hole);
+        return bg::area(a.hole) > bg::area(b.hole);
     });
 
     //Try to put shapes in every hole
     for (HoleOwner& hole : holes) {
-        h_area = bg::area(*hole.hole);
-        bg::centroid(*hole.hole, h_center);
+        h_area = bg::area(hole.hole);
+        bg::centroid(hole.hole, h_center);
 
         for (unsigned k = 0 ; k < _shapes.size() ;
                 ++k) { //For each shape, starting with the largest
-            if (bg::area(_shapes[k].getMultiP()) < h_area && !mergedV[k]) {
-                bg::centroid(_shapes[k].getMultiP(), s_center);
+            if (_shapes[k].area() < h_area && !mergedV[k]) {
+                s_center = _shapes[k].centroid();
                 //Translate the shape's centroid on the hole's centroid
-                translate(_shapes[k], h_center.x() - s_center.x(), h_center.y() - s_center.y());
+                _shapes[k].translate(h_center.x() - s_center.x(), h_center.y() - s_center.y());
 
                 //If the shape fits, then merge
-                if (!bg::overlaps(*hole.hole, _shapes[k].getMultiP())) {
+                if (!_shapes[k].intersectsWith(hole.hole)) {
                     mergedV[k] = true; //Will not use this shape again
                     /*Fill the ret vector accordingly
                     (find set containing hole.sID and add the shape into it,
