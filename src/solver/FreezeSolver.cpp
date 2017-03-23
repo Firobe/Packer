@@ -2,7 +2,7 @@
 #include <vector>
 #include <numeric>
 
-#include "Freeze.hpp"
+#include "FreezeSolver.hpp"
 #include "Log.hpp"
 #include "common.hpp"
 #include "Display.hpp"
@@ -17,14 +17,14 @@
 using namespace std;
 
 
-void Freeze::preSolve() {
+void FreezeSolver::preSolve() {
     for (unsigned i = 0; i < _shapes.size(); ++i)
         rotateToBestAngle(_shapes[i]);
 }
 
 
 // Principe: On balance une pièce au dessus
-void Freeze::solveBin() {
+void FreezeSolver::solveBin() {
     Box box;
     std::list<unsigned> indiceCopy;
     indiceCopy.resize(_shapes.size());
@@ -88,7 +88,7 @@ void Freeze::solveBin() {
 }
 
 
-void Freeze::awayStartingPoint(Shape& shape) {
+void FreezeSolver::awayStartingPoint(Shape& shape) {
     Box box;
     shape.envelope(box);
     // Translation above
@@ -96,7 +96,7 @@ void Freeze::awayStartingPoint(Shape& shape) {
                     -box.min_corner().y());
 }
 
-void Freeze::randomStartingPoint(Shape& shape) {
+void FreezeSolver::randomStartingPoint(Shape& shape) {
     Box box;
     shape.envelope(box);
     // Translation to bin origin
@@ -107,11 +107,11 @@ void Freeze::randomStartingPoint(Shape& shape) {
 
 
 
-void Freeze::gravityMoveDown(Shape& shape) {
+void FreezeSolver::gravityMoveDown(Shape& shape) {
     shape.translate(0., GRAVITY_STEP);
 }
 
-void Freeze::wiggle(Shape& shape) {
+void FreezeSolver::wiggle(Shape& shape) {
     float randomX, randomY, randomAngle;
     randomX = rand() % 101 - 50.;
     // First bin randomY can be: -1,0,1
@@ -123,17 +123,17 @@ void Freeze::wiggle(Shape& shape) {
 }
 
 
-void Freeze::bounceUp(Shape& shape) {
+void FreezeSolver::bounceUp(Shape& shape) {
     shape.translate(0., -BOUNCE_STEP);
     wiggle(shape);
 }
 
-void Freeze::bounceLeft(Shape& shape) {
+void FreezeSolver::bounceLeft(Shape& shape) {
     shape.translate(-BOUNCE_STEP, 0.);
     wiggle(shape);
 }
 
-void Freeze::bounceRight(Shape& shape) {
+void FreezeSolver::bounceRight(Shape& shape) {
     shape.translate(BOUNCE_STEP, 0.);
     wiggle(shape);
 }

@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Solver.hpp"
 #include "Outer.hpp"
 #include "Splitter.hpp"
 

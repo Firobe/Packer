@@ -1,4 +1,4 @@
 HoleTransformer();
 DO 2 TIMES
-	SimpleTransformer(rotate_step=25, criteria=intersection);
-Scanline();
+	SimpleTransformer(rotate_step=30, criteria=intersection);
+ScanlineSolver();

@@ -3,9 +3,10 @@
 #include <chrono>
 #include <boost/type_index.hpp>
 
-#include "solver/box/Scanline.hpp"
-#include "solver/box/ToInfinityAndBeyond.hpp"
-#include "solver/box/TheSkyIsTheLimit.hpp"
+#include "solver/ScanlineSolver.hpp"
+#include "solver/ToInfinityAndBeyondSolver.hpp"
+#include "solver/TheSkyIsTheLimitSolver.hpp"
+#include "solver/FreezeSolver.hpp"
 #include "Splitter.hpp"
 #include "Parser.hpp"
 #include "Outer.hpp"
@@ -49,9 +50,10 @@ int main() {
                 shapes, shapes2
             }) {
 		cerr << "-------------------------------------" << endl;
-        testSolver<Scanline>(s);
-        testSolver<ToInfinityAndBeyond>(s);
-        testSolver<TheSkyIsTheLimit>(s);
+        testSolver<ScanlineSolver>(s);
+        testSolver<ToInfinityAndBeyondSolver>(s);
+        testSolver<TheSkyIsTheLimitSolver>(s);
+        testSolver<FreezeSolver>(s);
         testSolver<Solver>(s);
         }
     return EXIT_SUCCESS;

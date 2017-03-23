@@ -1,11 +1,11 @@
 #include <vector>
 
-#include "TheSkyIsTheLimit.hpp"
+#include "TheSkyIsTheLimitSolver.hpp"
 #include "common.hpp"
 
 using namespace std;
 
-void TheSkyIsTheLimit::preSolve() {
+void TheSkyIsTheLimitSolver::preSolve() {
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
@@ -13,7 +13,7 @@ void TheSkyIsTheLimit::preSolve() {
         _shapes[i].envelope(_boxes[i]);
 }
 
-void TheSkyIsTheLimit::solveBin() {
+void TheSkyIsTheLimitSolver::solveBin() {
     // == Stopping Cases ==
     if (_boxes[0].max_corner().y() - _boxes[0].min_corner().y() > Parser::getDims().y()) {
         // STOP, remaining pieces are too tall to fit in any way

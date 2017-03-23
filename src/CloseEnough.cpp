@@ -10,12 +10,12 @@
 
 #include "CloseEnough.hpp"
 #include "Merger.hpp"
-#include "SimpleTransformer.hpp"
-#include "HoleTransformer.hpp"
-#include "solver/box/Scanline.hpp"
-#include "solver/box/Freeze.hpp"
-#include "solver/box/TheSkyIsTheLimit.hpp"
-#include "solver/box/ToInfinityAndBeyond.hpp"
+#include "transformer/SimpleTransformer.hpp"
+#include "transformer/HoleTransformer.hpp"
+#include "solver/ScanlineSolver.hpp"
+#include "solver/FreezeSolver.hpp"
+#include "solver/TheSkyIsTheLimitSolver.hpp"
+#include "solver/ToInfinityAndBeyondSolver.hpp"
 
 using qi::double_;
 using qi::int_;
@@ -48,10 +48,10 @@ using TransformerRegistry = Registry<Transformer,
 
 using SolverRegistry = Registry<Solver,
       boost::mpl::set<
-      Scanline,
-      TheSkyIsTheLimit,
-      ToInfinityAndBeyond,
-      Freeze
+      ScanlineSolver,
+      TheSkyIsTheLimitSolver,
+      ToInfinityAndBeyondSolver,
+      FreezeSolver
       >::type>;
 
 /**

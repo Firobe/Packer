@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Scanline.hpp"
+#include "ScanlineSolver.hpp"
 #include "Log.hpp"
 #include "common.hpp"
 #include "Display.hpp"
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void Scanline::preSolve() {
+void ScanlineSolver::preSolve() {
     for (unsigned i = 0; i < _shapes.size(); ++i)
         rotateToBestAngle(_shapes[i]);
 
@@ -21,7 +21,7 @@ void Scanline::preSolve() {
         _shapes[i].envelope(_boxes[i]);
 }
 
-void Scanline::solveBin() {
+void ScanlineSolver::solveBin() {
     for (auto && i : _indices) {
         if ((_boxes[i].max_corner().x() - _boxes[i].min_corner().x() > Parser::getDims().x()
                 && _boxes[i].max_corner().y() - _boxes[i].min_corner().y() > Parser::getDims().x())
@@ -121,7 +121,7 @@ void Scanline::solveBin() {
     }
 }
 
-int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
+int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double length,
                       double& plast) const {
     while (cells[i] + PRECISION < length) {
         length -= cells[i];
@@ -135,7 +135,7 @@ int Scanline::getLast(const vector<double>& cells, unsigned i, double length,
     return i;
 }
 
-bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
+bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
                              int lastX, unsigned iY,
                              int lastY) const {
     for (int x = iX; x <= lastX; ++x)
@@ -146,7 +146,7 @@ bool Scanline::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned i
     return true;
 }
 
-void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
+void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
                         vector<double>& cellH) {
     cerr << "============\nCELL MATRIX";
 
@@ -170,7 +170,7 @@ void Scanline::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
     cerr << endl;
 }
 
-double Scanline::getLenFromIndex(const vector<double>& lengthVector,
+double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,
                                  unsigned index) const {
     double length = 0;
 

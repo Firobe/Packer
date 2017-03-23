@@ -7,7 +7,7 @@
 
 #include "Outer.hpp"
 #include "Matrix.hpp"
-#include "Solver.hpp"
+#include "solver/Solver.hpp"
 #include "Log.hpp"
 #include "Shape.hpp"
 

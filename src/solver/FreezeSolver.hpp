@@ -5,7 +5,7 @@
 
 #include "Solver.hpp"
 
-class Freeze : public Solver {
+class FreezeSolver : public Solver {
 private:
     void preSolve() override;
     void solveBin() override;
@@ -19,7 +19,7 @@ private:
     void bounceRight(Shape& shape);
 
 public:
-    Freeze(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p) {}
+    FreezeSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p) {}
 };
 
 #endif

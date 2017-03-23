@@ -9,12 +9,12 @@
  * with the only guaranty being that
  * the shape do not intersect.
  */
-class ToInfinityAndBeyond : public Solver {
+class ToInfinityAndBeyondSolver : public Solver {
 private:
     void solveBin() override;
 
 public:
-    ToInfinityAndBeyond(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
+    ToInfinityAndBeyondSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
                 p) {}
 };
 
