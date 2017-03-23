@@ -4,6 +4,7 @@
 #define DEFAULT_AMPLITUDE (0.01)
 
 #include "Solver.hpp"
+#include "CloseEnough.hpp"
 
 class ProbaSolver : public Solver {
 private:

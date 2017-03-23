@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Shape.hpp"
+#include "common.hpp"
 
 /**
  * @brief The bitmap class is used in order to rasterize a Shape or a MultiPolygon.
@@ -28,9 +28,7 @@ private:
     void construct(MultiPolygon& mult, int, float, float, int, float, float);
 public:
     bitmap(MultiPolygon& mult, float pres);
-    bitmap(Shape& s, float pres);
     bitmap(MultiPolygon& mult, int width, int height);
-    bitmap(Shape& s, int width, int height);
     bitmap(const bool* nmap, int width, int height);
     bitmap(int width, int height);
 

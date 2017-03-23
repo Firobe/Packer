@@ -14,17 +14,16 @@ add_test(ParserTest parser)
 add_executable(compare Compare.cpp)
 target_link_libraries(compare packer_lib)
 
-#add_executable(quadtree quadtreeTest.cpp)
-#target_link_libraries(quadtree packer_lib)
-#add_test(quadTreeTest quadtree)
+add_executable(quadtree quadtreeTest.cpp)
+target_link_libraries(quadtree packer_lib)
+add_test(quadTreeTest quadtree)
 
 add_executable(interpolator interpolatorTest.cpp)
 target_link_libraries(interpolator packer_lib)
 add_test(InterpolatorTest interpolator)
 
-
-#add_executable(bitmap bitmapTest.cpp)
-#target_link_libraries(bitmap packer_lib)
-#add_test(bitmapTest bitmap)
-# add_executable(openmp openmp.cpp)
+add_executable(bitmap bitmapTest.cpp)
+target_link_libraries(bitmap packer_lib)
+add_test(bitmapTest bitmap)
+ add_executable(openmp openmp.cpp)
 

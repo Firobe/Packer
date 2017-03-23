@@ -8,9 +8,9 @@ add_library(packer_lib STATIC
     Interpolator.cpp
     Display.cpp
     CloseEnough.cpp
-	#quadtree/QuadTree.cpp
+	quadtree/QuadTree.cpp
     quadtree/InnerQuadTree.cpp
-	#quadtree/bitmap.cpp
+	quadtree/bitmap.cpp
     transformer/SimpleTransformer.cpp
     transformer/HoleTransformer.cpp
     solver/Solver.cpp

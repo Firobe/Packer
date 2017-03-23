@@ -82,7 +82,7 @@ QuadTree::~QuadTree() {
    than precision can be detected by the quadtree
  */
 QuadTree::QuadTree(Shape& s, float precision) :
-    QuadTree(s.getMultiP(), precision) {
+    QuadTree(s._multiP, precision) {
     bmap->saveMap(s.getIdentifier());
 }
 

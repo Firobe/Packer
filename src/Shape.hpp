@@ -18,7 +18,8 @@
  * Also stores it's ID in the original SVG file.
  */
 class Shape {
-private:
+    friend class QuadTree;
+protected:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
     unsigned _indexP1, _indexP2;

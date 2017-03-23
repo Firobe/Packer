@@ -15,7 +15,6 @@
 
 #include "bitmap.hpp"
 #include "common.hpp"
-#include "Shape.hpp"
 
 #define BMAP_COORD(X,Y) width*Y + X
 
@@ -176,8 +175,6 @@ bitmap::bitmap(MultiPolygon& mult, float pres) {
     translate<MultiPolygon>(mult, reference.x(), reference.y());
 }
 
-bitmap::bitmap(Shape& shape, float pres) : bitmap(shape.getMultiP(), pres) {}
-
 /**
  * @brief bitmap::bitmap generate a bitmap that is the rasterization of the boost MultiPolygon
  * @param mult MultiPolygon to rasterize
@@ -242,17 +239,6 @@ bitmap::bitmap(int width, int height) : width(width), height(height) {
 
     nbBlack = 0;
 }
-
-
-/**
- * @brief Constructor for Shapes, it just call the MultiPolygon constructor with the Shape's MultiPolygon
- * @param shape
- * @param width
- * @param height
- */
-bitmap::bitmap(Shape& shape, int width, int height) : bitmap(shape.getMultiP(), width,
-            height) {}
-
 
 /**
  * @brief bitmap::set set the value of the point (i,j)

@@ -1,7 +1,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "solver/quadtree/bitmap.hpp"
+#include "quadtree/bitmap.hpp"
 #include "commonTest.hpp"
 
 using namespace std;

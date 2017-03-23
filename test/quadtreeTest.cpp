@@ -14,8 +14,8 @@
 #include "commonTest.hpp"
 #include "Parser.hpp"
 #include "Shape.hpp"
-#include "solver/quadtree/QuadTree.hpp"
-#include "solver/quadtree/bitmap.hpp"
+#include "quadtree/QuadTree.hpp"
+#include "quadtree/bitmap.hpp"
 #include <boost/geometry/algorithms/convert.hpp>
 
 #define REPEAT 100
