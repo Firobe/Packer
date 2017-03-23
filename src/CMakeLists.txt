@@ -14,9 +14,10 @@ add_library(packer_lib STATIC
     transformer/SimpleTransformer.cpp
     transformer/HoleTransformer.cpp
     solver/Solver.cpp
-	solver/ToInfinityAndBeyondSolver.cpp
-	solver/TheSkyIsTheLimitSolver.cpp
+	solver/LineSolver.cpp
+	solver/MultilineSolver.cpp
 	solver/FreezeSolver.cpp
+	solver/ProbaSolver.cpp
 	solver/ScanlineSolver.cpp)
 
 if (${ENABLE_DISPLAY})

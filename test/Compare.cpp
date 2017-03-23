@@ -4,9 +4,10 @@
 #include <boost/type_index.hpp>
 
 #include "solver/ScanlineSolver.hpp"
-#include "solver/ToInfinityAndBeyondSolver.hpp"
-#include "solver/TheSkyIsTheLimitSolver.hpp"
+#include "solver/LineSolver.hpp"
+#include "solver/MultilineSolver.hpp"
 #include "solver/FreezeSolver.hpp"
+#include "solver/ProbaSolver.hpp"
 #include "Splitter.hpp"
 #include "Parser.hpp"
 #include "Outer.hpp"
@@ -50,11 +51,12 @@ int main() {
                 shapes, shapes2
             }) {
 		cerr << "-------------------------------------" << endl;
-        testSolver<ScanlineSolver>(s);
-        testSolver<ToInfinityAndBeyondSolver>(s);
-        testSolver<TheSkyIsTheLimitSolver>(s);
-        testSolver<FreezeSolver>(s);
         testSolver<Solver>(s);
+        testSolver<LineSolver>(s);
+        testSolver<MultilineSolver>(s);
+        testSolver<ScanlineSolver>(s);
+        testSolver<FreezeSolver>(s);
+        testSolver<ProbaSolver>(s);
         }
     return EXIT_SUCCESS;
     }

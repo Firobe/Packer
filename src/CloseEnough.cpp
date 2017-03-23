@@ -14,8 +14,9 @@
 #include "transformer/HoleTransformer.hpp"
 #include "solver/ScanlineSolver.hpp"
 #include "solver/FreezeSolver.hpp"
-#include "solver/TheSkyIsTheLimitSolver.hpp"
-#include "solver/ToInfinityAndBeyondSolver.hpp"
+#include "solver/MultilineSolver.hpp"
+#include "solver/LineSolver.hpp"
+#include "solver/ProbaSolver.hpp"
 
 using qi::double_;
 using qi::int_;
@@ -49,9 +50,10 @@ using TransformerRegistry = Registry<Transformer,
 using SolverRegistry = Registry<Solver,
       boost::mpl::set<
       ScanlineSolver,
-      TheSkyIsTheLimitSolver,
-      ToInfinityAndBeyondSolver,
-      FreezeSolver
+      MultilineSolver,
+      LineSolver,
+      FreezeSolver,
+	  ProbaSolver
       >::type>;
 
 /**

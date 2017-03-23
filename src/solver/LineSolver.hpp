@@ -1,5 +1,5 @@
-#ifndef TOINFINITYANDBEYOND__H
-#define TOINFINITYANDBEYOND__H
+#ifndef LINESOLVER__H
+#define LINESOLVER__H
 
 #include "Solver.hpp"
 
@@ -9,12 +9,12 @@
  * with the only guaranty being that
  * the shape do not intersect.
  */
-class ToInfinityAndBeyondSolver : public Solver {
+class LineSolver : public Solver {
 private:
     void solveBin() override;
 
 public:
-    ToInfinityAndBeyondSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
+    LineSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
                 p) {}
 };
 

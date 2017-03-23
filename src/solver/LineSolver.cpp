@@ -1,8 +1,8 @@
-#include "ToInfinityAndBeyondSolver.hpp"
+#include "LineSolver.hpp"
 
 using namespace std;
 
-void ToInfinityAndBeyondSolver::solveBin() {
+void LineSolver::solveBin() {
     vector<Box> boxes(_shapes.size());
     Point previous, reference;
 
