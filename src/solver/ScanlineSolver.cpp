@@ -122,7 +122,7 @@ void ScanlineSolver::solveBin() {
 }
 
 int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double length,
-                      double& plast) const {
+                            double& plast) const {
     while (cells[i] + PRECISION < length) {
         length -= cells[i];
         i++;
@@ -136,8 +136,8 @@ int ScanlineSolver::getLast(const vector<double>& cells, unsigned i, double leng
 }
 
 bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsigned iX,
-                             int lastX, unsigned iY,
-                             int lastY) const {
+                                   int lastX, unsigned iY,
+                                   int lastY) const {
     for (int x = iX; x <= lastX; ++x)
         for (int y = iY; y <= lastY; ++y)
             if (cellIsEmpty[x][y] == false)
@@ -147,7 +147,7 @@ bool ScanlineSolver::allCellsEmpty(const vector<vector<bool>>& cellIsEmpty, unsi
 }
 
 void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> cellW,
-                        vector<double>& cellH) {
+                              vector<double>& cellH) {
     cerr << "============\nCELL MATRIX";
 
     for (auto && x : cellIsEmpty) {
@@ -171,7 +171,7 @@ void ScanlineSolver::printAll(vector<vector<bool>>& cellIsEmpty, vector<double> 
 }
 
 double ScanlineSolver::getLenFromIndex(const vector<double>& lengthVector,
-                                 unsigned index) const {
+                                       unsigned index) const {
     double length = 0;
 
     for (unsigned i = 0; i < index; ++i)

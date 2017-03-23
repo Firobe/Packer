@@ -4,8 +4,8 @@ set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
-set(FORCE_UNPACK 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
-set(ENABLE_DISPLAY 0)
+option(FORCE_UNPACK "Boost unpack forcing" 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
+option(ENABLE_DISPLAY "Display build" 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 
@@ -14,7 +14,10 @@ if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
 endif()
 
 if(${ENABLE_DISPLAY})
+	message(STATUS "Will build with display support")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENABLE_DISPLAY")
+else ()
+	message(STATUS "Will build WITHOUT display support")
 endif ()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O3 -fopenmp")

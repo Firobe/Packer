@@ -53,7 +53,7 @@ using SolverRegistry = Registry<Solver,
       MultilineSolver,
       LineSolver,
       FreezeSolver,
-	  ProbaSolver
+      ProbaSolver
       >::type>;
 
 /**
