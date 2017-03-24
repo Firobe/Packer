@@ -17,7 +17,7 @@ private:
     void printAll(std::vector<std::vector<bool>>& cellIsEmpty, std::vector<double> cellW,
                   std::vector<double>& cellH);
 public:
-    ScanlineSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p),
+    ScanlineSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p),
         _boxes(v.size()) {}
 };
 

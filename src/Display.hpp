@@ -7,6 +7,7 @@
 
 #include "Shape.hpp"
 #include "Log.hpp"
+#include "Layout.hpp"
 
 #define WINDOW_WIDTH 1024
 #define WINDOW_HEIGHT 768
@@ -18,24 +19,24 @@ private:
 public:
     CustomShape(const ::Shape& s) :
         _shape(s),
-        _begins(_shape.getMultiP().size()) {
+        _begins(_shape._multiP.size()) {
         unsigned acc = 0;
 
         for (unsigned i = 0 ; i < _begins.size() ; ++i) {
             _begins[i] = acc;
-            acc += _shape.getMultiP()[i].outer().size();
+            acc += _shape._multiP[i].outer().size();
         }
     }
     size_t getPointCount() const override {
-        return _begins.back() + _shape.getMultiP().back().outer().size();
+        return _begins.back() + _shape._multiP.back().outer().size();
     }
     sf::Vector2f getPoint(std::size_t index) const override {
         unsigned i = 0;
 
         for (; i < _begins.size() and _begins[i] <= index; ++i);
 
-        return sf::Vector2f(_shape.getMultiP()[i - 1].outer()[index - _begins[i - 1]].x(),
-                            _shape.getMultiP()[i - 1].outer()[index - _begins[i - 1]].y());
+        return sf::Vector2f(_shape._multiP[i - 1].outer()[index - _begins[i - 1]].x(),
+                            _shape._multiP[i - 1].outer()[index - _begins[i - 1]].y());
     }
     void update() {
         sf::Shape::update();
@@ -46,7 +47,7 @@ class Display {
     sf::RenderWindow _window;
     std::thread _thread;
     bool _mustExit;
-    const std::vector<Shape>& _shapes;
+    const Layout& _shapes;
     std::vector<CustomShape> _toDraw;
     std::vector<unsigned> _ids;
     bool _mustRender;
@@ -56,11 +57,11 @@ class Display {
     void updateShape(unsigned i);
     void render();
     static bool _enabled;
-    static Display& getInstance(const std::vector<Shape>& s = std::vector<Shape>()) {
+    static Display& getInstance(const Layout& s = Layout()) {
         static Display disp(WINDOW_WIDTH, WINDOW_HEIGHT, s);
         return disp;
     }
-    Display(int width, int height, const std::vector<Shape>& s) :
+    Display(int width, int height, const Layout& s) :
         _window(sf::VideoMode(width, height), "PACKER3000"),
         _thread(),
         _mustExit(false),
@@ -84,7 +85,7 @@ class Display {
     unsigned byIdentifier(unsigned identifier);
     void reset();
 public:
-    static void Init(const std::vector<Shape>& s) {
+    static void Init(const Layout& s) {
         _enabled = true;
         getInstance(s);
     }

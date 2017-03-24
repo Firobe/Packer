@@ -68,13 +68,13 @@ void Splitter::split(Point a, Point b) {
     _shapes = result;
 }
 
-vector<Shape> Splitter::getShapes() const {
-    vector<Shape> result;
-    result.reserve(_shapes.size());
+vector<Shape>* Splitter::getShapes() const {
+    vector<Shape>* result = new vector<Shape>;
+    result->reserve(_shapes.size());
 
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
         vector<Ring> tmp(1, _shapes[i]);
-        result.emplace_back(tmp, i);
+        result->emplace_back(tmp, i);
     }
 
     return result;

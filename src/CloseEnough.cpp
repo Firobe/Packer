@@ -116,7 +116,7 @@ Call makeCall(Function f, vector<Parameter> p) {
 /**
  * Actually executes every call of every block n times
  */
-void callEverything(vector<Call> block, int n, vector<Shape>* shapes) {
+void callEverything(vector<Call> block, int n, Layout* shapes) {
     for (int i = 0 ; i < n ; ++i)
         for (auto && j : block)
             j(*shapes);
@@ -126,7 +126,7 @@ void callEverything(vector<Call> block, int n, vector<Shape>* shapes) {
  * Given a Call struct, make the appropriate
  * function calls with appropriate parameters
  */
-void Call::operator()(vector<Shape>& shapes) {
+void Call::operator()(Layout& shapes) {
     static Merger merge(shapes);
 
     if (func.cat == FUNC_TRANSFORMER) {
@@ -169,7 +169,7 @@ void makeRule(qi::rule<std::string::iterator, std::string(), ascii::space_type>&
  * (See CloseEnough.hpp for a human-readable grammar)
  * and error handler
  */
-CE_Parser::CE_Parser(vector<Shape>& s) : CE_Parser::base_type(start, "program start") {
+CE_Parser::CE_Parser(Layout& s) : CE_Parser::base_type(start, "program start") {
     TransformerRegistry::init();
     SolverRegistry::init();
     //GRAMMAR BEGIN

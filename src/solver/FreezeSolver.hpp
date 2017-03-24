@@ -19,7 +19,7 @@ private:
     void bounceRight(Shape& shape);
 
 public:
-    FreezeSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p) {}
+    FreezeSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p) {}
 };
 
 #endif

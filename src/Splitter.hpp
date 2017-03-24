@@ -16,7 +16,7 @@ public:
     }
     void split(Point a, Point b);
     void halfSplit(Point a, Point b, Point);
-    std::vector<Shape> getShapes() const;
+    std::vector<Shape>* getShapes() const;
 };
 
 #endif

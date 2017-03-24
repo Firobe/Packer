@@ -13,7 +13,7 @@
 
 #include "commonTest.hpp"
 #include "Parser.hpp"
-#include "Shape.hpp"
+#include "Layout.hpp"
 #include "quadtree/QuadTree.hpp"
 #include "quadtree/bitmap.hpp"
 #include <boost/geometry/algorithms/convert.hpp>
@@ -30,7 +30,7 @@ int main() {
     vector<string> toPack;
 
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
-	vector<Shape> shapes = Parser::Parse("vertebrae.svg", toPack);
+	Layout shapes(Parser::Parse("vertebrae.svg", toPack));
 
 	/*for (Shape& s: shapes) {
         cout << bg::num_points(s.getMultiP()) << endl;

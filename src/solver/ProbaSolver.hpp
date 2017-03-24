@@ -12,7 +12,7 @@ private:
     void preSolve() override;
     void solveBin() override;
 public:
-    ProbaSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p) {
+    ProbaSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p) {
         if (!getParameter(p, "amplitudeProba", _amplitudeProba))
             _amplitudeProba = DEFAULT_AMPLITUDE;
     }

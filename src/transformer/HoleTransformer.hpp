@@ -18,7 +18,7 @@
  */
 class HoleTransformer : public Transformer {
 public:
-    HoleTransformer(std::vector<Shape>& s, const std::vector<Parameter>& params) :
+    HoleTransformer(Layout& s, const std::vector<Parameter>& params) :
         Transformer(s, params) {}
     std::vector<std::vector<unsigned> > transform();
 };

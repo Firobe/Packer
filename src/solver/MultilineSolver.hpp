@@ -15,7 +15,7 @@ private:
     void preSolve() override;
     void solveBin() override;
 public:
-    MultilineSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v, p),
+    MultilineSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p),
         _boxes(v.size()) {}
 };
 

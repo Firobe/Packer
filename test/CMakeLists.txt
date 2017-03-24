@@ -13,6 +13,7 @@ add_test(ParserTest parser)
 
 add_executable(compare Compare.cpp)
 target_link_libraries(compare packer_lib)
+#add_test(CompareTest compare)
 
 add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree packer_lib)

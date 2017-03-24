@@ -40,8 +40,8 @@ public:
     void rotater(float angle);
 
 public:
-	void rotate(double degrees) override;
-	void translate(double Tx, double Ty) override;
+    void rotate(double degrees) override;
+    void translate(double Tx, double Ty) override;
     bool intersectsWith(const QuadTree&) const;
 
 private:

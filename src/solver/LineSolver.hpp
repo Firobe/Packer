@@ -14,7 +14,7 @@ private:
     void solveBin() override;
 
 public:
-    LineSolver(std::vector<Shape>& v, const std::vector<Parameter>& p) : Solver(v,
+    LineSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v,
                 p) {}
 };
 

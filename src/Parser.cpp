@@ -96,8 +96,8 @@ using ProcessedAttributes =
  * Fills shapes with the different interpolated
  * shapes found in the SVG file.
  */
-vector<Shape> Parser::Parse(const string& path,
-                            vector<string>& ids) { // TODO : Returns a copy, can be improved
+vector<Shape>* Parser::Parse(const string& path,
+                             vector<string>& ids) {
     LOG(info) << "Parsing SVG file..." << endl;
     //Opening SVG file
     file<> svgFile(path.c_str());
@@ -201,7 +201,7 @@ void Parser::on_enter_element(svgpp::tag::element::g) {
             //Add the ring to _shapes only if the ID on top of the stack (its own ID)
             //is in the _ids vector (or if there is no ID specified by the user)
             _identifiers.push_back(_idStack.top());
-            _shapes.emplace_back(tmp, _identifiers.size() - 1);
+            _shapes->emplace_back(tmp, _identifiers.size() - 1);
         }
 
         _idStack.pop();
@@ -249,7 +249,7 @@ void Parser::on_exit_element() {
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
             _identifiers.push_back(_idStack.top());
-            _shapes.emplace_back(_rings, _identifiers.size() - 1);
+            _shapes->emplace_back(_rings, _identifiers.size() - 1);
         }
 
         _idStack.pop();

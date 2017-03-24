@@ -12,6 +12,6 @@ int main() {
     for (int i = 0 ; i < nbSplit ; i++)
         splitter.split(Point(rand() % width, rand() % height), Point(rand() % width, rand() % height));
 
-    vector<Shape> ss = splitter.getShapes();
-    cout << debugOutputSVG(ss);
+    Layout l(splitter.getShapes());
+    cout << debugOutputSVG(l);
     }

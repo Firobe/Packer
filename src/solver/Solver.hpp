@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include "Parser.hpp"
-#include "Shape.hpp"
+#include "Layout.hpp"
 #include "common.hpp"
 
 #define SPACE_COEF (1.2) //Spacing between bins
@@ -22,7 +22,7 @@
  */
 class Solver {
 protected:
-    std::vector<Shape>& _shapes; //Shapes to be packed
+    Layout& _shapes; //Shapes to be packed
     unsigned _binNumber; //Current number of bins
     std::list<unsigned> _indices; //List of the indices in _shapes not packed yet
 
@@ -44,7 +44,7 @@ protected:
     }
 
 public:
-    Solver(std::vector<Shape>& s, const std::vector<Parameter>&) : _shapes(s),
+    Solver(Layout& s, const std::vector<Parameter>&) : _shapes(s),
         _binNumber(0) {}
     void solve();
 };

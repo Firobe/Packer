@@ -9,6 +9,7 @@
 #include "Display.hpp"
 #include "CloseEnough.hpp"
 #include "quadtree/QuadTree.hpp"
+#include "Layout.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -47,7 +48,36 @@ int main(int argc, char** argv) {
         toPack = vm["id"].as<vector<string>>();
 
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
-    vector<Shape> shapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
+    vector<Shape>* rawShapes = Parser::Parse(vm["input-file"].as<string>(), toPack);
+
+    //If nothing was selected, fill toPack with every parsed ID
+    if (!vm.count("id"))
+        LOG(info) << "Will pack *all* shapes." << endl;
+
+    for (auto && s : *rawShapes)
+        toPack.push_back(s.getIdentifier());
+
+    //Apply a buffer to the shapes
+    LOG(info) << "Buffering shapes..." << endl;
+    #pragma omp parallel for schedule(dynamic, 1)
+
+    for (unsigned i = 0 ; i < rawShapes->size() ; ++i)
+        (*rawShapes)[i].bufferize(vm["buffer"].as<double>());
+
+    //If the user did not specify width, take document width for packing (idem for height)
+    Parser::setDims(Point(
+                        (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
+                        (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
+    Layout shapes;
+
+    if (!vm.count("quadtrees")) {
+        LOG(info) << "Will use plain shapes" << endl;
+        shapes = Layout(rawShapes);
+    }
+    else {
+        LOG(info) << "Will use QuadTrees ! WARNING : NOT YET FUNCTIONAL" << endl;
+        shapes = Layout(rawShapes, vm["quadtrees"].as<float>());
+    }
 
     if (vm["display"].as<bool>())
 #ifdef ENABLE_DISPLAY
@@ -57,39 +87,8 @@ int main(int argc, char** argv) {
         LOG(warning) <<
                      "Warning : project was not built with display support, so no display for you !" << endl;
 #endif
-
-    //If nothing was selected, fill toPack with every parsed ID
-    if (!vm.count("id"))
-        LOG(info) << "Will pack *all* shapes." << endl;
-
-    for (auto && s : shapes)
-        toPack.push_back(s.getIdentifier());
-
-    //Apply a buffer to the shapes
-    LOG(info) << "Buffering shapes..." << endl;
-    #pragma omp parallel for schedule(dynamic, 1)
-
-    for (unsigned i = 0 ; i < shapes.size() ; ++i)
-        shapes[i].bufferize(vm["buffer"].as<double>());
-
-    //If the user did not specify width, take document width for packing (idem for height)
-    Parser::setDims(Point(
-                        (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
-                        (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
-    //signal(SIGINT, signalHandler);
-
-	/*
-	//CONVERTING SHAPES TO QUADTREES
-	vector<QuadTree> quads;
-	if(vm.count("quadtrees")){
-		LOG(info) << "Generating quadtrees..." << endl;
-		quads.reserve(shapes.size());
-		for(auto && s : shapes)
-			quads.emplace_back(s, vm["quadtrees"].as<float>());
-	}
-	*/
-
     //MAIN PROCESSING
+    LOG(info) << "Will now execute the script..." << endl;
     CE_Parser parser(shapes);
     auto begin = toDo.begin(), end = toDo.end();
     bool success = phrase_parse(begin, end, parser, ascii::space);

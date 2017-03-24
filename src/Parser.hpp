@@ -32,7 +32,7 @@ private:
     /**
      * The final vector of shapes that ought to be returned to the main
      */
-    std::vector<Shape> _shapes;
+    std::vector<Shape>* _shapes;
 
     /**
      * The rings parsed at a certain moment of the document traversal.
@@ -74,9 +74,10 @@ private:
     Parser(std::vector<std::string>& i) :
         _ids(i), _groupStack(-1),
         _currentMatrix(1, 0, 0, 1, 0, 0), _toApply(0) {
+        _shapes = new std::vector<Shape>;
     }
 public:
-    static std::vector<Shape> Parse(const std::string&, std::vector<std::string>&);
+    static std::vector<Shape>* Parse(const std::string&, std::vector<std::string>&);
     static const std::string& id(unsigned i) {
         return _identifiers[i];
     }
@@ -87,7 +88,7 @@ public:
         _binDims = p;
     }
 
-    std::vector<Shape> getShapes() {
+    std::vector<Shape>* getShapes() {
         return _shapes;
     }
 

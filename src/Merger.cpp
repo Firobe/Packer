@@ -21,7 +21,7 @@ void Merger::merge(vector<vector<unsigned> > shapesToMerge) {
             unsigned sid = binaryFind(*ids, idTab[i]);//Idem for i-th shape
             _shapes[sod].mergeWith(_shapes[sid]); //Merge polygons
             _shapesMerged[sod] = _shapesMerged[sod] + _shapesMerged[sid]; //Concatenation
-            _shapes.erase(_shapes.begin() + sid);
+            _shapes.erase(sid);
             _shapesMerged.erase(_shapesMerged.begin() + sid);
             ids->erase(ids->begin() + sid);
         }
@@ -43,38 +43,26 @@ void Merger::reset() {
     });
     auto ids = getIds(_shapesInfos);
     auto ids2 = getIds(_shapes);
+    vector<Shape>* after = new vector<Shape>;
 
-    for (auto& s : _shapesInfos)
-        s.reserve(_shapesInfos.size());
+    for (auto& i : _shapesInfos) {
+        after->emplace_back(i.oldP1, i.oldP2, i.indexP1, i.indexP2, i.id);
+        after->back().reserve(_shapesInfos.size());
+    }
 
     for (unsigned i = 0; i < _shapes.size(); ++i) {
         unsigned sod = binaryFind(*ids2, _shapes[i].getID());
 
         for (unsigned j = 0; j < _shapesMerged[sod].size(); ++j) {
             unsigned sid = binaryFind(*ids, _shapesMerged[i][j]);
-            _shapesInfos[sid].addNthPolygon(_shapes[i], j);
+            (*after)[sid].addNthPolygon(_shapes[i], j);
         }
     }
 
-    _shapes.clear();
-
-    for (auto& s : _shapesInfos)
-        _shapes.push_back(s);
-
+    _shapes.replaceShapes(after);
     delete ids;
     delete ids2;
     Display::Reset();
 }
 
-/**
- * Creates a vector containing the IDs of the shapes in v (in the same order)
- */
-vector<unsigned>* getIds(vector<Shape>& v) {
-    auto ret = new vector<unsigned>(v.size());
-
-    for (unsigned i = 0 ; i < v.size() ; ++i)
-        (*ret)[i] = v[i].getID();
-
-    return ret;
-}
 

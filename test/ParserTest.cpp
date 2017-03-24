@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include "Parser.hpp"
-#include "Shape.hpp"
+#include "Layout.hpp"
 #include "commonTest.hpp"
 
 //sugina
@@ -11,7 +11,7 @@ using namespace std;
 int main() {
     try {
 		vector<string> toPack;
-		vector<Shape> shapes = Parser::Parse("test.svg", toPack);
+		Layout shapes(Parser::Parse("test.svg", toPack));
 
         //Testing base
         ASSERT(Parser::getDims().x() == 500, "Bad doc width");

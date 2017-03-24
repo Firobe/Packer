@@ -13,7 +13,7 @@
 #include <boost/type_index.hpp>
 #include <boost/mpl/for_each.hpp>
 
-#include "Shape.hpp"
+#include "Layout.hpp"
 #include "common.hpp"
 
 namespace qi = boost::spirit::qi;
@@ -109,7 +109,7 @@ struct Function {
 struct Call {
     Function func;
     std::vector<Parameter> params;
-    void operator()(std::vector<Shape>& shapes);
+    void operator()(Layout& shapes);
 };
 
 /**
@@ -151,7 +151,7 @@ struct RegistryFunctor {
  */
 template<typename BaseClass, typename RegisterList>
 struct Registry {
-    static std::map<std::string, boost::function<BaseClass* (std::vector<Shape>&, std::vector<Parameter>)>>
+    static std::map<std::string, boost::function<BaseClass* (Layout&, std::vector<Parameter>)>>
             _fact;
     //Usage : reg<ClassToRegister>();
     template<typename DerivedClass>
@@ -160,7 +160,7 @@ struct Registry {
                       phoenix::placeholders::arg2);
     }
     //Usage : instanciate("className", shapes, parameters); Returns a BaseClass pointer
-    static BaseClass* instanciate(std::string name, std::vector<Shape>& s,
+    static BaseClass* instanciate(std::string name, Layout& s,
                                   std::vector<Parameter> p) {
         return _fact.at(name)(s, p);
     }
@@ -173,7 +173,7 @@ struct Registry {
 
 //Allocate static map for each created template
 template<typename T, typename U>
-std::map<std::string, boost::function<T* (std::vector<Shape>&, std::vector<Parameter>)>>
+std::map<std::string, boost::function<T* (Layout&, std::vector<Parameter>)>>
         Registry<T, U>::_fact;
 
 /**
@@ -200,7 +200,7 @@ struct CE_Parser : qi::grammar<std::string::iterator, void(), ascii::space_type>
     qi::rule<std::string::iterator, void(), ascii::space_type> 						big_block;
     qi::rule<std::string::iterator, void(), ascii::space_type> 						start;
 
-    CE_Parser(std::vector<Shape>& s);
+    CE_Parser(Layout& s);
 };
 
 #endif

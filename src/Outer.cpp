@@ -9,14 +9,13 @@
 #include "Matrix.hpp"
 #include "solver/Solver.hpp"
 #include "Log.hpp"
-#include "Shape.hpp"
 
 using namespace std;
 using namespace rapidxml_ns;
 using XMLElement = rapidxml_ns::xml_node<>* ;  //Defines the XMLElement type
 
 Outer::Outer(const std::string& path, bool addto, std::vector<std::string>& tp,
-             vector<Shape>& s) :
+             Layout& s) :
     _shapes(s),
     _ids(tp),
     _addTo(addto),
@@ -265,7 +264,7 @@ void Outer::groupShapes() {
  * (Theoretically with the packed shapes)
  */
 void Outer::Write(const std::string& path, bool addto, std::vector<std::string>& tp,
-                  std::vector<Shape>& s) {
+                  Layout& s) {
     Outer outer(path, addto, tp, s);
     XMLElement rootNode = outer._doc.first_node();
     LOG(info) << "Producing SVG output... (addto=" << addto << ")\n";
@@ -279,7 +278,7 @@ void Outer::Write(const std::string& path, bool addto, std::vector<std::string>&
  * Computes the compression ratio :
  * actual area / minimal area
  */
-double compressionRatio(const vector<Shape>& _shapes) {
+double compressionRatio(Layout& _shapes) {
     //Computing the total enveloppe of shapes
     std::vector<Box> boxes(_shapes.size());
 
@@ -318,16 +317,18 @@ double compressionRatio(const vector<Shape>& _shapes) {
  * Should be used for debug only.
  * Outputs what the solver actually sees.
  */
-string debugOutputSVG(const vector<Shape>& _shapes) {
+string debugOutputSVG(Layout& _shapes) {
     stringstream ret;
     bg::svg_mapper <Point> mapper(ret, Parser::getDims().x(), Parser::getDims().y());
 
-    for (const Shape& s : _shapes)
-        mapper.add(s._multiP);
-
     for (const Shape& s : _shapes) {
-        mapper.map(s._multiP, "fill:rgb(" + to_string(rand() % 256) + "," +
-                   to_string(rand() % 256) + "," + to_string(rand() % 256) + ")");
+        int r = rand() % 256, g = rand() % 256, b = rand() % 256;
+
+        for (unsigned i = 0 ; i < s.polyNumber() ; ++i) {
+            mapper.add(s.getNthPoly(i));
+            mapper.map(s.getNthPoly(i), "fill:rgb(" + to_string(r) + "," +
+                       to_string(g) + "," + to_string(b) + ")");
+        }
     }
 
     LOG(info) << "Debug SVG generated" << endl;

@@ -18,7 +18,7 @@ using Clock = std::chrono::system_clock;
 using namespace std;
 
 template <typename T>
-void testSolver(vector<Shape> shapes) {
+void testSolver(Layout shapes) {
 	Parser::setDims(Point(RANGE * 3, RANGE * 3));
     cerr << "Testing : " << boost::typeindex::type_id<T>().pretty_name() << endl;
     T s(shapes, {});
@@ -34,28 +34,28 @@ int main() {
     srand(time(0));
 
     int splitNb = rand() % 42 + 21;
-    Splitter splot(RANGE, RANGE);
-    Splitter splout(RANGE, RANGE);
+    Splitter cut1(RANGE, RANGE);
+    Splitter cut2(RANGE, RANGE);
 
     for (int i = 0 ; i < splitNb ; ++i) {
-        splot.split(Point(rand() % RANGE, rand() % RANGE), Point(rand() % RANGE, rand() % RANGE));
+        cut1.split(Point(rand() % RANGE, rand() % RANGE), Point(rand() % RANGE, rand() % RANGE));
         int r = rand() % RANGE;
         bool vr = rand() % 2;
-        splout.split(Point(r, r), vr ? Point(r, RANGE) : Point(RANGE, r));
+        cut2.split(Point(r, r), vr ? Point(r, RANGE) : Point(RANGE, r));
         }
 
-    vector<Shape> shapes = splot.getShapes(); //Rectangles
-    vector<Shape> shapes2 = splout.getShapes(); //Triangles
+    Layout rects(cut1.getShapes()); //Rectangles
+	Layout triangles(cut2.getShapes()); //Triangles
 
     for (auto && s : {
-                shapes, shapes2
+                rects, triangles
             }) {
 		cerr << "-------------------------------------" << endl;
         testSolver<Solver>(s);
         testSolver<LineSolver>(s);
         testSolver<MultilineSolver>(s);
         testSolver<ScanlineSolver>(s);
-        testSolver<FreezeSolver>(s);
+        //testSolver<FreezeSolver>(s);
         testSolver<ProbaSolver>(s);
         }
     return EXIT_SUCCESS;

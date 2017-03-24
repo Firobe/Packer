@@ -18,7 +18,8 @@
  * Also stores it's ID in the original SVG file.
  */
 class Shape {
-	friend class QuadTree; //QuadTree can access protected members from every Shape object
+    friend class QuadTree; //QuadTree can access protected members from every Shape object
+    friend class CustomShape;
 protected:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
@@ -33,13 +34,13 @@ public:
     Shape(std::vector<Ring>& r, unsigned id) : _id(id), _out() {
         fillShape(r);
     }
-	Shape(const MultiPolygon& p, unsigned id) : _multiP(p), _id(id) {
-		setOld();
-	}
+    Shape(const MultiPolygon& p, unsigned id) : _multiP(p), _id(id) {
+        setOld();
+    }
     Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
 
-	//Getters - Setters
+    //Getters - Setters
     unsigned getID() const;
     Point getOldP1() const;
     Point getOldP2() const;
@@ -49,13 +50,13 @@ public:
     const std::string& getOut() const;
     void appendOut(const std::string& s);
 
-	//MultiP
+    //MultiP
     void addNthPolygon(const Shape& s, unsigned n);
     void reserve(int nbPoly);
     unsigned polyNumber() const;
     const Polygon& getNthPoly(unsigned i) const;
 
-	//Algorithms
+    //Algorithms
     virtual void mergeWith(const Shape&);
     virtual void rotate(double degrees);
     virtual void translate(double Tx, double Ty);
@@ -68,7 +69,7 @@ public:
     virtual void bufferize(double buffer);
     virtual std::array<double, 6> getTransMatrix() const;
 
-	//Debug
+    //Debug
     std::string debugOutputSVG() const;
     friend std::string debugOutputSVG(const std::vector<Shape>&);
 };

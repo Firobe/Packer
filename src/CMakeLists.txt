@@ -8,6 +8,7 @@ add_library(packer_lib STATIC
     Interpolator.cpp
     Display.cpp
     CloseEnough.cpp
+	Layout.cpp
 	quadtree/QuadTree.cpp
     quadtree/InnerQuadTree.cpp
 	quadtree/bitmap.cpp

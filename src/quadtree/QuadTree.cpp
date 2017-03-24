@@ -94,7 +94,7 @@ QuadTree::QuadTree(Shape& s, float precision) :
    than precision can be detected by the quadtree
  */
 QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
-   	: Shape(mult, id), precision(precision) {
+    : Shape(mult, id), precision(precision) {
     float rotationAngle = 360.f / quadsNumber;
     float currentAngle = 0.f;
     trees.reserve(quadsNumber);
@@ -193,7 +193,7 @@ void QuadTree::rotater(float angle) {
  * @param y
  */
 void QuadTree::rotate(double angle) {
-	rotater(angle);
+    rotater(angle);
 }
 
 /**
@@ -202,7 +202,7 @@ void QuadTree::rotate(double angle) {
  * @param y
  */
 void QuadTree::translate(double Tx, double Ty) {
-	translater(Tx, Ty);
+    translater(Tx, Ty);
 }
 
 /**

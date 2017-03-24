@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Shape.hpp"
+#include "Layout.hpp"
 #include "common.hpp"
 
 /**
@@ -15,9 +15,9 @@
  */
 class Transformer {
 protected:
-    std::vector<Shape>& _shapes; // Contains parsed shapes
+    Layout& _shapes; // Contains parsed shapes
 public:
-    Transformer(std::vector<Shape>& s, const std::vector<Parameter>&) : _shapes(s) {}
+    Transformer(Layout& s, const std::vector<Parameter>&) : _shapes(s) {}
     virtual std::vector<std::vector<unsigned> > transform() = 0;
 };
 

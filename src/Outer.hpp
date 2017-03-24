@@ -7,8 +7,7 @@
 #include <rapidxml_ns/rapidxml_ns.hpp>
 #include <rapidxml_ns/rapidxml_ns_utils.hpp>
 
-#include "Shape.hpp"
-
+#include "Layout.hpp"
 
 // Node from svg tree
 enum NodeType { hasChild, hasValue, noChild };
@@ -21,7 +20,7 @@ enum NodeType { hasChild, hasValue, noChild };
  */
 class Outer {
 protected:
-    std::vector<Shape>& _shapes;
+    Layout& _shapes;
     rapidxml_ns::xml_document<> _doc; //SVG file to parse.
     std::vector<std::string>& _ids; //IDs of packed shapes.
     bool _addTo; //Are we duplicating or not
@@ -30,10 +29,10 @@ protected:
     bool _stopPrinting;
 public:
     static void Write(const std::string& path, bool addto, std::vector<std::string>& tp,
-                      std::vector<Shape>&);
+                      Layout&);
 private:
     Outer(const std::string& path, bool addto, std::vector<std::string>& tp,
-          std::vector<Shape>&);
+          Layout&);
     ~Outer();
     void recurOutput(rapidxml_ns::xml_node<>*, bool = true);
     void printNode(rapidxml_ns::xml_node<>*, bool);
@@ -43,6 +42,6 @@ private:
     void groupShapes();
 };
 
-double compressionRatio(const std::vector<Shape>& _shapes);
-std::string debugOutputSVG(const std::vector<Shape>& _shapes);
+double compressionRatio(Layout& _shapes);
+std::string debugOutputSVG(Layout& _shapes);
 #endif

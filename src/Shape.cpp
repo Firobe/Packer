@@ -324,23 +324,23 @@ const std::string& Shape::getIdentifier() const {
 }
 
 const std::string& Shape::getOut() const {
-	return _out;
+    return _out;
 }
 
 Point Shape::getOldP1() const {
-	return _oldP1;
+    return _oldP1;
 }
 
 Point Shape::getOldP2() const {
-	return _oldP2;
+    return _oldP2;
 }
 
 unsigned Shape::getIndexP1() const {
-	return _indexP1;
+    return _indexP1;
 }
 
 unsigned Shape::getIndexP2() const {
-	return _indexP2;
+    return _indexP2;
 }
 
 /**
@@ -348,14 +348,14 @@ unsigned Shape::getIndexP2() const {
  * @param s String to be appended
  */
 void Shape::appendOut(const std::string& s) {
-	_out += s;
+    _out += s;
 }
 
 /**
  * @brief Returns the number of polygons
  */
 unsigned Shape::polyNumber() const {
-	return _multiP.size();
+    return _multiP.size();
 }
 
 /**
@@ -363,11 +363,11 @@ unsigned Shape::polyNumber() const {
  * @param n
  */
 const Polygon& Shape::getNthPoly(unsigned i) const {
-	return _multiP[i];
+    return _multiP[i];
 }
 
 unsigned Shape::getID() const {
-	return _id;
+    return _id;
 }
 
 /**
@@ -376,7 +376,7 @@ unsigned Shape::getID() const {
  * @param n
  */
 void Shape::addNthPolygon(const Shape& s, unsigned n) {
-	_multiP.push_back(s._multiP[n]);
+    _multiP.push_back(s._multiP[n]);
 }
 
 /**
@@ -384,5 +384,5 @@ void Shape::addNthPolygon(const Shape& s, unsigned n) {
  * @param nbPoly Number of polygons to reserve
  */
 void Shape::reserve(int nbPoly) {
-	_multiP.reserve(nbPoly);
+    _multiP.reserve(nbPoly);
 }
