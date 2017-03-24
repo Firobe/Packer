@@ -2,6 +2,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/vertebrae.svg ${CMAKE_CURRENT_BINARY_
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test.svg ${CMAKE_CURRENT_BINARY_DIR}/test.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple.svg ${CMAKE_CURRENT_BINARY_DIR}/simple.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lots.svg ${CMAKE_CURRENT_BINARY_DIR}/lots.svg @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mergeGood.svg ${CMAKE_CURRENT_BINARY_DIR}/mergeGood.svg @ONLY)
+
 
 add_executable(splitter SplitterTest.cpp)
 target_link_libraries(splitter packer_lib)
@@ -13,7 +15,7 @@ add_test(ParserTest parser)
 
 add_executable(compare Compare.cpp)
 target_link_libraries(compare packer_lib)
-#add_test(CompareTest compare)
+add_test(CompareTest compare)
 
 add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree packer_lib)

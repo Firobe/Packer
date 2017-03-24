@@ -30,7 +30,16 @@ int main() {
     vector<string> toPack;
 
     //Parsing input file, sending to the parser the ids of the shapes we want to keep
-	Layout shapes(Parser::Parse("vertebrae.svg", toPack));
+	Layout shapes(Parser::Parse("mergeGood.svg", toPack), 5);
+	cerr << "Constructed : " << &shapes << endl;
+
+	shapes.erase(0);
+
+	cerr << "END OF SCOPE" << endl;
+	//QuadTree &quad = dynamic_cast<QuadTree&>(shapes[0]);
+	//quad.~QuadTree();
+	//shapes[0] = shapes[1];
+
 
 	/*for (Shape& s: shapes) {
         cout << bg::num_points(s.getMultiP()) << endl;
@@ -40,7 +49,7 @@ int main() {
 		file.close();
 	}*/
 
-	auto cstart = Clock::now();
+	/*auto cstart = Clock::now();
 	vector<QuadTree> quads;
 	quads.reserve(shapes.size()); //No copy of quadtress needed to place them in the vector
 
@@ -67,7 +76,7 @@ int main() {
 		}
 	}
 	cout << "QuadTrees approximations errors : " << diff << endl;
-	cout << "QuadTree accuracy critical error : " << crit << endl;
+	cout << "QuadTree accuracy critical error : " << crit << endl;*/
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");
@@ -214,12 +223,12 @@ int main() {
 	cout << "QuadTree accuracy critical error : " << crit << endl;*/
 
 	//quads[1].saveTree("test-init");
-	cout << endl << quads[1] << endl;
+	/*cout << endl << quads[1] << endl;
 
 	for (int i=0; i<1; i++) {
 		quads[1].rotater(100);
 		cout << quads[1] << endl;
-	}
+	}*/
 
 	//quads[1].saveTree("test-rota");
 

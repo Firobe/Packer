@@ -23,15 +23,10 @@ static float pi = boost::math::constants::pi<float>();
  * @param q
  */
 void QuadTree::copy(const QuadTree& q) {
-    cout << "quadtree copied" << endl;
-    trees.reserve(quadsNumber);
+	trees = new InnerQuadTree* [quadsNumber];
 
-    for (InnerQuadTree* quad : q.trees){
-		InnerQuadTree* tmp = new InnerQuadTree(*quad);
-		if(tmp == nullptr)
-			throw runtime_error("POUET");
-        trees.push_back(tmp);
-	}
+	for (unsigned i=0; i< quadsNumber; i++)
+		trees[i] = new InnerQuadTree(*(q.trees[i]));
 
     treesOffset = q.treesOffset;
 	currentTree = q.currentTree;
@@ -51,28 +46,49 @@ QuadTree::QuadTree(const QuadTree& q) : Shape(q) {
 
 /**
  * @brief assignement operator
- * @param q
+ * @param qi
  * @return the quadtree copied
  */
 QuadTree& QuadTree::operator=(const QuadTree& q) {
-    if (this != &q) {
-        this->~QuadTree();
+	if (this != &q) {
+		destroy();
+		Shape::operator=(q);
         copy(q);
     }
 
     return *this;
 }
 
+QuadTree& QuadTree::operator=(QuadTree&& q) {
+	if (this != &q) {
+		destroy();
+		q.trees = nullptr;
+		trees = q.trees;
+		treesOffset = q.treesOffset;
+		currentTree = q.currentTree;
+		_totalX = q._totalX;
+		_totalY = q._totalY;
+		_maxDepth = q._maxDepth;
+		precision = q.precision;
+    }
+
+    return *this;
+}
+
+void QuadTree::destroy() {
+	if (trees != nullptr) {
+		for (unsigned i=0; i<quadsNumber; i++)
+			delete trees[i];
+		delete[] trees;
+	}
+	trees = nullptr;
+}
+
 /**
  * @brief destructor
  */
 QuadTree::~QuadTree() {
-    for (InnerQuadTree* quad : trees) {
-        if (quad != nullptr)
-            delete quad;
-        quad = nullptr;
-    }
-
+	destroy();
 }
 
 /**
@@ -94,10 +110,10 @@ QuadTree::QuadTree(Shape& s, float precision) :
    than precision can be detected by the quadtree
  */
 QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
-    : Shape(mult, id), precision(precision) {
+    : Shape(mult, id), trees(nullptr), precision(precision) {
     float rotationAngle = 360.f / quadsNumber;
     float currentAngle = 0.f;
-    trees.reserve(quadsNumber);
+	trees = new InnerQuadTree*[quadsNumber];
     treesOffset.reserve(quadsNumber);
     // Put the shape at the (0,0) point
     Box preEnvelop;
@@ -143,10 +159,10 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         int size = pow(2, maxDepth);
         bitmap bmap(mult, size, size);
         // QuadTree size is shape envelop size
-        trees.push_back(new InnerQuadTree(envelop.min_corner().x() + _totalX,
+        trees[i] = new InnerQuadTree(envelop.min_corner().x() + _totalX,
                                           envelop.min_corner().y() + _totalY,
                                           envelop.max_corner().x() + _totalX, envelop.max_corner().y() + _totalY,
-                                          bmap, 0, 0, size, 0));
+                                          bmap, 0, 0, size, 0);
     }
 }
 
@@ -214,8 +230,8 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
     s << "Absolute Position : (" << q._totalX << "," << q._totalY << ") " << endl;
     s << " - Trees : " << std::endl;
 
-    for (InnerQuadTree* quad : q.trees)
-        s << *quad << std::endl;
+    for (unsigned i=0; i<q.quadsNumber; i++)
+        s << *(q.trees[i]) << std::endl;
 
     return s;
 }

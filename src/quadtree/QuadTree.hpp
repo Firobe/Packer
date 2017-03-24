@@ -14,7 +14,7 @@ class bitmap;
 class QuadTree : public Shape {
 private:
     static constexpr unsigned quadsNumber = 12; //30 degree angle
-    std::vector<InnerQuadTree*> trees;
+    InnerQuadTree** trees;
     std::vector<Point> treesOffset;
     unsigned currentTree = 0;
 
@@ -25,9 +25,11 @@ private:
 
 private:
     void copy(const QuadTree&);
+	void destroy();
 public:
     QuadTree(const QuadTree&); //copy operator
     QuadTree& operator=(const QuadTree&); //assignment operator
+	QuadTree& operator=(QuadTree&& q);
     ~QuadTree();
 
 public:

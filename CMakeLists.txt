@@ -106,11 +106,11 @@ if (DEFINED target-os AND target-os STREQUAL "windows")
     set(EXE_NAME_PLUGIN "${EXE_NAME}.exe")
 else ()
     message(STATUS "Classic compilation")
-    target_link_libraries(${EXE_NAME} boost_program_options)
+	target_link_libraries(${EXE_NAME} boost_program_options)
     set(EXE_NAME_PLUGIN "${EXE_NAME}")
-    install(TARGETS ${EXE_NAME} RUNTIME
-            DESTINATION ~/.config/inkscape/extensions/
-            PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
+	install(TARGETS ${EXE_NAME} RUNTIME
+	         DESTINATION ~/.config/inkscape/extensions/
+	        PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
     install(FILES ${CMAKE_BINARY_DIR}/packer.inx
             DESTINATION ~/.config/inkscape/extensions/
             PERMISSIONS OWNER_READ OWNER_WRITE)

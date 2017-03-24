@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "Merger.hpp"
 #include "common.hpp"
 #include "Display.hpp"
