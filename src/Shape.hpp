@@ -18,7 +18,7 @@
  * Also stores it's ID in the original SVG file.
  */
 class Shape {
-    friend class QuadTree;
+	friend class QuadTree; //QuadTree can access protected members from every Shape object
 protected:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
@@ -33,61 +33,42 @@ public:
     Shape(std::vector<Ring>& r, unsigned id) : _id(id), _out() {
         fillShape(r);
     }
-
+	Shape(const MultiPolygon& p, unsigned id) : _multiP(p), _id(id) {
+		setOld();
+	}
     Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
 
-    unsigned getID() const {
-        return _id;
-    }
-    void addNthPolygon(const Shape& s, unsigned n) {
-        _multiP.push_back(s._multiP[n]);
-    }
-    void mergeWith(const Shape&);
-    void reserve(int nbPoly) {
-        _multiP.reserve(nbPoly);
-    }
-    //Informations on Shape
-    unsigned polyNumber() const {
-        return _multiP.size();
-    }
-    Polygon getNthPoly(unsigned i) const {
-        return _multiP[i];
-    }
-    //Adaptation of boost algorithms
-    void rotate(double degrees);
-    void translate(double Tx, double Ty);
-    void envelope(Box&) const;
-    Point centroid() const;
-    int area() const;
-    bool intersectsWith(const Shape&) const;
-    bool intersectsWith(const Ring& s) const;
-    void convexHull(Polygon&) const;
-
+	//Getters - Setters
+    unsigned getID() const;
+    Point getOldP1() const;
+    Point getOldP2() const;
+    unsigned getIndexP1() const;
+    unsigned getIndexP2() const;
     const std::string& getIdentifier() const;
+    const std::string& getOut() const;
+    void appendOut(const std::string& s);
 
-    std::array<double, 6> getTransMatrix() const;
-    void bufferize(double buffer);
-    void appendOut(const std::string& s) {
-        _out += s;
-    }
-    const std::string& getOut() {
-        return _out;
-    }
+	//MultiP
+    void addNthPolygon(const Shape& s, unsigned n);
+    void reserve(int nbPoly);
+    unsigned polyNumber() const;
+    const Polygon& getNthPoly(unsigned i) const;
 
-    Point getOldP1() {
-        return _oldP1;
-    }
-    Point getOldP2() {
-        return _oldP2;
-    }
-    unsigned getIndexP1() {
-        return _indexP1;
-    }
-    unsigned getIndexP2() {
-        return _indexP2;
-    }
+	//Algorithms
+    virtual void mergeWith(const Shape&);
+    virtual void rotate(double degrees);
+    virtual void translate(double Tx, double Ty);
+    virtual void envelope(Box&) const;
+    virtual Point centroid() const;
+    virtual int area() const;
+    virtual bool intersectsWith(const Shape&) const;
+    virtual bool intersectsWith(const Ring& s) const;
+    virtual void convexHull(Polygon&) const;
+    virtual void bufferize(double buffer);
+    virtual std::array<double, 6> getTransMatrix() const;
 
+	//Debug
     std::string debugOutputSVG() const;
     friend std::string debugOutputSVG(const std::vector<Shape>&);
 };

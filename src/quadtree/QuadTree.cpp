@@ -33,7 +33,6 @@ void QuadTree::copy(const QuadTree& q) {
     _totalX = q._totalX;
     _totalY = q._totalY;
     _maxDepth = q._maxDepth;
-    multiP = q.multiP;
     precision = q.precision;
 }
 
@@ -41,7 +40,7 @@ void QuadTree::copy(const QuadTree& q) {
  * @brief copy constructor
  * @param q
  */
-QuadTree::QuadTree(const QuadTree& q) {
+QuadTree::QuadTree(const QuadTree& q) : Shape(q) {
     copy(q);
 }
 
@@ -82,7 +81,7 @@ QuadTree::~QuadTree() {
    than precision can be detected by the quadtree
  */
 QuadTree::QuadTree(Shape& s, float precision) :
-    QuadTree(s._multiP, precision) {
+    QuadTree(s._multiP, precision, s._id) {
     bmap->saveMap(s.getIdentifier());
 }
 
@@ -94,20 +93,20 @@ QuadTree::QuadTree(Shape& s, float precision) :
  * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
    than precision can be detected by the quadtree
  */
-QuadTree::QuadTree(MultiPolygon& mult, float precision) :
-    multiP(mult), precision(precision) {
+QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
+   	: Shape(mult, id), precision(precision) {
     float rotationAngle = 360.f / quadsNumber;
     float currentAngle = 0.f;
     trees.reserve(quadsNumber);
     treesOffset.reserve(quadsNumber);
     // Put the shape at the (0,0) point
     Box preEnvelop;
-    bg::envelope(multiP, preEnvelop);
+    bg::envelope(_multiP, preEnvelop);
     bg::correct(preEnvelop);
     Point preReference = preEnvelop.min_corner();
     // Place the shape into the (0,0) point in order to create the quadTree
-    translate<MultiPolygon>(multiP, -preReference.x(), -preReference.y());
-    translate<Box>(preEnvelop, -preReference.x(), -preReference.y());
+    ::translate<MultiPolygon>(_multiP, -preReference.x(), -preReference.y());
+    ::translate<Box>(preEnvelop, -preReference.x(), -preReference.y());
     _totalX = preReference.x();
     _totalY = preReference.y();
 
@@ -117,15 +116,15 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision) :
         bg::strategy::transform::rotate_transformer<bg::degree, float, 2, 2> rotator(
             currentAngle);
         currentAngle += rotationAngle;
-        bg::transform(multiP, newP, rotator);
+        bg::transform(_multiP, newP, rotator);
         // Compute the shape Box envelop
         Box envelop;
         bg::envelope(newP, envelop);
         bg::correct(envelop);
         Point reference = envelop.min_corner();
         // Place the shape into the (0,0) point in order to create the quadTree
-        translate<MultiPolygon>(newP, -reference.x(), -reference.y());
-        translate<Box>(envelop, -reference.x(), -reference.y());
+        ::translate<MultiPolygon>(newP, -reference.x(), -reference.y());
+        ::translate<Box>(envelop, -reference.x(), -reference.y());
         treesOffset.push_back(reference);
         // We determine maxDepth thanks to the precision
         // If the deaper quadTree width and height need to be smaller than precision
@@ -156,7 +155,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision) :
  * @param q
  * @return
  */
-bool QuadTree::intersects(const QuadTree& q) const {
+bool QuadTree::intersectsWith(const QuadTree& q) const {
     return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY,
             q._totalX, q._totalY);
 }
@@ -172,7 +171,7 @@ void QuadTree::translater(float x, float y) {
 }
 
 /**
- * @brief QuadTree::rotate rotate a QuadTree
+ * @brief QuadTree::rotater rotate a QuadTree
  * The rotation is around the (0,0) point by default
  * Better rotation is possible with the possibility to choose the rotation point
  * @param angle rotation angle in degree, stored in radians
@@ -186,6 +185,24 @@ void QuadTree::rotater(float angle) {
     newX += treesOffset[newQuad].x();
     newY += treesOffset[newQuad].y();
     currentTree = newQuad;
+}
+
+/**
+ * @brief QuadTree::rotate overload of Shape::rotate for quadtrees
+ * @param x
+ * @param y
+ */
+void QuadTree::rotate(double angle) {
+	rotater(angle);
+}
+
+/**
+ * @brief QuadTree::translate overload of Shape::translate for quadtrees
+ * @param x
+ * @param y
+ */
+void QuadTree::translate(double Tx, double Ty) {
+	translater(Tx, Ty);
 }
 
 /**

@@ -38,7 +38,9 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
 }
 
 /**
- * Stores all of B's polygons into A
+ * @brief mergeMultiP Stores all of B's polygons into A
+ * @param A
+ * @param B
  */
 void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
     for (auto& b : B)
@@ -46,7 +48,7 @@ void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
 }
 
 /**
- * Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
+ * @brief Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
  * a c e
  * b d f
  * 0 0 1
@@ -84,12 +86,13 @@ array<double, 6> Shape::getTransMatrix() const {
 }
 
 /**
- * Initializes the boost model with a set of points.
+ * @brief Initializes the boost model with a set of points.
  * (should be a closed path)
  *
  * Also initializes _oldP1, P2, _indexP1, P2 which should
  * be two points from the shape as for as possible from each other.
  * (will be used to compute transformation matrix)
+ * @param rings vector of rings to be processed
  */
 void Shape::fillShape(vector<Ring>& rings) {
     LOG(debug) << "Received " << rings.size() << " Rings for a Shape" << endl;
@@ -131,9 +134,10 @@ void Shape::fillShape(vector<Ring>& rings) {
 }
 
 /**
- * Change shapes by adding a buffer
+ * @brief Change shapes by adding a buffer
  * (of <buffer>+BEZIER_TOLERANCE px) around each of them.
  * _oldP1, P2, indexP1, P2 are also recalculated according to the new multiPolygon
+ * @param buffer Size of the buffer in pixels
  */
 void Shape::bufferize(double buffer) {
     /*
@@ -168,7 +172,7 @@ void Shape::bufferize(double buffer) {
 }
 
 /**
- * Store points for future transformation reference.
+ * @brief Store points for future transformation reference.
  * Find two points that maximize distance between them.
  * The first point is currently always at index 0.
  * Points are only concidered in the first Polygon of the shape
@@ -187,43 +191,48 @@ void Shape::setOld() {
 }
 
 /**
- * Merge another Shape into the current one
+ * @brief Merge another Shape into the current one
+ * @param s another Shape
  */
 void Shape::mergeWith(const Shape& s) {
     mergeMultiP(_multiP, s._multiP);
 }
 
 /**
- * Rotate a shape by <angle> degrees
+ * @brief Rotate a shape by <angle>
+ * @param angle In degrees
  */
 void Shape::rotate(double angle) {
     ::rotate<MultiPolygon> (_multiP, angle);
 }
 
 /**
- * Translate a shape by (x, y)
+ * @brief Translate a shape by (x, y)
+ * @param x
+ * @param y
  */
 void Shape::translate(double x, double y) {
     ::translate<MultiPolygon> (_multiP, x, y);
 }
 
 /**
- * Compute the rectangular envelope
+ * @brief Compute the rectangular envelope
  * as a Box, in place
+ * @param b Box where the result will be stored
  */
 void Shape::envelope(Box& b) const {
     bg::envelope(_multiP, b);
 }
 
 /**
- * Returns the area of the Shape
+ * @brief Returns the area of the Shape
  */
 int Shape::area() const {
     return bg::area(_multiP);
 }
 
 /**
- * Returns the centroid of the Shape
+ * @brief Returns the centroid of the Shape
  */
 Point Shape::centroid() const {
     Point p;
@@ -232,28 +241,31 @@ Point Shape::centroid() const {
 }
 
 /**
- * Check if the Shape intersects with another
+ * @brief Check if the Shape intersects with another
+ * @param s Another shape
  */
 bool Shape::intersectsWith(const Shape& s) const {
     return bg::overlaps(_multiP, s._multiP);
 }
 
 /**
- * Check if the Shape intersects with a Ring
+ * @brief Check if the Shape intersects with a Ring
+ * @param s A ring
  */
 bool Shape::intersectsWith(const Ring& s) const {
     return bg::overlaps(_multiP, s);
 }
 
 /**
- * Generates the convex hull of the Shape into a polygon
+ * @brief Generates the convex hull of the Shape into a polygon
+ * @param p Polygon where the result will be stored
  */
 void Shape::convexHull(Polygon& p) const {
     bg::convex_hull(_multiP, p);
 }
 
 /**
- * Output function using the svg output methods of BOOST.
+ * @brief Output function using the svg output methods of BOOST.
  * Should be used for debug only.
  * Outputs what the solver actually sees.
  */
@@ -268,9 +280,10 @@ string Shape::debugOutputSVG() const {
 }
 
 /**
- * Rotates object so that its retangular bounding box
+ * @brief Rotates object so that its retangular bounding box
  * will be of minimal area
  * Explores a range of 90 degrees with a fixed step
+ * @param object Shape to be processed
  */
 void rotateToBestAngle(Shape& object) {
     const double ANGLE_MAX = 90.0;
@@ -306,15 +319,70 @@ void rotateToBestAngle(Shape& object) {
         object.rotate(90);
 }
 
-
 const std::string& Shape::getIdentifier() const {
     return Parser::id(_id);
 }
 
+const std::string& Shape::getOut() const {
+	return _out;
+}
 
+Point Shape::getOldP1() const {
+	return _oldP1;
+}
 
+Point Shape::getOldP2() const {
+	return _oldP2;
+}
 
+unsigned Shape::getIndexP1() const {
+	return _indexP1;
+}
 
+unsigned Shape::getIndexP2() const {
+	return _indexP2;
+}
 
+/**
+ * @brief Appends a string to _out
+ * @param s String to be appended
+ */
+void Shape::appendOut(const std::string& s) {
+	_out += s;
+}
 
+/**
+ * @brief Returns the number of polygons
+ */
+unsigned Shape::polyNumber() const {
+	return _multiP.size();
+}
 
+/**
+ * @brief Returns a reference on the nth Polygon
+ * @param n
+ */
+const Polygon& Shape::getNthPoly(unsigned i) const {
+	return _multiP[i];
+}
+
+unsigned Shape::getID() const {
+	return _id;
+}
+
+/**
+ * @brief Add the nth polygon of s into the current shape
+ * @param s A shape
+ * @param n
+ */
+void Shape::addNthPolygon(const Shape& s, unsigned n) {
+	_multiP.push_back(s._multiP[n]);
+}
+
+/**
+ * @brief Reserve space into the MultiPolygon
+ * @param nbPoly Number of polygons to reserve
+ */
+void Shape::reserve(int nbPoly) {
+	_multiP.reserve(nbPoly);
+}

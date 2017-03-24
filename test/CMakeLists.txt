@@ -25,5 +25,5 @@ add_test(InterpolatorTest interpolator)
 add_executable(bitmap bitmapTest.cpp)
 target_link_libraries(bitmap packer_lib)
 add_test(bitmapTest bitmap)
- add_executable(openmp openmp.cpp)
 
+#add_executable(openmp openmp.cpp)

@@ -39,7 +39,7 @@ vector<vector<unsigned> > HoleTransformer::transform() {
 
     for (auto && shape : _shapes)
         for (unsigned i = 0 ; i < shape.polyNumber() ; ++i) {
-            Polygon polygon = shape.getNthPoly(i);
+            const Polygon& polygon = shape.getNthPoly(i);
 
             for (auto && hole : polygon.inners())
                 holes.push_back({hole, shape.getID()});

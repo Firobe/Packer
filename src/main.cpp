@@ -8,6 +8,7 @@
 #include "Parser.hpp"
 #include "Display.hpp"
 #include "CloseEnough.hpp"
+#include "quadtree/QuadTree.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -76,6 +77,18 @@ int main(int argc, char** argv) {
                         (vm["width"].as<int>() == 0) ? Parser::getDims().x() : vm["width"].as<int>(),
                         (vm["height"].as<int>() == 0) ? Parser::getDims().y() : vm["height"].as<int>()));
     //signal(SIGINT, signalHandler);
+
+	/*
+	//CONVERTING SHAPES TO QUADTREES
+	vector<QuadTree> quads;
+	if(vm.count("quadtrees")){
+		LOG(info) << "Generating quadtrees..." << endl;
+		quads.reserve(shapes.size());
+		for(auto && s : shapes)
+			quads.emplace_back(s, vm["quadtrees"].as<float>());
+	}
+	*/
+
     //MAIN PROCESSING
     CE_Parser parser(shapes);
     auto begin = toDo.begin(), end = toDo.end();
@@ -113,6 +126,7 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
     ("conf,c", po::value<string>()->default_value("default.ce"),
      "CloseEnough configuration file (refer to documentation)")
     ("confString,cs", po::value<string>(), "CloseEnough string (used instead of file)")
+    ("quadtrees,q", po::value<float>(), "If used, will use quadtrees with given precision")
     ("debug", po::bool_switch()->default_value(false),
      "Produce debug SVG instead of real one")
     ("buffer", po::value<double>()->default_value(0.),
