@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <fstream>
 
 
@@ -25,11 +26,15 @@ void QuadTree::copy(const QuadTree& q) {
     cout << "quadtree copied" << endl;
     trees.reserve(quadsNumber);
 
-    for (InnerQuadTree* quad : q.trees)
-        trees.push_back(new InnerQuadTree(*quad));
+    for (InnerQuadTree* quad : q.trees){
+		InnerQuadTree* tmp = new InnerQuadTree(*quad);
+		if(tmp == nullptr)
+			throw runtime_error("POUET");
+        trees.push_back(tmp);
+	}
 
     treesOffset = q.treesOffset;
-    bmap = new bitmap(*q.bmap);
+	currentTree = q.currentTree;
     _totalX = q._totalX;
     _totalY = q._totalY;
     _maxDepth = q._maxDepth;
@@ -65,13 +70,9 @@ QuadTree::~QuadTree() {
     for (InnerQuadTree* quad : trees) {
         if (quad != nullptr)
             delete quad;
-
         quad = nullptr;
     }
 
-    if (bmap != nullptr) delete bmap;
-
-    bmap = nullptr;
 }
 
 /**
@@ -82,7 +83,6 @@ QuadTree::~QuadTree() {
  */
 QuadTree::QuadTree(Shape& s, float precision) :
     QuadTree(s._multiP, precision, s._id) {
-    bmap->saveMap(s.getIdentifier());
 }
 
 
@@ -141,12 +141,12 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         // Create the bitmap that will be used in order to create the quadTree
         _maxDepth = maxDepth;
         int size = pow(2, maxDepth);
-        bmap = new bitmap(mult, size, size);
+        bitmap bmap(mult, size, size);
         // QuadTree size is shape envelop size
         trees.push_back(new InnerQuadTree(envelop.min_corner().x() + _totalX,
                                           envelop.min_corner().y() + _totalY,
                                           envelop.max_corner().x() + _totalX, envelop.max_corner().y() + _totalY,
-                                          *bmap, 0, 0, size, 0));
+                                          bmap, 0, 0, size, 0));
     }
 }
 
@@ -217,7 +217,6 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
     for (InnerQuadTree* quad : q.trees)
         s << *quad << std::endl;
 
-    s << " - bitmap : " << std::endl << *q.bmap;
     return s;
 }
 

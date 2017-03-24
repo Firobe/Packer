@@ -19,7 +19,6 @@ private:
     unsigned currentTree = 0;
 
     float _totalX, _totalY;
-    bitmap* bmap;
     int _maxDepth;
     float precision;
 

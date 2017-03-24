@@ -20,7 +20,7 @@ else ()
 	message(STATUS "Will build WITHOUT display support")
 endif ()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O3 -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O0 -g -fopenmp")
 if(CMAKE_BUILD_TYPE STREQUAL "coverage")
   SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
   SET(CMAKE_C_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
@@ -92,7 +92,7 @@ endif ()
 
 add_subdirectory(doc)
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
 add_executable(packer src/main.cpp)
 
 target_link_libraries(packer packer_lib)

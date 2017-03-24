@@ -53,13 +53,13 @@ int main() {
 	int celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
 	cout << "Qd cre : " << celapsed << " microseconds elapsed" << endl;
 
-	/*// Intersection accuracy verification
+	// Intersection accuracy verification
 	int diff = 0;
 	int crit = 0;
 	for(size_t i=0; i<quads.size(); i++) {
 		for(size_t j=i+1; j<quads.size(); j++) {
-			bool b1 = quads[i].intersects(quads[j]);
-			bool b2 = bg::intersects(shapes[i].getMultiP(), shapes[j].getMultiP());
+			bool b1 = quads[i].intersectsWith(quads[j]);
+			bool b2 = shapes[i].intersectsWith(shapes[j]);
 			//cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
 			//cout << "Inter : " << b1 << "-" << b2 << endl;
 			if (b1 && !b2) diff++;
@@ -67,7 +67,7 @@ int main() {
 		}
 	}
 	cout << "QuadTrees approximations errors : " << diff << endl;
-	cout << "QuadTree accuracy critical error : " << crit << endl;*/
+	cout << "QuadTree accuracy critical error : " << crit << endl;
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");
