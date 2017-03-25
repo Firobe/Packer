@@ -21,7 +21,7 @@ add_library(packer_lib STATIC
 	solver/ProbaSolver.cpp
 	solver/ScanlineSolver.cpp)
 
-if (${ENABLE_DISPLAY})
+if (${DISPLAY})
 	find_package(SFML 2.0 REQUIRED system window graphics)
 	target_link_libraries(packer_lib ${SFML_LIBRARIES})
 endif ()

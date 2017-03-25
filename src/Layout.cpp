@@ -83,14 +83,15 @@ const Shape& Layout::operator[](unsigned n) const {
  * @brief Destructor, frees _s and _q if needed
  */
 Layout::~Layout() {
-	cerr << "Destructor : " << this << endl;
     if (_s != nullptr)
         delete _s;
-	_s = nullptr;
+
+    _s = nullptr;
 
     if (_q != nullptr)
         delete _q;
-	_q = nullptr;
+
+    _q = nullptr;
 }
 
 /**

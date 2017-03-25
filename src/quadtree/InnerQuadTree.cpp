@@ -27,21 +27,24 @@ void InnerQuadTree::copy(const InnerQuadTree& q) {
     size = q.size;
 
     if (q.q1 != nullptr)
-		q1 = new InnerQuadTree(*q.q1);
-	else
-		q1 = nullptr;
-	if (q.q2 != nullptr)
-		q2 = new InnerQuadTree(*q.q2);
-	else
-		q2 = nullptr;
-	if (q.q3 != nullptr)
-		q3 = new InnerQuadTree(*q.q3);
-	else
-		q3 = nullptr;
-	if (q.q4 != nullptr)
-		q4 = new InnerQuadTree(*q.q4);
-	else
-		q4 = nullptr;
+        q1 = new InnerQuadTree(*q.q1);
+    else
+        q1 = nullptr;
+
+    if (q.q2 != nullptr)
+        q2 = new InnerQuadTree(*q.q2);
+    else
+        q2 = nullptr;
+
+    if (q.q3 != nullptr)
+        q3 = new InnerQuadTree(*q.q3);
+    else
+        q3 = nullptr;
+
+    if (q.q4 != nullptr)
+        q4 = new InnerQuadTree(*q.q4);
+    else
+        q4 = nullptr;
 
     x1 = q.x1;
     y1 = q.y1;

@@ -25,11 +25,11 @@ private:
 
 private:
     void copy(const QuadTree&);
-	void destroy();
+    void destroy();
 public:
     QuadTree(const QuadTree&); //copy operator
     QuadTree& operator=(const QuadTree&); //assignment operator
-	QuadTree& operator=(QuadTree&& q);
+    QuadTree& operator=(QuadTree&& q);
     ~QuadTree();
 
 public:

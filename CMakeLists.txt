@@ -4,23 +4,38 @@ set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
 set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
+
+# Compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -fopenmp")
+
+# Options
 option(FORCE_UNPACK "Boost unpack forcing" 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
-option(ENABLE_DISPLAY "Display build" 0)
+option(DISPLAY "Display build" 0)
+option(DEBUG "Enable debug compilation flags" 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 
+# Testing enabling
 if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
     enable_testing()
 endif()
 
-if(${ENABLE_DISPLAY})
+# SFML Enabling
+if(${DISPLAY})
 	message(STATUS "Will build with display support")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENABLE_DISPLAY")
 else ()
 	message(STATUS "Will build WITHOUT display support")
 endif ()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O0 -g -fopenmp")
+# Debug enabling (use it with cmake -DDEBUG=1 ..)
+if(${DEBUG})
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+else ()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+endif ()
+
+# Coverage build (use it with cmake -DCMAKE_BUILD_TYPE=coverage ..)
 if(CMAKE_BUILD_TYPE STREQUAL "coverage")
   SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
   SET(CMAKE_C_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
@@ -35,6 +50,7 @@ endif()
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/third_party)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+# Boost finding and / or unpacking
 find_package(Boost ${BOOST_REQUIRED_VERSION} COMPONENTS ${BOOST_LIBS})
 if(NOT Boost_FOUND OR ${FORCE_UNPACK})
 	find_package(Boost)
@@ -89,22 +105,27 @@ else ()
 	include_directories(${Boost_INCLUDE_DIRS})
 	link_directories(${Boost_LIBRARY_DIRS})
 endif ()
+# End of boost wizardry
 
+# Add other targets
 add_subdirectory(doc)
 add_subdirectory(src)
 #add_subdirectory(test)
 add_executable(packer src/main.cpp)
 
 target_link_libraries(packer packer_lib)
-if (${ENABLE_DISPLAY})
+if (${DISPLAY})
 	target_link_libraries(packer ${SFML_LIBRARIES})
 endif ()
 
+# Windows cross-compilation
 if (DEFINED target-os AND target-os STREQUAL "windows")
     message(STATUS "cross compilation")
     target_link_libraries(${EXE_NAME} boost_program_options-mt-s)
     set(EXE_NAME_PLUGIN "${EXE_NAME}.exe")
+# Normal compilation
 else ()
+	# Fome installing
     message(STATUS "Classic compilation")
 	target_link_libraries(${EXE_NAME} boost_program_options)
     set(EXE_NAME_PLUGIN "${EXE_NAME}")
@@ -124,6 +145,8 @@ else ()
 			DESTINATION ~/.config/inkscape/extensions/
 			PERMISSIONS OWNER_READ OWNER_WRITE)
 endif ()
+
+# Copy runtime files to the build directory
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.inx ${CMAKE_BINARY_DIR}/packer.inx @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/extensions/packer.py ${CMAKE_BINARY_DIR}/packer.py @ONLY)
 file(COPY ${CMAKE_SOURCE_DIR}/font.ttf DESTINATION ${CMAKE_BINARY_DIR})

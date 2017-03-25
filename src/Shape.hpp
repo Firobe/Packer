@@ -39,17 +39,17 @@ public:
     }
     Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
-	virtual Shape& operator=(const Shape& s) {
-		_multiP = s._multiP;
-		_oldP1 = s._oldP1;
-		_oldP2 = s._oldP2;
-		_indexP1 = s._indexP1;
-		_indexP2 = s._indexP2;
-		_id = s._id;
-		_out = s._out;
-		return *this;
-	}
-	virtual ~Shape(){}
+    virtual Shape& operator=(const Shape& s) {
+        _multiP = s._multiP;
+        _oldP1 = s._oldP1;
+        _oldP2 = s._oldP2;
+        _indexP1 = s._indexP1;
+        _indexP2 = s._indexP2;
+        _id = s._id;
+        _out = s._out;
+        return *this;
+    }
+    virtual ~Shape() {}
 
     //Getters - Setters
     unsigned getID() const;
