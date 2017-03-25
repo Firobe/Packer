@@ -61,6 +61,7 @@ QuadTree& QuadTree::operator=(const QuadTree& q) {
 
 QuadTree& QuadTree::operator=(QuadTree&& q) {
     if (this != &q) {
+        Shape::operator=(q);
         destroy();
         q.trees = nullptr;
         trees = q.trees;
