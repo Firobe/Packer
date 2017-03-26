@@ -162,9 +162,10 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         int size = pow(2, maxDepth);
         bitmap bmap(mult, size, size);
         // QuadTree size is shape envelop size
-        trees[i] = new InnerQuadTree(envelop.min_corner().x() + _totalX,
-                                     envelop.min_corner().y() + _totalY,
-                                     envelop.max_corner().x() + _totalX, envelop.max_corner().y() + _totalY,
+		trees[i] = new InnerQuadTree(envelop.min_corner().x(),
+									 envelop.min_corner().y(),
+									 envelop.max_corner().x(),
+									 envelop.max_corner().y(),
                                      bmap, 0, 0, size, 0);
     }
 }
@@ -175,6 +176,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
  * @return
  */
 bool QuadTree::intersectsWith(const QuadTree& q) const {
+	cerr << "QuadTree instersect called" << endl;
     return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY,
             q._totalX, q._totalY);
 }
@@ -230,11 +232,12 @@ void QuadTree::translate(double Tx, double Ty) {
  * @param q
  */
 std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
+	s << "QuadTree n° : " << q.getIdentifier() << endl;
     s << "Absolute Position : (" << q._totalX << "," << q._totalY << ") " << endl;
-    s << " - Trees : " << std::endl;
 
+	s << "Trees : " << std::endl;
     for (unsigned i = 0; i < q.quadsNumber; i++)
-        s << *(q.trees[i]) << std::endl;
+		s << " - " << *(q.trees[i]) << std::endl;
 
     return s;
 }

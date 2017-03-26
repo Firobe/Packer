@@ -152,6 +152,7 @@ bool InnerQuadTree::intersectsRec(const InnerQuadTree& q, float offsetX1, float 
     */
     Box b1{{x1 + offsetX1, y1 + offsetY1}, {x2 + offsetX1, y2 + offsetY1}};
     Box b2{{q.x1 + offsetX2, q.y1 + offsetY2}, {q.x2 + offsetX2, q.y2 + offsetY2}};
+	cout << bg::wkt(b1) << ":" << bg::wkt(b2) << endl;
     bool boxIntersects = bg::intersects(b1, b2);
     //cout << boxIntersects << test << endl;
 
@@ -264,10 +265,8 @@ void InnerQuadTree::translater(float x, float y) {
 
 
 std::ostream& operator<<(std::ostream& s, const InnerQuadTree& q) {
-    s << "Boundind box : (" << q.x1 << "," << q.y1 << ") (" << q.x2 << "," << q.y2 << ")" <<
-      endl;
-    s << "Size : " << q.x2 - q.x1 << ":"  << q.y2 - q.y1 << endl;
-    s << "Size : " << q.size << endl;
+	s << "Boundind box : (" << q.x1 << "," << q.y1 << ")-(" << q.x2 << "," << q.y2 << ")    " <<
+		 "Size : " << q.x2 - q.x1 << "," << q.y2 - q.y1 << "    InnerTrees : " << q.size;
     return s;
 }
 

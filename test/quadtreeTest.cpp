@@ -5,6 +5,7 @@
 #include <ctime>
 #include <typeinfo>
 #include <chrono>
+#include <stdexcept>
 
 #include <boost/geometry.hpp>
 // Plante sans cette include pour une raison indeterminé
@@ -27,56 +28,39 @@ int main() {
 	srand(time(0));
 
 	//Will contain the IDs the solver will pack
-    vector<string> toPack;
+	vector<string> toPack;
 
-    //Parsing input file, sending to the parser the ids of the shapes we want to keep
-	Layout shapes(Parser::Parse("mergeGood.svg", toPack), 5);
-	cerr << "Constructed : " << &shapes << endl;
+	//Parsing input file, sending to the parser the ids of the shapes we want to keep
+	auto cstart = Clock::now();
 
-	shapes.erase(0);
+	Layout shapes(Parser::Parse("quadtreeTest.svg", toPack), 5);
+	ASSERT(shapes.size() == 6, "wrong number of shapes");
 
-	cerr << "END OF SCOPE" << endl;
-	//QuadTree &quad = dynamic_cast<QuadTree&>(shapes[0]);
-	//quad.~QuadTree();
-	//shapes[0] = shapes[1];
-
-
-	/*for (Shape& s: shapes) {
-        cout << bg::num_points(s.getMultiP()) << endl;
-		ofstream file;
-		file.open(s.getID() + ".svg");
-		file << s.debugOutputSVG();
-		file.close();
-	}*/
-
-	/*auto cstart = Clock::now();
-	vector<QuadTree> quads;
-	quads.reserve(shapes.size()); //No copy of quadtress needed to place them in the vector
-
-	for (Shape& s: shapes) {
-		quads.emplace_back(s, 5);
-		//cout << " - QuadTree : " << endl << quads.back() << endl;
-		//bitmap(s, 64, 64);
-	}
 	auto cend = Clock::now();
 	int celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
-	cout << "Qd cre : " << celapsed << " microseconds elapsed" << endl;
+	cerr << "Parsing and quadtree creation time : " << celapsed << " microseconds elapsed" << endl;
+
+
+	for(size_t i=0; i<shapes.size(); i++) {
+		QuadTree& quad = dynamic_cast<QuadTree&>(shapes[i]);
+		cout << quad << endl;
+	}
 
 	// Intersection accuracy verification
-	int diff = 0;
-	int crit = 0;
-	for(size_t i=0; i<quads.size(); i++) {
-		for(size_t j=i+1; j<quads.size(); j++) {
-			bool b1 = quads[i].intersectsWith(quads[j]);
-			bool b2 = shapes[i].intersectsWith(shapes[j]);
-			//cout << "Shape : " << shapes[i].getID() << "-" << shapes[j].getID() << endl;
-			//cout << "Inter : " << b1 << "-" << b2 << endl;
-			if (b1 && !b2) diff++;
-			if (!b1 && b2) crit++;
+	cerr << "Testting intersection accuracy :" << endl;
+	bool noerr=true;
+	for(size_t i=0; i<shapes.size(); i++) {
+		for(size_t j=i+1; j<shapes.size(); j++) {
+			if (shapes[i].intersectsWith(shapes[j])) {
+				cerr << " - Error between : " << i << " and " << j << endl;
+				noerr = false;
+			}
 		}
 	}
-	cout << "QuadTrees approximations errors : " << diff << endl;
-	cout << "QuadTree accuracy critical error : " << crit << endl;*/
+	if (noerr)
+		cerr << "No error found" << endl;
+	else
+		cerr << "Some errors where find, see upside for more details" << endl;
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");

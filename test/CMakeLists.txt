@@ -3,6 +3,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test.svg ${CMAKE_CURRENT_BINARY_DIR}/
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple.svg ${CMAKE_CURRENT_BINARY_DIR}/simple.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lots.svg ${CMAKE_CURRENT_BINARY_DIR}/lots.svg @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mergeGood.svg ${CMAKE_CURRENT_BINARY_DIR}/mergeGood.svg @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/quadtreeTest.svg ${CMAKE_CURRENT_BINARY_DIR}/quadtreeTest.svg @ONLY)
 
 
 add_executable(splitter SplitterTest.cpp)
