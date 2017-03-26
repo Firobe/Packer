@@ -25,6 +25,8 @@ using Clock = std::chrono::system_clock;
 using namespace std;
 
 int main() {
+	static bool verboseDebug = false;
+
 	srand(time(0));
 
 	//Will contain the IDs the solver will pack
@@ -40,14 +42,15 @@ int main() {
 	int celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
 	cerr << "Parsing and quadtree creation time : " << celapsed << " microseconds elapsed" << endl;
 
-
-	for(size_t i=0; i<shapes.size(); i++) {
-		QuadTree& quad = dynamic_cast<QuadTree&>(shapes[i]);
-		cout << quad << endl;
+	if (verboseDebug) {
+		for(size_t i=0; i<shapes.size(); i++) {
+			QuadTree& quad = dynamic_cast<QuadTree&>(shapes[i]);
+			cout << quad << endl;
+		}
 	}
 
 	// Intersection accuracy verification
-	cerr << "Testting intersection accuracy :" << endl;
+	cerr << "Testing intersection accuracy" << endl;
 	bool noerr=true;
 	for(size_t i=0; i<shapes.size(); i++) {
 		for(size_t j=i+1; j<shapes.size(); j++) {
@@ -61,6 +64,65 @@ int main() {
 		cerr << "No error found" << endl;
 	else
 		cerr << "Some errors where find, see upside for more details" << endl;
+
+
+	//Translation tests
+	cerr << "Testing Translation accuracy" << endl;
+	shapes[3].translate(-50, -150);
+	ASSERT( shapes[0].intersectsWith(shapes[3]), "First Translation error 1");
+	ASSERT( shapes[1].intersectsWith(shapes[3]), "First Translation error 2");
+	ASSERT(!shapes[2].intersectsWith(shapes[3]), "First Translation error 3");
+	ASSERT( shapes[4].intersectsWith(shapes[3]), "First Translation error 4");
+	ASSERT( shapes[5].intersectsWith(shapes[3]), "First Translation error 5");
+
+	shapes[2].translate(50,-150);
+	ASSERT(shapes[0].intersectsWith(shapes[2]), "Second Translation error 1");
+	ASSERT(shapes[1].intersectsWith(shapes[2]), "Second Translation error 2");
+	ASSERT(shapes[3].intersectsWith(shapes[2]), "Second Translation error 3");
+	ASSERT(shapes[4].intersectsWith(shapes[2]), "Second Translation error 4");
+	ASSERT(shapes[5].intersectsWith(shapes[2]), "Second Translation error 5");
+	cerr << "No error found" << endl;
+
+	// Rotation test
+	cerr << "Testing Rotation accuracy" << endl;
+	Box test;
+	shapes[0].rotate(90);
+	shapes[0].envelope(test);
+	ASSERT(abs(test.min_corner().x() - 0)     < pow(10,-4), "Rotation 1-1");
+	ASSERT(abs(test.min_corner().y() - -99.5) < pow(10,-4), "Rotation 1-2");
+	ASSERT(abs(test.max_corner().x() - 99.5)  < pow(10,-4), "Rotation 1-3");
+	ASSERT(abs(test.max_corner().y() - 0)     < pow(10,-4), "Rotation 1-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+
+	shapes[0].rotate(90);
+	shapes[0].envelope(test);
+	ASSERT(abs(test.min_corner().x() - -99.5) < pow(10,-4), "Rotation 2-1");
+	ASSERT(abs(test.min_corner().y() - -99.5) < pow(10,-4), "Rotation 2-2");
+	ASSERT(abs(test.max_corner().x() - 0)     < pow(10,-4), "Rotation 2-3");
+	ASSERT(abs(test.max_corner().y() - 0)     < pow(10,-4), "Rotation 2-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+
+	shapes[0].rotate(90);
+	shapes[0].envelope(test);
+	ASSERT(abs(test.min_corner().x() - -99.5) < pow(10,-4), "Rotation 3-1");
+	ASSERT(abs(test.min_corner().y() - 0)     < pow(10,-4), "Rotation 3-2");
+	ASSERT(abs(test.max_corner().x() - 0)     < pow(10,-4), "Rotation 3-3");
+	ASSERT(abs(test.max_corner().y() - 99.5)  < pow(10,-4), "Rotation 3-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+
+	shapes[0].rotate(90);
+	shapes[0].envelope(test);
+	ASSERT(abs(test.min_corner().x() - 0)     < pow(10,-4), "Rotation 4-1");
+	ASSERT(abs(test.min_corner().y() - 0)     < pow(10,-4), "Rotation 4-2");
+	ASSERT(abs(test.max_corner().x() - 99.5)  < pow(10,-4), "Rotation 4-3");
+	ASSERT(abs(test.max_corner().y() - 99.5)  < pow(10,-4), "Rotation 4-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+	cerr << "No error found" << endl;
+
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");

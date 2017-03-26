@@ -245,7 +245,6 @@ Point Shape::centroid() const {
  * @param s Another shape
  */
 bool Shape::intersectsWith(const Shape& s) const {
-	cerr << "Shape called" << endl;
     return bg::overlaps(_multiP, s._multiP);
 }
 

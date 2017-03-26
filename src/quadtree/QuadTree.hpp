@@ -20,8 +20,8 @@ private:
 
     float _totalX, _totalY;
     int _maxDepth;
-    float precision;
-
+	float precision;
+	int _area;
 
 private:
     void copy(const QuadTree&);
@@ -33,17 +33,16 @@ public:
     ~QuadTree();
 
 public:
-    QuadTree(Shape&, float precision);
-    QuadTree(MultiPolygon& mult, float precision, unsigned id);
+	QuadTree(Shape&, float precision);
+	QuadTree(MultiPolygon& mult, float precision, unsigned id);
 
 public:
-    void translater(float x, float y);
-    void rotater(float angle);
-
-public:
+	// Overrided algorithms
     void rotate(double degrees) override;
     void translate(double Tx, double Ty) override;
-    bool intersectsWith(const QuadTree&) const;
+	bool intersectsWith(const Shape&) const override;
+	void envelope(Box&) const override;
+	int area() const override;
 
 private:
     void saveTree(std::string filename, int depth);

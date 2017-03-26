@@ -73,7 +73,7 @@ public:
     virtual void translate(double Tx, double Ty);
     virtual void envelope(Box&) const;
     virtual Point centroid() const;
-    virtual int area() const;
+	virtual int area() const;
     virtual bool intersectsWith(const Shape&) const;
     virtual bool intersectsWith(const Ring& s) const;
     virtual void convexHull(Polygon&) const;
