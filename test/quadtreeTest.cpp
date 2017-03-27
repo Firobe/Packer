@@ -86,7 +86,12 @@ int main() {
 	// Rotation test
 	cerr << "Testing Rotation accuracy" << endl;
 	Box test;
-	shapes[0].rotate(90);
+
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
 	shapes[0].envelope(test);
 	ASSERT(abs(test.min_corner().x() - 0)     < pow(10,-4), "Rotation 1-1");
 	ASSERT(abs(test.min_corner().y() - -99.5) < pow(10,-4), "Rotation 1-2");
@@ -94,8 +99,9 @@ int main() {
 	ASSERT(abs(test.max_corner().y() - 0)     < pow(10,-4), "Rotation 1-4");
 	if (verboseDebug)
 		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
-
-	shapes[0].rotate(90);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
 	shapes[0].envelope(test);
 	ASSERT(abs(test.min_corner().x() - -99.5) < pow(10,-4), "Rotation 2-1");
 	ASSERT(abs(test.min_corner().y() - -99.5) < pow(10,-4), "Rotation 2-2");
@@ -103,8 +109,9 @@ int main() {
 	ASSERT(abs(test.max_corner().y() - 0)     < pow(10,-4), "Rotation 2-4");
 	if (verboseDebug)
 		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
-
-	shapes[0].rotate(90);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
 	shapes[0].envelope(test);
 	ASSERT(abs(test.min_corner().x() - -99.5) < pow(10,-4), "Rotation 3-1");
 	ASSERT(abs(test.min_corner().y() - 0)     < pow(10,-4), "Rotation 3-2");
@@ -112,8 +119,9 @@ int main() {
 	ASSERT(abs(test.max_corner().y() - 99.5)  < pow(10,-4), "Rotation 3-4");
 	if (verboseDebug)
 		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
-
-	shapes[0].rotate(90);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
+	shapes[0].rotate(30);
 	shapes[0].envelope(test);
 	ASSERT(abs(test.min_corner().x() - 0)     < pow(10,-4), "Rotation 4-1");
 	ASSERT(abs(test.min_corner().y() - 0)     < pow(10,-4), "Rotation 4-2");
@@ -121,8 +129,124 @@ int main() {
 	ASSERT(abs(test.max_corner().y() - 99.5)  < pow(10,-4), "Rotation 4-4");
 	if (verboseDebug)
 		cout << dynamic_cast<QuadTree&>(shapes[0]) << endl;
+
+
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[5]) << endl;
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].envelope(test);
+	ASSERT(abs(test.min_corner().x() - 0)      < pow(10,-4), "Rotation 5-1");
+	ASSERT(abs(test.min_corner().y() - -199.5) < pow(10,-4), "Rotation 5-2");
+	ASSERT(abs(test.max_corner().x() - 99.5)   < pow(10,-4), "Rotation 5-3");
+	ASSERT(abs(test.max_corner().y() - -100)   < pow(10,-4), "Rotation 5-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[5]) << endl;
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].envelope(test);
+	ASSERT(abs(test.min_corner().x() - -199.5) < pow(10,-4), "Rotation 6-1");
+	ASSERT(abs(test.min_corner().y() - -99.5)  < pow(10,-4), "Rotation 6-2");
+	ASSERT(abs(test.max_corner().x() - -100)   < pow(10,-4), "Rotation 6-3");
+	ASSERT(abs(test.max_corner().y() - 0)      < pow(10,-4), "Rotation 6-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[5]) << endl;
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].envelope(test);
+	ASSERT(abs(test.min_corner().x() - -99.5)  < pow(10,-4), "Rotation 7-1");
+	ASSERT(abs(test.min_corner().y() - 100)    < pow(10,-4), "Rotation 7-2");
+	ASSERT(abs(test.max_corner().x() - 0)      < pow(10,-4), "Rotation 7-3");
+	ASSERT(abs(test.max_corner().y() - 199.5)  < pow(10,-4), "Rotation 7-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[5]) << endl;
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].rotate(30);
+	shapes[5].envelope(test);
+	ASSERT(abs(test.min_corner().x() - 100)    < pow(10,-4), "Rotation 8-1");
+	ASSERT(abs(test.min_corner().y() - 0)      < pow(10,-4), "Rotation 8-2");
+	ASSERT(abs(test.max_corner().x() - 199.5)  < pow(10,-4), "Rotation 8-3");
+	ASSERT(abs(test.max_corner().y() - 99.5)   < pow(10,-4), "Rotation 8-4");
+	if (verboseDebug)
+		cout << dynamic_cast<QuadTree&>(shapes[5]) << endl;
+
 	cerr << "No error found" << endl;
 
+	// centroid test
+	cerr << "Testing centroid accuracy" << endl;
+	Point p;
+
+	p = shapes[0].centroid();
+	ASSERT(abs(p.x() - 49.75)  < pow(10,-4), "Centroid 1-1");
+	ASSERT(abs(p.y() - 49.75)  < pow(10,-4), "Centroid 1-2");
+	shapes[0].rotate(90);
+	p = shapes[0].centroid();
+	ASSERT(abs(p.x() - 49.75)  < pow(10,-4), "Centroid 2-1");
+	ASSERT(abs(p.y() - -49.75) < pow(10,-4), "Centroid 2-2");
+	shapes[0].rotate(90);
+	p = shapes[0].centroid();
+	ASSERT(abs(p.x() - -49.75) < pow(10,-4), "Centroid 3-1");
+	ASSERT(abs(p.y() - -49.75) < pow(10,-4), "Centroid 3-2");
+	shapes[0].rotate(90);
+	p = shapes[0].centroid();
+	ASSERT(abs(p.x() - -49.75) < pow(10,-4), "Centroid 4-1");
+	ASSERT(abs(p.y() - 49.75)  < pow(10,-4), "Centroid 4-2");
+	shapes[0].rotate(90);
+	p = shapes[0].centroid();
+	ASSERT(abs(p.x() - 49.75)  < pow(10,-4), "Centroid 5-1");
+	ASSERT(abs(p.y() - 49.75)  < pow(10,-4), "Centroid 5-2");
+
+
+	p = shapes[5].centroid();
+	ASSERT(abs(p.x() - 149.75)  < pow(10,-4), "Centroid 6-1");
+	ASSERT(abs(p.y() - 49.75)   < pow(10,-4), "Centroid 6-2");
+	shapes[5].rotate(90);
+	p = shapes[5].centroid();
+	ASSERT(abs(p.x() - 49.75)   < pow(10,-4), "Centroid 7-1");
+	ASSERT(abs(p.y() - -149.75) < pow(10,-4), "Centroid 7-2");
+	shapes[5].rotate(90);
+	p = shapes[5].centroid();
+	ASSERT(abs(p.x() - -149.75) < pow(10,-4), "Centroid 8-1");
+	ASSERT(abs(p.y() - -49.75)  < pow(10,-4), "Centroid 8-2");
+	shapes[5].rotate(90);
+	p = shapes[5].centroid();
+	ASSERT(abs(p.x() - -49.75)  < pow(10,-4), "Centroid 9-1");
+	ASSERT(abs(p.y() - 149.75)  < pow(10,-4), "Centroid 9-2");
+	shapes[5].rotate(90);
+	p = shapes[5].centroid();
+	ASSERT(abs(p.x() - 149.75)  < pow(10,-4), "Centroid 10-1");
+	ASSERT(abs(p.y() - 49.75)   < pow(10,-4), "Centroid 10-2");
+
+	cerr << "No error found" << endl;
+
+	// Speed test
+	Layout vertebraeQuad(Parser::Parse("vertebrae.svg", toPack), 5);
+	Layout vertebraePoly(Parser::Parse("vertebrae.svg", toPack));
+
+	cstart = Clock::now();
+	for (int i=0; i<REPEAT; i++)
+		for (Shape& s1: vertebraePoly) {
+			for (Shape& s2 : vertebraePoly)
+				s1.intersectsWith(s2);
+		}
+	cend = Clock::now();
+	celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
+	cout << "Sh int : " << celapsed << " microseconds elapsed" << endl;
+
+	cstart = Clock::now();
+	for (int i=0; i<REPEAT; i++)
+		for (Shape& s1: vertebraeQuad) {
+			for (Shape& s2 : vertebraeQuad)
+				s1.intersectsWith(s2);
+		}
+	cend = Clock::now();
+	int celapsed2 = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
+	cout << "qd int : " << celapsed2 << " microseconds elapsed" << endl;
+	cout << "  - ratio : " << (double) celapsed/celapsed2 << endl;
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");

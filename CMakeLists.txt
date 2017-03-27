@@ -6,7 +6,7 @@ set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
 
 # Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -O0 -g -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -fopenmp")
 
 # Options
 option(FORCE_UNPACK "Boost unpack forcing" 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
@@ -37,7 +37,7 @@ endif ()
 
 # Coverage build (use it with cmake -DCMAKE_BUILD_TYPE=coverage ..)
 if(CMAKE_BUILD_TYPE STREQUAL "coverage")
-  SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage -std=c++11")
   SET(CMAKE_C_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
   if(CMAKE_COMPILER_IS_GNUCXX)
     include(CodeCoverage)

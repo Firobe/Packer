@@ -16,6 +16,7 @@ private:
     static constexpr unsigned quadsNumber = 12; //30 degree angle
     InnerQuadTree** trees;
     std::vector<Point> treesOffset;
+	std::vector<Point> _centroid;
     unsigned currentTree = 0;
 
     float _totalX, _totalY;
@@ -38,11 +39,31 @@ public:
 
 public:
 	// Overrided algorithms
-    void rotate(double degrees) override;
-    void translate(double Tx, double Ty) override;
-	bool intersectsWith(const Shape&) const override;
+	/*void mergeWith(const Shape&) {
+		std::cerr << "mergeWith Not implemented" << std::endl;
+	}*/
+	void rotate(double degrees) override;
+	void translate(double Tx, double Ty) override;
 	void envelope(Box&) const override;
+	Point centroid() const override;
 	int area() const override;
+	bool intersectsWith(const Shape&) const override;
+	bool intersectsWith(const Ring&) const {
+		std::cerr << "intersectsWith Not implemented" << std::endl;
+		return false;
+	}
+	void convexHull(Polygon&) const {
+		std::cerr << "convexHull Not implemented" << std::endl;
+	}
+	void bufferize(double) {
+		std::cerr << "bufferize Not implemented" << std::endl;
+		return;
+	}
+	/*std::array<double, 6> getTransMatrix() const {
+		std::cerr << "getTransMatrix Not implemented" << std::endl;
+		std::array<double, 6> result;
+		return result;
+	}*/
 
 private:
     void saveTree(std::string filename, int depth);

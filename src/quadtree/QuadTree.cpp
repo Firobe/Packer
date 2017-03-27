@@ -4,10 +4,13 @@
 #include <fstream>
 
 
+//TODO: ind the good include for centroid
+#include <boost/geometry.hpp>
+
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/strategies/cartesian/area_surveyor.hpp>
 #include <boost/geometry/algorithms/correct.hpp>
-#include <boost/geometry/algorithms/intersects.hpp>
+#include <boost/geometry/algorithms/centroid.hpp>
 #include <boost/math/constants/constants.hpp>
 
 #include "bitmap.hpp"
@@ -37,6 +40,7 @@ void QuadTree::copy(const QuadTree& q) {
     _maxDepth = q._maxDepth;
 	precision = q.precision;
 	_area = q._area;
+	_centroid = q._centroid;
 }
 
 /**
@@ -75,6 +79,7 @@ QuadTree& QuadTree::operator=(QuadTree&& q) {
         _maxDepth = q._maxDepth;
 		precision = q.precision;
 		_area = q._area;
+		_centroid = q._centroid;
     }
 
     return *this;
@@ -123,6 +128,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
     float currentAngle = 0.f;
     trees = new InnerQuadTree*[quadsNumber];
     treesOffset.reserve(quadsNumber);
+	_centroid.reserve(quadsNumber);
     // Put the shape at the (0,0) point
     Box preEnvelop;
     bg::envelope(_multiP, preEnvelop);
@@ -150,6 +156,9 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         ::translate<MultiPolygon>(newP, -reference.x(), -reference.y());
         ::translate<Box>(envelop, -reference.x(), -reference.y());
         treesOffset.push_back(reference);
+		Point p;
+		bg::centroid(newP, p);
+		_centroid.push_back(p);
         // We determine maxDepth thanks to the precision
         // If the deaper quadTree width and height need to be smaller than precision
         int maxDepth = 0;
@@ -181,6 +190,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
  * @return
  */
 bool QuadTree::intersectsWith(const Shape& s) const {
+	cerr << "QuadTree intersect" << endl;
 	const QuadTree& q = static_cast<const QuadTree &>(s);
     return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY,
             q._totalX, q._totalY);
@@ -195,11 +205,11 @@ bool QuadTree::intersectsWith(const Shape& s) const {
  */
 void QuadTree::rotate(double degrees) {
 	float anglePrecision = 360.0 / quadsNumber;
-	float angle = static_cast<float>(degrees) + anglePrecision*currentTree;
+	float angle = - static_cast<float>(degrees);
 	_totalX -= treesOffset[currentTree].x();
 	_totalY -= treesOffset[currentTree].y();
 
-	unsigned newQuad = (int) round(angle / anglePrecision) % quadsNumber;
+	unsigned newQuad = (int) round((anglePrecision*currentTree - angle) / anglePrecision) % quadsNumber;
 	float newAngle = pi * angle / 180.f;
 	// Compute the tree position
 	float newX = cos(newAngle) * _totalX - sin(newAngle) * _totalY;
@@ -228,6 +238,12 @@ int QuadTree::area() const {
 	return _area;
 }
 
+Point QuadTree::centroid() const {
+	cerr << "QuadTree centroid" << endl;
+	return Point{_totalX + _centroid[currentTree].x(),
+				 _totalY + _centroid[currentTree].y()};
+}
+
 /**
  * @brief operator << get informations about the QuadTree for debugging purpose
  * @param s
@@ -239,8 +255,9 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
 	s << "Current tree (angle) : " << q.currentTree << "(" << 30*q.currentTree << ")" << endl;
 
 	s << "Trees : " << std::endl;
-    for (unsigned i = 0; i < q.quadsNumber; i++)
-		s << " - " << *(q.trees[i]) << std::endl;
+	for (unsigned i = 0; i < q.quadsNumber; i++) {
+		s << " - " << *(q.trees[i]) << "    " << bg::wkt(q.treesOffset[i]) << endl;
+	}
 
     return s;
 }
