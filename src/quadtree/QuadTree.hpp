@@ -28,8 +28,8 @@ private:
     void copy(const QuadTree&);
     void destroy();
 public:
-    QuadTree(const QuadTree&); //copy operator
-    QuadTree& operator=(const QuadTree&); //assignment operator
+	QuadTree(const QuadTree&); //copy operator
+	QuadTree& operator=(const Shape&) override; //assignment operator
     QuadTree& operator=(QuadTree&& q);
     ~QuadTree();
 

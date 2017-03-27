@@ -44,6 +44,9 @@ public:
     Shape& operator[](unsigned n);
     void push_back(const Shape& s);
     void erase(unsigned n);
+	bool useQuads() {
+		return usingQuads;
+	}
 
     class iterator : public std::iterator <
         std::random_access_iterator_tag,

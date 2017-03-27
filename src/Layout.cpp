@@ -40,7 +40,7 @@ void Layout::replaceShapes(std::vector<Shape>* s) {
  */
 void Layout::push_back(const Shape& s) {
     if (usingQuads)
-        _q->push_back(dynamic_cast<const QuadTree&>(s));
+		_q->push_back(dynamic_cast<const QuadTree&>(s));
     else
         _s->push_back(s);
 }

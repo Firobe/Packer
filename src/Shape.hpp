@@ -1,6 +1,7 @@
 #ifndef SHAPE__H
 #define SHAPE__H
 
+#include <iostream> //need to remove after
 #include <string>
 #include <array>
 
@@ -40,6 +41,7 @@ public:
     Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
     virtual Shape& operator=(const Shape& s) {
+		std::cerr << "shape assignement called" << std::endl;
         _multiP = s._multiP;
         _oldP1 = s._oldP1;
         _oldP2 = s._oldP2;

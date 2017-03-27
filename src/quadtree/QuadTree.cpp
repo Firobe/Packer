@@ -56,7 +56,10 @@ QuadTree::QuadTree(const QuadTree& q) : Shape(q) {
  * @param qi
  * @return the quadtree copied
  */
-QuadTree& QuadTree::operator=(const QuadTree& q) {
+QuadTree& QuadTree::operator=(const Shape& s) {
+	cerr << "quadtree assignement called" << endl;
+
+	const QuadTree &q = dynamic_cast<const QuadTree &>(s);
     if (this != &q) {
         destroy();
         Shape::operator=(q);
@@ -191,7 +194,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
  */
 bool QuadTree::intersectsWith(const Shape& s) const {
 	cerr << "QuadTree intersect" << endl;
-	const QuadTree& q = static_cast<const QuadTree &>(s);
+	const QuadTree& q = dynamic_cast<const QuadTree &>(s);
     return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY,
             q._totalX, q._totalY);
 }
