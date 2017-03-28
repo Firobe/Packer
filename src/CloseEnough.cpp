@@ -141,11 +141,14 @@ void Call::operator()(Layout& shapes) {
 
         if (mergeP == "true")
             merge.merge(transformed);
+
+        delete t;
     }
     else if (func.cat == FUNC_SOLVER) {
         Solver* s = SolverRegistry::instanciate(func.name, shapes, params);
         s->solve();
         merge.reset();
+        delete s;
     }
     else
         throw runtime_error("Unknown type function");
