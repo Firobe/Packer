@@ -4,6 +4,20 @@
 using namespace std;
 
 /**
+ * @brief Updates the vector of reference
+ */
+void Layout::generateRefs() {
+    ShapeVec::clear();
+
+    if (usingQuads)
+        for (QuadTree& s : *_q)
+            ShapeVec::emplace_back(s);
+    else
+        for (Shape& s : *_s)
+            ShapeVec::emplace_back(s);
+}
+
+/**
  * @brief Generate a quadtree from each Shape in the parameter
  * @param s Pointer to a vector of raw Shapes
  */
@@ -32,17 +46,24 @@ void Layout::replaceShapes(std::vector<Shape>* s) {
 
         _s = s;
     }
+
+    generateRefs();
 }
 
 /**
  * @brief Implementation of push_back with the classical behaviour
  * @param s Shape or QuadTree to push
  */
-void Layout::push_back(const Shape& s) {
-    if (usingQuads)
-        _q->push_back(dynamic_cast<const QuadTree&>(s));
-    else
-        _s->push_back(s);
+void Layout::push_back(Shape& s) {
+    if (usingQuads) {
+        QuadTree& t = dynamic_cast<QuadTree&>(s);
+        _q->push_back(t);
+        ShapeVec::push_back(t);
+    }
+    else {
+        _s->push_back(std::move(s));
+        ShapeVec::push_back(s);
+    }
 }
 
 /**
@@ -50,17 +71,13 @@ void Layout::push_back(const Shape& s) {
  * @param n
  */
 void Layout::erase(unsigned n) {
+    ShapeVec::erase(ShapeVec::begin() + n);
+    /*
     if (usingQuads)
         _q->erase(_q->begin() + n);
     else
         _s->erase(_s->begin() + n);
-}
-
-/**
- * @brief Return the number of shapes on the layout
- */
-unsigned Layout::size() const {
-    return usingQuads ? _q->size() : _s->size();
+    	*/
 }
 
 /**
@@ -68,7 +85,7 @@ unsigned Layout::size() const {
  * @param n
  */
 Shape& Layout::operator[](unsigned n) {
-    return usingQuads ? (*_q)[n] : (*_s)[n];
+    return ShapeVec::operator[](n);
 }
 
 /**
@@ -76,7 +93,7 @@ Shape& Layout::operator[](unsigned n) {
  * @param n
  */
 const Shape& Layout::operator[](unsigned n) const {
-    return usingQuads ? (*_q)[n] : (*_s)[n];
+    return ShapeVec::operator[](n);
 }
 
 /**
@@ -92,12 +109,16 @@ Layout::~Layout() {
         delete _q;
 
     _q = nullptr;
+
+    for (Shape* s : _copies)
+        delete s;
 }
 
 /**
  * @brief Move assignment operator
  */
 Layout& Layout::operator=(Layout&& o) {
+    ShapeVec::operator=(o);
     copy(o);
     o._q = nullptr;
     o._s = nullptr;
@@ -117,7 +138,7 @@ void Layout::copy(const Layout& o) {
 /**
  * @brief Copy constructor
  */
-Layout::Layout(const Layout& o) {
+Layout::Layout(const Layout& o) : ShapeVec(o) {
     LOG(debug) << "Copying the whole layout !!" << endl;
     copy(o);
 
@@ -132,7 +153,37 @@ Layout::Layout(const Layout& o) {
         _s = new vector<Shape>;
         _q = nullptr;
 
-        for (auto && c : *o._s)
-            (*_s).push_back(c);
+        for (auto && c : *o._s) {
+            Shape s(c);
+            (*_s).push_back(move(s));
+        }
     }
+}
+
+/**
+ * @brief Create a new Shape/QuadTree
+ * and return a reference on it
+ */
+Shape& Layout::newCopy() {
+    Shape* s = nullptr;
+    #pragma omp critical
+    {
+        if (usingQuads)
+            s = new QuadTree();
+        else s = new Shape();
+
+        _copies.push_back(s);
+    }
+    return *s;
+}
+
+/**
+ * @brief Makes a deep copy of tc into c
+ * @param tc Shape to copy
+ * @param c Recipient of copy
+ */
+void Layout::copyShape(Shape& c, const Shape& tc) {
+    if (usingQuads)
+        c.operator = (dynamic_cast<const QuadTree&>(tc));
+    else c.operator = (tc);
 }

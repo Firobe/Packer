@@ -20,6 +20,7 @@
 class Shape {
     friend class QuadTree; //QuadTree can access protected members from every Shape object
     friend class CustomShape;
+    friend class Layout;
 protected:
     MultiPolygon _multiP;
     Point _oldP1, _oldP2;
@@ -29,6 +30,11 @@ protected:
 
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
     void setOld();
+    Shape(const Shape&) = default;
+    virtual Shape& operator=(const Shape& s) {
+        copy(s);
+        return *this;
+    }
 public:
     Shape() {}
     Shape(std::vector<Ring>& r, unsigned id) : _id(id), _out() {
@@ -39,17 +45,13 @@ public:
     }
     Shape(Point P1, Point P2, unsigned i1, unsigned i2, unsigned id) : _oldP1(P1),
         _oldP2(P2), _indexP1(i1), _indexP2(i2), _id(id) {}
-    virtual Shape& operator=(const Shape& s) {
-        _multiP = s._multiP;
-        _oldP1 = s._oldP1;
-        _oldP2 = s._oldP2;
-        _indexP1 = s._indexP1;
-        _indexP2 = s._indexP2;
-        _id = s._id;
-        _out = s._out;
+    virtual Shape& operator=(Shape&& s) {
+        copy(s);
         return *this;
     }
+    Shape(Shape&& s) = default;
     virtual ~Shape() {}
+    void copy(const Shape& s);
 
     //Getters - Setters
     unsigned getID() const;
@@ -73,7 +75,7 @@ public:
     virtual void translate(double Tx, double Ty);
     virtual void envelope(Box&) const;
     virtual Point centroid() const;
-	virtual int area() const;
+    virtual int area() const;
     virtual bool intersectsWith(const Shape&) const;
     virtual bool intersectsWith(const Ring& s) const;
     virtual void convexHull(Polygon&) const;

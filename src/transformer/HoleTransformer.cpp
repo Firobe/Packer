@@ -37,7 +37,7 @@ vector<vector<unsigned> > HoleTransformer::transform() {
     };
     vector<HoleOwner> holes;
 
-    for (auto && shape : _shapes)
+    for (Shape& shape : _shapes)
         for (unsigned i = 0 ; i < shape.polyNumber() ; ++i) {
             const Polygon& polygon = shape.getNthPoly(i);
 

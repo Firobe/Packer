@@ -17,6 +17,7 @@
 #include "QuadTree.hpp"
 #include "InnerQuadTree.hpp"
 #include "common.hpp"
+#include "Log.hpp"
 #include "Shape.hpp"
 
 using namespace std;
@@ -38,9 +39,9 @@ void QuadTree::copy(const QuadTree& q) {
     _totalX = q._totalX;
     _totalY = q._totalY;
     _maxDepth = q._maxDepth;
-	precision = q.precision;
-	_area = q._area;
-	_centroid = q._centroid;
+    precision = q.precision;
+    _area = q._area;
+    _centroid = q._centroid;
 }
 
 /**
@@ -56,7 +57,9 @@ QuadTree::QuadTree(const QuadTree& q) : Shape(q) {
  * @param qi
  * @return the quadtree copied
  */
-QuadTree& QuadTree::operator=(const QuadTree& q) {
+QuadTree& QuadTree::operator=(const Shape& s) {
+    const QuadTree& q = dynamic_cast<const QuadTree&>(s);
+
     if (this != &q) {
         destroy();
         Shape::operator=(q);
@@ -66,7 +69,10 @@ QuadTree& QuadTree::operator=(const QuadTree& q) {
     return *this;
 }
 
-QuadTree& QuadTree::operator=(QuadTree&& q) {
+QuadTree& QuadTree::operator=(Shape&& s) {
+    QuadTree&& q(dynamic_cast < QuadTree && >(s));
+
+    //LOG(info) << q.trees << endl;
     if (this != &q) {
         Shape::operator=(q);
         destroy();
@@ -77,9 +83,9 @@ QuadTree& QuadTree::operator=(QuadTree&& q) {
         _totalX = q._totalX;
         _totalY = q._totalY;
         _maxDepth = q._maxDepth;
-		precision = q.precision;
-		_area = q._area;
-		_centroid = q._centroid;
+        precision = q.precision;
+        _area = q._area;
+        _centroid = q._centroid;
     }
 
     return *this;
@@ -122,13 +128,13 @@ QuadTree::QuadTree(Shape& s, float precision) :
    than precision can be detected by the quadtree
  */
 QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
-	: Shape(mult, id), trees(nullptr), precision(precision) {
-	_area =  bg::area(mult);
+    : Shape(mult, id), trees(nullptr), precision(precision) {
+    _area =  bg::area(mult);
     float rotationAngle = 360.f / quadsNumber;
     float currentAngle = 0.f;
     trees = new InnerQuadTree*[quadsNumber];
     treesOffset.reserve(quadsNumber);
-	_centroid.reserve(quadsNumber);
+    _centroid.reserve(quadsNumber);
     // Put the shape at the (0,0) point
     Box preEnvelop;
     bg::envelope(_multiP, preEnvelop);
@@ -156,9 +162,9 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         ::translate<MultiPolygon>(newP, -reference.x(), -reference.y());
         ::translate<Box>(envelop, -reference.x(), -reference.y());
         treesOffset.push_back(reference);
-		Point p;
-		bg::centroid(newP, p);
-		_centroid.push_back(p);
+        Point p;
+        bg::centroid(newP, p);
+        _centroid.push_back(p);
         // We determine maxDepth thanks to the precision
         // If the deaper quadTree width and height need to be smaller than precision
         int maxDepth = 0;
@@ -176,10 +182,10 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
         int size = pow(2, maxDepth);
         bitmap bmap(mult, size, size);
         // QuadTree size is shape envelop size
-		trees[i] = new InnerQuadTree(envelop.min_corner().x(),
-									 envelop.min_corner().y(),
-									 envelop.max_corner().x(),
-									 envelop.max_corner().y(),
+        trees[i] = new InnerQuadTree(envelop.min_corner().x(),
+                                     envelop.min_corner().y(),
+                                     envelop.max_corner().x(),
+                                     envelop.max_corner().y(),
                                      bmap, 0, 0, size, 0);
     }
 }
@@ -190,8 +196,7 @@ QuadTree::QuadTree(MultiPolygon& mult, float precision, unsigned id)
  * @return
  */
 bool QuadTree::intersectsWith(const Shape& s) const {
-	cerr << "QuadTree intersect" << endl;
-	const QuadTree& q = static_cast<const QuadTree &>(s);
+    const QuadTree& q = static_cast<const QuadTree&>(s);
     return trees[currentTree]->intersectsRec(*q.trees[q.currentTree], _totalX, _totalY,
             q._totalX, q._totalY);
 }
@@ -204,19 +209,19 @@ bool QuadTree::intersectsWith(const Shape& s) const {
  * @param angle rotation angle in degree, stored in radians
  */
 void QuadTree::rotate(double degrees) {
-	float anglePrecision = 360.0 / quadsNumber;
-	float angle = - static_cast<float>(degrees);
-	_totalX -= treesOffset[currentTree].x();
-	_totalY -= treesOffset[currentTree].y();
-
-	unsigned newQuad = (int) round((anglePrecision*currentTree - angle) / anglePrecision) % quadsNumber;
-	float newAngle = pi * angle / 180.f;
-	// Compute the tree position
-	float newX = cos(newAngle) * _totalX - sin(newAngle) * _totalY;
-	float newY = sin(newAngle) * _totalX + cos(newAngle) * _totalY;
-	_totalX = newX + treesOffset[newQuad].x();
-	_totalY = newY + treesOffset[newQuad].y();
-	currentTree = newQuad;
+    float anglePrecision = 360.0 / quadsNumber;
+    float angle = - static_cast<float>(degrees);
+    _totalX -= treesOffset[currentTree].x();
+    _totalY -= treesOffset[currentTree].y();
+    unsigned newQuad = (int) round((anglePrecision * currentTree - angle) / anglePrecision) %
+                       quadsNumber;
+    float newAngle = pi * angle / 180.f;
+    // Compute the tree position
+    float newX = cos(newAngle) * _totalX - sin(newAngle) * _totalY;
+    float newY = sin(newAngle) * _totalX + cos(newAngle) * _totalY;
+    _totalX = newX + treesOffset[newQuad].x();
+    _totalY = newY + treesOffset[newQuad].y();
+    currentTree = newQuad;
 }
 
 /**
@@ -226,22 +231,21 @@ void QuadTree::rotate(double degrees) {
  * @param y
  */
 void QuadTree::translate(double Tx, double Ty) {
-	_totalX += static_cast<float>(Tx);
-	_totalY += static_cast<float>(Ty);
+    _totalX += static_cast<float>(Tx);
+    _totalY += static_cast<float>(Ty);
 }
 
 void QuadTree::envelope(Box& b) const {
-	b = {{_totalX,_totalY},{_totalX+trees[currentTree]->x2,_totalY+trees[currentTree]->y2}};
+    b = {{_totalX, _totalY}, {_totalX + trees[currentTree]->x2, _totalY + trees[currentTree]->y2}};
 }
 
 int QuadTree::area() const {
-	return _area;
+    return _area;
 }
 
 Point QuadTree::centroid() const {
-	cerr << "QuadTree centroid" << endl;
-	return Point{_totalX + _centroid[currentTree].x(),
-				 _totalY + _centroid[currentTree].y()};
+    return Point{_totalX + _centroid[currentTree].x(),
+                 _totalY + _centroid[currentTree].y()};
 }
 
 /**
@@ -250,14 +254,14 @@ Point QuadTree::centroid() const {
  * @param q
  */
 std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
-	s << "QuadTree n° : " << q.getIdentifier() << endl;
+    s << "QuadTree n° : " << q.getIdentifier() << endl;
     s << "Absolute Position : (" << q._totalX << "," << q._totalY << ") " << endl;
-	s << "Current tree (angle) : " << q.currentTree << "(" << 30*q.currentTree << ")" << endl;
+    s << "Current tree (angle) : " << q.currentTree << "(" << 30 * q.currentTree << ")" <<
+      endl;
+    s << "Trees : " << std::endl;
 
-	s << "Trees : " << std::endl;
-	for (unsigned i = 0; i < q.quadsNumber; i++) {
-		s << " - " << *(q.trees[i]) << "    " << bg::wkt(q.treesOffset[i]) << endl;
-	}
+    for (unsigned i = 0; i < q.quadsNumber; i++)
+        s << " - " << *(q.trees[i]) << "    " << bg::wkt(q.treesOffset[i]) << endl;
 
     return s;
 }
