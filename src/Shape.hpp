@@ -1,6 +1,7 @@
 #ifndef SHAPE__H
 #define SHAPE__H
 
+#include <iostream> //need to remove after
 #include <string>
 #include <array>
 
