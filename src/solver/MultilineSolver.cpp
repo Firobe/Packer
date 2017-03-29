@@ -6,7 +6,8 @@
 using namespace std;
 
 void MultilineSolver::preSolve() {
-    sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
+	if(_sort)
+		sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
     // Create the sorted bounding _boxes by decreasing height
     for (unsigned i = 0; i < _shapes.size(); ++i)
@@ -26,8 +27,8 @@ void MultilineSolver::solveBin() {
     }
 
     double currY = _binNumber * Parser::getDims().y(), currX = 0, offset;
-    offset = _boxes[0].max_corner().y() -
-             _boxes[0].min_corner().y(); //height of the working line
+	offset = _boxes[0].max_corner().y() -
+				 _boxes[0].min_corner().y(); //height of the working line
 
     for (list<unsigned>::iterator i = _indices.begin() ; i != _indices.end() ; ++i) {
         if (currX + _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x() >
@@ -36,7 +37,8 @@ void MultilineSolver::solveBin() {
             //we create a new line under the first box of the line
             currY += offset;
             currX = 0;
-            offset = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
+			if(_sort)
+				offset = _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y();
 
             if (currY + offset > Parser::getDims().y() * (_binNumber + 1)) {
                 //if space is missing in current bin,
@@ -50,6 +52,8 @@ void MultilineSolver::solveBin() {
         translate<Box>(_boxes[*i], currX - _boxes[*i].min_corner().x(),
                        currY - _boxes[*i].min_corner().y());
         currX += _boxes[*i].max_corner().x() - _boxes[*i].min_corner().x();
+		if(!_sort)
+			offset = max(offset,  _boxes[*i].max_corner().y() - _boxes[*i].min_corner().y());
         markPacked(i);
     }
 }
