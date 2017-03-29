@@ -170,12 +170,13 @@ void makeRule(qi::rule<std::string::iterator, std::string(), ascii::space_type>&
  * and error handler
  */
 CE_Parser::CE_Parser(Layout& s) : CE_Parser::base_type(start, "program start") {
+	static qi::real_parser<double, qi::strict_real_policies<double>> const strict_double;
     TransformerRegistry::init();
     SolverRegistry::init();
     //GRAMMAR BEGIN
     string_			   %= lexeme[+(char_ - '"' - ',' - '(' - ')' - '=')];
-    value			   %= int_
-                          | double_
+    value			   %= strict_double
+                          | int_
                           | string_;
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;
