@@ -19,6 +19,7 @@ protected:
 public:
     Transformer(Layout& s, const std::vector<Parameter>&) : _shapes(s) {}
     virtual std::vector<std::vector<unsigned> > transform() = 0;
+    virtual ~Transformer() {}
 };
 
 #endif

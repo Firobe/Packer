@@ -304,7 +304,7 @@ double compressionRatio(Layout& _shapes) {
     //Computing the sum of every shape area
     double sum = 0.;
 
-    for (auto && s : _shapes)
+    for (Shape& s : _shapes)
         sum += s.area();
 
     LOG(debug) << "Minimal area is " << sum << endl;

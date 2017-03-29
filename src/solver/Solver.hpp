@@ -47,6 +47,7 @@ public:
     Solver(Layout& s, const std::vector<Parameter>&) : _shapes(s),
         _binNumber(0) {}
     void solve();
+    virtual ~Solver() {}
 };
 
 /**

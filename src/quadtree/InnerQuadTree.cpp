@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
 #include <boost/geometry.hpp>
 // Plante sans cette include pour une raison indeterminé
@@ -264,10 +265,11 @@ void InnerQuadTree::translater(float x, float y) {
 
 
 std::ostream& operator<<(std::ostream& s, const InnerQuadTree& q) {
-    s << "Boundind box : (" << q.x1 << "," << q.y1 << ") (" << q.x2 << "," << q.y2 << ")" <<
-      endl;
-    s << "Size : " << q.x2 - q.x1 << ":"  << q.y2 - q.y1 << endl;
-    s << "Size : " << q.size << endl;
+    s << fixed << setprecision(2);
+    s << setw(6) << "Boundind box : (" << setw(6) << q.x1 << "," << setw(
+          6) << q.y1 << ")-(" << setw(6) << q.x2 << "," << setw(6) << q.y2 << ")    " <<
+      "Size : (" << setw(8) << (q.x2 - q.x1) << "," << setw(8) << (q.y2 - q.y1) <<
+      ")    InnerTrees : " << q.size;
     return s;
 }
 

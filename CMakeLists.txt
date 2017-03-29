@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 project(free_packingPFA)
 set(BOOST_LIBS program_options)
 set(LIBS_DIR third_party/boost/stage/lib/)
@@ -9,9 +9,9 @@ set(EXE_NAME "packer")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -fopenmp")
 
 # Options
-option(FORCE_UNPACK "Boost unpack forcing" 0) #Set to 1 to force local installation of Boost (ensure that it will take priority)
-option(DISPLAY "Display build" 0)
-option(DEBUG "Enable debug compilation flags" 0)
+option(FORCE_UNPACK "Boost unpack forcing") #Set to 1 to force local installation of Boost (ensure that it will take priority)
+option(DISPLAY "Display build")
+option(DEBUG "Enable debug compilation flags")
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules)
 
@@ -30,6 +30,7 @@ endif ()
 
 # Debug enabling (use it with cmake -DDEBUG=1 ..)
 if(${DEBUG})
+        message(STATUS "Will build sebug configuration")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
@@ -37,7 +38,7 @@ endif ()
 
 # Coverage build (use it with cmake -DCMAKE_BUILD_TYPE=coverage ..)
 if(CMAKE_BUILD_TYPE STREQUAL "coverage")
-  SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_CXX_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage -std=c++11")
   SET(CMAKE_C_FLAGS "-g -O0 -pg -fprofile-arcs -ftest-coverage")
   if(CMAKE_COMPILER_IS_GNUCXX)
     include(CodeCoverage)
@@ -110,7 +111,7 @@ endif ()
 # Add other targets
 add_subdirectory(doc)
 add_subdirectory(src)
-#add_subdirectory(test)
+add_subdirectory(test)
 add_executable(packer src/main.cpp)
 
 target_link_libraries(packer packer_lib)

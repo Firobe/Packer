@@ -386,3 +386,13 @@ void Shape::addNthPolygon(const Shape& s, unsigned n) {
 void Shape::reserve(int nbPoly) {
     _multiP.reserve(nbPoly);
 }
+
+void Shape::copy(const Shape& s) {
+    _multiP = s._multiP;
+    _oldP1 = s._oldP1;
+    _oldP2 = s._oldP2;
+    _indexP1 = s._indexP1;
+    _indexP2 = s._indexP2;
+    _id = s._id;
+    _out = s._out;
+}

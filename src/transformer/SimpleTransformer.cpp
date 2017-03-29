@@ -10,6 +10,7 @@
 #include "Merger.hpp"
 #include "Parser.hpp"
 #include "Display.hpp"
+#include "quadtree/QuadTree.hpp"
 
 using namespace std;
 
@@ -48,6 +49,8 @@ void applyTrans(Shape& a, Shape& b, double alpha, double beta, double offset, Bo
  * (uses precomputed boxA)
  */
 double getClose(Shape& shapeA, Shape& shapeB, Box& boxA) {
+    //QuadTree& q1 = dynamic_cast<QuadTree &>(shapeA);
+    //QuadTree& q2 = dynamic_cast<QuadTree &>(shapeB);
     //Dichotomy to find closest non-intersecting position (by translating on the x-axis)
     double x1, x2, mid;
     x1 = boxA.min_corner().x();
@@ -89,40 +92,43 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
         unsigned bestJ = j;
         //Move shapes
         bool merged = false; //Check if a merge occured
-        #pragma omp parallel for schedule(dynamic, 1) collapse(3)
+        #pragma omp parallel
+        {
+            Shape& shapeA(_shapes.newCopy());
+            Shape& shapeB(_shapes.newCopy());
+            #pragma omp for schedule(dynamic, 1) collapse(3)
 
-        for (int alpha = 0; alpha < 360; alpha += _rotateStep) { //Rotate first shape
-            for (int beta = 0.; beta < 360 ; beta += _rotateStep) { //Rotate second shape
-                for (int offset = 0; offset < _translateNb ; ++offset) { //Trying different offsets
-                    Box boxA, boxB;
-                    Shape shapeA, shapeB;
-                    shapeA = _shapes[i];
-                    shapeB = _shapes[j];
-                    applyTrans(shapeA, shapeB, alpha, beta, static_cast<double>(offset) / _translateNb, boxA,
-                               boxB, 0, true);
-                    double mid = getClose(shapeA, shapeB, boxA);
-                    double ratio = _criteria(shapeA, shapeB, _rentability);
-                    shapeA.mergeWith(shapeB);
-                    shapeA.envelope(boxA);
-                    bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() <
-                                     Parser::getDims().x() and boxA.max_corner().y() -
-                                     boxA.min_corner().y() < Parser::getDims().y();
+            for (int alpha = 0; alpha < 360; alpha += _rotateStep) { //Rotate first shape
+                for (int beta = 0.; beta < 360 ; beta += _rotateStep) { //Rotate second shape
+                    for (int offset = 0; offset < _translateNb ; ++offset) { //Trying different offsets
+                        Box boxA, boxB;
+                        _shapes.copyShape(shapeA, _shapes[i]);
+                        _shapes.copyShape(shapeB, _shapes[j]);
+                        applyTrans(shapeA, shapeB, alpha, beta, static_cast<double>(offset) / _translateNb, boxA,
+                                   boxB, 0, true);
+                        double mid = getClose(shapeA, shapeB, boxA);
+                        double ratio = _criteria(shapeA, shapeB, _rentability);
+                        shapeA.mergeWith(shapeB);
+                        shapeA.envelope(boxA);
+                        bool withinBin = boxA.max_corner().x() - boxA.min_corner().x() <
+                                         Parser::getDims().x() and boxA.max_corner().y() -
+                                         boxA.min_corner().y() < Parser::getDims().y();
 
-                    //Computes intersection efficiency
-                    //Store the best candidate
-                    if (ratio > bestArea and withinBin) {
-                        merged = true;
-                        bestArea = ratio;
-                        bestAlpha = alpha;
-                        bestBeta = beta;
-                        bestOffset = offset;
-                        bestMid = mid;
-                        bestJ = j;
+                        //Computes intersection efficiency
+                        //Store the best candidate
+                        if (ratio > bestArea and withinBin) {
+                            merged = true;
+                            bestArea = ratio;
+                            bestAlpha = alpha;
+                            bestBeta = beta;
+                            bestOffset = offset;
+                            bestMid = mid;
+                            bestJ = j;
+                        }
                     }
                 }
             }
         }
-
         string textBase = "SimpleTransformer (" + to_string(i + 1) +
                           "/" + to_string(_shapes.size() - 1) + ")";
         Box boxA, boxB;
