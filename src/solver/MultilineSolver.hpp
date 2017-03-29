@@ -14,17 +14,15 @@
 class MultilineSolver : public Solver {
 private:
     std::vector<Box> _boxes;
-	bool _sort;
+    bool _sort;
     void preSolve() override;
     void solveBin() override;
 public:
     MultilineSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p),
         _boxes(v.size()) {
-			int tmpSort = true;
-			LOG(info) << "COUCOUILLE = " << getParameter(p, "sort", tmpSort) << std::endl;
-			_sort = (tmpSort == true);
-			LOG(info) << "CACA = " << _sort << std::endl;
-	}
+        int tmpSort = true;
+        _sort = (tmpSort == true);
+    }
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <array>
 
 #include "common.hpp"
+#include "Matrix.hpp"
 
 /**
  * Shape class. Designed to be
@@ -71,6 +72,8 @@ public:
     const Polygon& getNthPoly(unsigned i) const;
 
     //Algorithms
+    void applyMatrix(Matrix& transM, bool = false);
+    void restore();
     virtual void mergeWith(const Shape&);
     virtual void rotate(double degrees);
     virtual void translate(double Tx, double Ty);

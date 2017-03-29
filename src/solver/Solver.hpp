@@ -49,7 +49,9 @@ public:
         _binNumber(0) {}
     void solve();
     virtual ~Solver() {}
-	unsigned getBinNb() { return _binNumber; }
+    unsigned getBinNb() {
+        return _binNumber;
+    }
 };
 
 /**

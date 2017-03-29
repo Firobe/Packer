@@ -173,7 +173,7 @@ void makeRule(qi::rule<std::string::iterator, std::string(), ascii::space_type>&
  * and error handler
  */
 CE_Parser::CE_Parser(Layout& s) : CE_Parser::base_type(start, "program start") {
-	static qi::real_parser<double, qi::strict_real_policies<double>> const strict_double;
+    static qi::real_parser<double, qi::strict_real_policies<double>> const strict_double;
     TransformerRegistry::init();
     SolverRegistry::init();
     //GRAMMAR BEGIN
