@@ -2,6 +2,7 @@
 #include <random>
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 #include <boost/geometry/algorithms/distance.hpp>
 
