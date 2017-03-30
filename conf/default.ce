@@ -1,4 +1,5 @@
 HoleTransformer();
 DO 2 TIMES
-	SimpleTransformer(rotate_step=30, criteria=intersection);
+	SimpleTransformer(rotate_step=30, criteria=box, rentability=0.1);
 ScanlineSolver();
+ProbaSolver(amplitude_proba=40., initial_placement=0);

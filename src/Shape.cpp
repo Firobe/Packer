@@ -78,8 +78,8 @@ array<double, 6> Shape::getTransMatrix() const {
     //Translate to origin, rotate, translate to new position
     array<double, 6> result;
     result[0] = c;
-    result[1] = s;
-    result[2] = -s;
+    result[1] = -s;
+    result[2] = s;
     result[3] = c;
     result[4] = - _oldP1.x() * c + _oldP1.y() * s + newP1.x();
     result[5] = - _oldP1.x() * s - _oldP1.y() * c + newP1.y();
@@ -400,8 +400,6 @@ void Shape::copy(const Shape& s) {
 
 void Shape::restore() {
     Matrix m = getTransMatrix();
-    m[1] *= -1; //Fuck Inkscape
-    m[2] *= -1;
     applyMatrix(m, true);
 }
 
@@ -409,6 +407,12 @@ void Shape::applyMatrix(Matrix& transM, bool inverse) {
     static const double pi = boost::math::constants::pi<double>();
     double theta = atan2(transM[1], transM[3]);
 
+    /*
+    if(fromTrans){
+    	transM[1] *= -1; //Fuck Inkscape
+    	transM[2] *= -1;
+    }
+    */
     if (inverse) {
         translate(-transM[4], -transM[5]);
         rotate(-theta * 180. / pi);

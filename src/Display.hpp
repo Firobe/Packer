@@ -87,6 +87,7 @@ class Display {
     }
     unsigned byIdentifier(unsigned identifier);
     void reset();
+    void updateAll();
 public:
     static void Init(const Layout& s) {
         _enabled = true;
@@ -95,6 +96,10 @@ public:
     static void Update(unsigned id) {
         if (_enabled)
             getInstance().updateShape(getInstance().byIdentifier(id));
+    }
+    static void UpdateAll() {
+        if (_enabled)
+            getInstance().updateAll();
     }
     static void Reset() {
         if (_enabled)
@@ -112,6 +117,7 @@ public:
 struct Display {
     static void Init(const std::vector<Shape>&) {}
     static void Update(unsigned) {}
+    static void UpdateAll() {}
     static void Reset() {}
     static void Text(const std::string&) {}
 };

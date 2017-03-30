@@ -23,7 +23,7 @@ private:
 
     void nextStep();
     double swagRNG() const;
-    bool shapeInBin(unsigned) const;
+    bool shapeInBin(unsigned, int = -1) const;
     void applySolution(Solution& s);
     void genSolution(Solution& s) const;
     double quality() const;

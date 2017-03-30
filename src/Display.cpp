@@ -48,6 +48,11 @@ void Display::updateShape(unsigned i) {
     _mustRender = true;
 }
 
+void Display::updateAll() {
+    for (unsigned i = 0 ; i < _shapes.size() ; ++i)
+        updateShape(i);
+}
+
 void Display::loop() {
     sf::Event event;
     _window.setActive(true);

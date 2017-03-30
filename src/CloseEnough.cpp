@@ -128,26 +128,39 @@ void callEverything(vector<Call> block, int n, Layout* shapes) {
  */
 void Call::operator()(Layout& shapes) {
     static Merger merge(shapes);
+    static bool needReset = false;
 
     if (func.cat == FUNC_TRANSFORMER) {
         vector<vector<unsigned>> transformed;
         string mergeP;
 
         if (!getParameter(params, "merge", mergeP))
-            mergeP = "true";
+            mergeP = "1";
 
         Transformer* t = TransformerRegistry::instanciate(func.name, shapes, params);
         transformed = t->transform();
 
-        if (mergeP == "true")
+        if (mergeP == "1") {
             merge.merge(transformed);
+            needReset = true;
+        }
 
         delete t;
     }
     else if (func.cat == FUNC_SOLVER) {
         Solver* s = SolverRegistry::instanciate(func.name, shapes, params);
+        string reset = "true";
+
+        if (!getParameter(params, "reset", reset))
+            reset = "true";
+
         s->solve();
-        merge.reset();
+
+        if (reset == "true" and needReset) {
+            merge.reset();
+            needReset = false;
+        }
+
         delete s;
     }
     else

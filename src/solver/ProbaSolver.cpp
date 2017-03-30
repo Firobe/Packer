@@ -35,23 +35,29 @@ void ProbaSolver::preSolve() {
 void ProbaSolver::solveBin() {
     Solution current;
     genSolution(current);
+    LOG(info) << "Doing random steps";
 
-    for (int i = 0 ; i < 1000 ; ++i) {
-        Display::Text("Prout");
-
+    for (int i = 0 ; i < 50 ; ++i) {
         for (unsigned step = 0 ; step < 20 ; ++step)
             nextStep();
 
         Solution newS;
         genSolution(newS);
 
-        if (newS.quality >= current.quality) applySolution(current);
-        else current = newS;
-
-        Display::Reset();
-        //this_thread::sleep_for(chrono::milliseconds(100));
+        if (newS.quality >= current.quality) {
+            Display::Text("Iteration " + to_string(i) + " discarded");
+            applySolution(current);
+            LOG(info) << ".";
+        }
+        else {
+            Display::UpdateAll();
+            Display::Text("Iteration " + to_string(i) + " accepted");
+            current = newS;
+            LOG(info) << "!";
+        }
     }
 
+    LOG(info) << endl;
     _indices.clear();
 }
 
@@ -61,10 +67,13 @@ double ProbaSolver::swagRNG() const {
     return distribution(generator);
 }
 
-bool ProbaSolver::shapeInBin(unsigned i) const {
+bool ProbaSolver::shapeInBin(unsigned i, int binNb) const {
+    if (binNb == -1)
+        binNb = _binNbs[i];
+
     Box e;
     _shapes[i].envelope(e);
-    double minHeight = Parser::getDims().y() * SPACE_COEF * _binNbs[i];
+    double minHeight = Parser::getDims().y() * SPACE_COEF * binNb;
     return e.min_corner().x() >= 0 and e.max_corner().x() <= Parser::getDims().x()
            and e.min_corner().y() >= minHeight and
            e.max_corner().y() <= minHeight + Parser::getDims().y();
@@ -76,18 +85,17 @@ bool ProbaSolver::shapeInBin(unsigned i) const {
 void ProbaSolver::nextStep() {
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
         double angle = (1 - (rand() % 2) * 2) * swagRNG() * 100;
-        double tX = (0.8 - (rand() % 2) * 2) * swagRNG() * Parser::getDims().x() / 10,
-               tY = (0.8 - (rand() % 2) * 2) * swagRNG() * Parser::getDims().y() / 10;
+        double tX = (0.9 - (rand() % 2) * 2) * swagRNG() * Parser::getDims().x() / 10,
+               tY = (0.9 - (rand() % 2) * 2) * swagRNG() * Parser::getDims().y() / 10;
         _shapes[i].translate(-_centroids[i].x(), -_centroids[i].y());
         _shapes[i].rotate(angle);
         _shapes[i].translate(_centroids[i].x() + tX, _centroids[i].y() + tY);
-        bool invalid = false;
+        bool invalid = !shapeInBin(i);
 
         for (unsigned j = 0 ; !invalid and j < _shapes.size() ; ++j)
-            if (i != j and _shapes[i].intersectsWith(_shapes[j]))
+            if (i != j and _binNbs[i] == _binNbs[j] and _shapes[i].intersectsWith(_shapes[j]))
                 invalid = true;
 
-        invalid = invalid || !shapeInBin(i);
         translate(_centroids[i], tX, tY);
 
         if (invalid) {
@@ -97,7 +105,6 @@ void ProbaSolver::nextStep() {
             _shapes[i].translate(_centroids[i].x() - tX, _centroids[i].y() - tY);
         }
 
-        Display::Update(i);
         //this_thread::sleep_for(chrono::milliseconds(2));
     }
 }
