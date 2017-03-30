@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <cerrno>
 
 #include <boost/geometry/algorithms/buffer.hpp>
 #include <boost/geometry/algorithms/area.hpp>
@@ -21,6 +22,8 @@
 #include "Interpolator.hpp"
 
 using namespace std;
+
+static const double pi = boost::math::constants::pi<double>();
 
 /**
  * Defines a comparator for Rings
@@ -42,10 +45,39 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
  * @param A
  * @param B
  */
-void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
+void Shape::mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
     for (auto& b : B)
         A.push_back(b);
 }
+
+array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1, Point dst2) const {
+	double c, s, x1, y1, x2, y2, n1, n2;
+	//Normalize vectors (x1, y1), (x2, y2)
+	n1 = bg::distance(src1, src2);
+	n2 = bg::distance(dst1, dst2);
+
+	if (!floatEqual(n1, n2, 10e-6))
+		throw runtime_error("Point order was modified or the shape was scaled");
+
+	x1 = (src2.x() - src1.x()) / n1;
+	y1 = (src2.y() - src1.y()) / n1;
+	x2 = (dst2.x() - dst1.x()) / n2;
+	y2 = (dst2.y() - dst1.y()) / n2;
+	//Computing cos & sin with dot products
+	c = x1 * x2 + y1 * y2;
+	s = x1 * y2 - x2 * y1;
+	//Resulting matrix corresponding to the following operations:
+	//Translate to origin, rotate, translate to new position
+	array<double, 6> result;
+	result[0] = c;
+	result[1] = s;
+	result[2] = -s;
+	result[3] = c;
+	result[4] = - src1.x() * c + src1.y() * s + dst1.x();
+	result[5] = - src1.x() * s - src1.y() * c + dst1.y();
+	return result;
+}
+
 
 /**
  * @brief Returns [a, b, c, d, e, f] corresponding to the 3*3 matrix :
@@ -56,33 +88,7 @@ void mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-    Point newP1 = _multiP[0].outer()[_indexP1];
-    Point newP2 = _multiP[0].outer()[_indexP2];
-    double c, s, x1, y1, x2, y2, n1, n2;
-    //Normalize vectors (x1, y1), (x2, y2)
-    n1 = bg::distance(_oldP1, _oldP2);
-    n2 = bg::distance(newP1, newP2);
-
-    if (!floatEqual(n1, n2, 10e-6))
-        throw runtime_error("Point order was modified or the shape was scaled");
-
-    x1 = (_oldP2.x() - _oldP1.x()) / n1;
-    y1 = (_oldP2.y() - _oldP1.y()) / n1;
-    x2 = (newP2.x() - newP1.x()) / n2;
-    y2 = (newP2.y() - newP1.y()) / n2;
-    //Computing cos & sin with dot products
-    c = x1 * x2 + y1 * y2;
-    s = x1 * y2 - x2 * y1;
-    //Resulting matrix corresponding to the following operations:
-    //Translate to origin, rotate, translate to new position
-    array<double, 6> result;
-    result[0] = c;
-    result[1] = s;
-    result[2] = -s;
-    result[3] = c;
-    result[4] = - _oldP1.x() * c + _oldP1.y() * s + newP1.x();
-    result[5] = - _oldP1.x() * s - _oldP1.y() * c + newP1.y();
-    return result;
+	return getTransMatrix(_oldP1, _oldP2, _multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2]);
 }
 
 /**
@@ -311,7 +317,7 @@ void rotateToBestAngle(Shape& object) {
     }
 
     object.rotate(bestAngle - currAngle);
-    object.envelope(currBox);
+	object.envelope(currBox);
 
     // To have height > width
     if (abs(currBox.max_corner().y() - currBox.min_corner().y()) < abs(
@@ -395,4 +401,31 @@ void Shape::copy(const Shape& s) {
     _indexP2 = s._indexP2;
     _id = s._id;
     _out = s._out;
+	_backupP1 = s._backupP1;
+	_backupP2 = s._backupP2;
+}
+
+void Shape::savePos() {
+	_backupP1 = _multiP[0].outer()[_indexP1];
+	_backupP2 = _multiP[0].outer()[_indexP2];
+}
+
+void Shape::restorePos() {
+	array<double, 6> transformMatrix;
+	transformMatrix = getTransMatrix(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2], _backupP1, _backupP2);
+	double c = transformMatrix[0];
+	double angle;
+
+	errno = 0;
+	if (c >= 1.l)
+		angle = 0.l;
+	else if (c <= -1.l)
+		angle = 180.l;
+	else
+		angle = acos(c) * 180 / pi;
+	if(errno == EDOM)
+		throw string(strerror(errno));
+
+	rotate(angle);
+	translate(transformMatrix[4], transformMatrix[5]);
 }

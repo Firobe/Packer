@@ -223,6 +223,40 @@ int main() {
 
 	cerr << "No error found" << endl;
 
+	// getTransformMatrix test
+	cerr << "Testing getTransMatrix accuracy" << endl;
+	array<double, 6> transformMatrix;
+
+	shapes[0].rotate(90);
+	transformMatrix = shapes[0].getTransMatrix();
+	ASSERT(abs(transformMatrix[0] - 0)  < pow(10,-4), "transformMatrix 1-1");
+	ASSERT(abs(transformMatrix[1] - 1)  < pow(10,-4), "transformMatrix 1-2");
+	ASSERT(abs(transformMatrix[2] - -1) < pow(10,-4), "transformMatrix 1-3");
+	ASSERT(abs(transformMatrix[3] - 0)  < pow(10,-4), "transformMatrix 1-4");
+	ASSERT(abs(transformMatrix[4] - 0)  < pow(10,-4), "transformMatrix 1-5");
+	ASSERT(abs(transformMatrix[5] - 0)  < pow(10,-4), "transformMatrix 1-6");
+
+	shapes[0].translate(-100,-100);
+	transformMatrix = shapes[0].getTransMatrix();
+	ASSERT(abs(transformMatrix[0] - 0)    < pow(10,-4), "transformMatrix 2-1");
+	ASSERT(abs(transformMatrix[1] - 1)    < pow(10,-4), "transformMatrix 2-2");
+	ASSERT(abs(transformMatrix[2] - -1)   < pow(10,-4), "transformMatrix 2-3");
+	ASSERT(abs(transformMatrix[3] - 0)    < pow(10,-4), "transformMatrix 2-4");
+	ASSERT(abs(transformMatrix[4] - -100) < pow(10,-4), "transformMatrix 2-5");
+	ASSERT(abs(transformMatrix[5] - -100) < pow(10,-4), "transformMatrix 2-6");
+
+	shapes[3].rotate(90);
+	shapes[3].translate(0,50);
+	transformMatrix = shapes[3].getTransMatrix();
+	ASSERT(abs(transformMatrix[0] - 0)    < pow(10,-4), "transformMatrix 3-1");
+	ASSERT(abs(transformMatrix[1] - 1)    < pow(10,-4), "transformMatrix 3-2");
+	ASSERT(abs(transformMatrix[2] - -1)   < pow(10,-4), "transformMatrix 3-3");
+	ASSERT(abs(transformMatrix[3] - 0)    < pow(10,-4), "transformMatrix 3-4");
+	ASSERT(abs(transformMatrix[4] - -150) < pow(10,-4), "transformMatrix 3-5");
+	ASSERT(abs(transformMatrix[5] - 100)  < pow(10,-4), "transformMatrix 3-6");
+
+	cerr << "No error found" << endl;
+
 	// Speed test
 	Layout vertebraeQuad(Parser::Parse("vertebrae.svg", toPack), 5);
 	Layout vertebraePoly(Parser::Parse("vertebrae.svg", toPack));
@@ -235,7 +269,7 @@ int main() {
 		}
 	cend = Clock::now();
 	celapsed = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
-	cout << "Sh int : " << celapsed << " microseconds elapsed" << endl;
+	cerr << "Sh int : " << celapsed << " microseconds elapsed" << endl;
 
 	cstart = Clock::now();
 	for (int i=0; i<REPEAT; i++)
@@ -245,8 +279,8 @@ int main() {
 		}
 	cend = Clock::now();
 	int celapsed2 = chrono::duration_cast<chrono::microseconds>(cend - cstart).count();
-	cout << "qd int : " << celapsed2 << " microseconds elapsed" << endl;
-	cout << "  - ratio : " << (double) celapsed/celapsed2 << endl;
+	cerr << "qd int : " << celapsed2 << " microseconds elapsed" << endl;
+	cerr << "  - ratio : " << (double) celapsed/celapsed2 << endl;
 
 	/*bitmap bmap(shapes[1].getMultiP(), 99, 100);
 	bmap.saveMap("test");

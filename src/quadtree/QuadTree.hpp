@@ -24,6 +24,11 @@ private:
     float precision;
     int _area;
 
+	float _oldX, _oldY;
+
+	float _backupX, _backupY;
+	unsigned _backupPos;
+
 private:
     void copy(const QuadTree&);
     void destroy();
@@ -42,34 +47,24 @@ public:
 
 public:
     // Overriden algorithms
-    /*void mergeWith(const Shape&) {
-    	std::cerr << "mergeWith Not implemented" << std::endl;
-    }*/
+	void savePos(); // TODO : implement it
+	void restorePos(); // TODO : implement it
+	void mergeWith(const Shape&) override;
     void rotate(double degrees) override;
     void translate(double Tx, double Ty) override;
     void envelope(Box&) const override;
     Point centroid() const override;
     int area() const override;
     bool intersectsWith(const Shape&) const override;
-    bool intersectsWith(const Ring&) const {
-        std::cerr << "intersectsWith Not implemented" << std::endl;
-        return false;
-    }
-    void convexHull(Polygon&) const {
-        std::cerr << "convexHull Not implemented" << std::endl;
-    }
-    void bufferize(double) {
-        std::cerr << "bufferize Not implemented" << std::endl;
-        return;
-    }
-    /*std::array<double, 6> getTransMatrix() const {
-    	std::cerr << "getTransMatrix Not implemented" << std::endl;
-    	std::array<double, 6> result;
-    	return result;
-    }*/
+	bool intersectsWith(const Ring&) const override;
+	void convexHull(Polygon&) const override;
+	void bufferize(double) override;
+	std::array<double, 6> getTransMatrix() const override;
 
 private:
     void saveTree(std::string filename, int depth);
+	void construct(float precision, MultiPolygon& mult);
+
 public:
     void saveTree(std::string filename);
 
