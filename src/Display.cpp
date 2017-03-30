@@ -10,6 +10,7 @@
 
 #define FPS 60.
 bool Display::_enabled = false; //Display is disabled until Init()
+double Display::window_height = 600;
 
 using namespace std;
 
@@ -47,6 +48,11 @@ void Display::updateShape(unsigned i) {
     _mustRender = true;
 }
 
+void Display::updateAll() {
+    for (unsigned i = 0 ; i < _shapes.size() ; ++i)
+        updateShape(i);
+}
+
 void Display::loop() {
     sf::Event event;
     _window.setActive(true);
@@ -74,7 +80,7 @@ void Display::reset() {
         _toDraw[i].setOutlineThickness(2);
         _toDraw[i].setOutlineColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
         _toDraw[i].scale(WINDOW_WIDTH / Parser::getDims().x(),
-                         WINDOW_HEIGHT / Parser::getDims().y());
+                         window_height / Parser::getDims().y());
         updateShape(i);
     }
 

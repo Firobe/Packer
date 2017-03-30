@@ -12,9 +12,10 @@
 #include <boost/geometry/strategies/agnostic/relate.hpp>
 #include <boost/geometry/io/svg/svg_mapper.hpp>
 #include <boost/geometry/algorithms/num_points.hpp>
-#include <boost/geometry/algorithms/overlaps.hpp>
+#include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/centroid.hpp>
 #include <boost/geometry/algorithms/convex_hull.hpp>
+#include <boost/math/constants/constants.hpp>
 
 #include "Shape.hpp"
 #include "Log.hpp"
@@ -251,7 +252,7 @@ Point Shape::centroid() const {
  * @param s Another shape
  */
 bool Shape::intersectsWith(const Shape& s) const {
-    return bg::overlaps(_multiP, s._multiP);
+    return bg::intersects(_multiP, s._multiP);
 }
 
 /**
@@ -259,7 +260,7 @@ bool Shape::intersectsWith(const Shape& s) const {
  * @param s A ring
  */
 bool Shape::intersectsWith(const Ring& s) const {
-    return bg::overlaps(_multiP, s);
+    return bg::intersects(_multiP, s);
 }
 
 /**
@@ -428,4 +429,29 @@ void Shape::restorePos() {
 
 	rotate(angle);
 	translate(transformMatrix[4], transformMatrix[5]);
+}
+
+void Shape::restore() {
+    Matrix m = getTransMatrix();
+    applyMatrix(m, true);
+}
+
+void Shape::applyMatrix(Matrix& transM, bool inverse) {
+    static const double pi = boost::math::constants::pi<double>();
+    double theta = atan2(transM[1], transM[3]);
+
+    /*
+    if(fromTrans){
+    	transM[1] *= -1; //Fuck Inkscape
+    	transM[2] *= -1;
+    }
+    */
+    if (inverse) {
+        translate(-transM[4], -transM[5]);
+        rotate(-theta * 180. / pi);
+    }
+    else {
+        rotate(theta * 180. / pi);
+        translate(transM[4], transM[5]);
+    }
 }

@@ -104,8 +104,11 @@ bool Outer::appendMatrix(XMLElement node, char*& cs, bool forceNoMatrix) {
         return true;
 
     //Get the matrix and write its SVG string equivalent
-    array<double, 6> m = _shapes[i].getTransMatrix();
+	array<double, 6> m = _shapes[i].getTransMatrix();
 	cerr << m << endl;
+
+    m[1] *= -1;
+	m[2] *= -1;
 
     if (_addTo)
         m[5] += Parser::getDims().y();

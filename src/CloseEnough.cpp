@@ -128,26 +128,39 @@ void callEverything(vector<Call> block, int n, Layout* shapes) {
  */
 void Call::operator()(Layout& shapes) {
     static Merger merge(shapes);
+    static bool needReset = false;
 
     if (func.cat == FUNC_TRANSFORMER) {
         vector<vector<unsigned>> transformed;
         string mergeP;
 
         if (!getParameter(params, "merge", mergeP))
-            mergeP = "true";
+            mergeP = "1";
 
         Transformer* t = TransformerRegistry::instanciate(func.name, shapes, params);
         transformed = t->transform();
 
-        if (mergeP == "true")
+        if (mergeP == "1") {
             merge.merge(transformed);
+            needReset = true;
+        }
 
         delete t;
     }
     else if (func.cat == FUNC_SOLVER) {
         Solver* s = SolverRegistry::instanciate(func.name, shapes, params);
+        string reset = "true";
+
+        if (!getParameter(params, "reset", reset))
+            reset = "true";
+
         s->solve();
-        merge.reset();
+
+        if (reset == "true" and needReset) {
+            merge.reset();
+            needReset = false;
+        }
+
         delete s;
     }
     else
@@ -173,12 +186,13 @@ void makeRule(qi::rule<std::string::iterator, std::string(), ascii::space_type>&
  * and error handler
  */
 CE_Parser::CE_Parser(Layout& s) : CE_Parser::base_type(start, "program start") {
+    static qi::real_parser<double, qi::strict_real_policies<double>> const strict_double;
     TransformerRegistry::init();
     SolverRegistry::init();
     //GRAMMAR BEGIN
     string_			   %= lexeme[+(char_ - '"' - ',' - '(' - ')' - '=')];
-    value			   %= int_
-                          | double_
+    value			   %= strict_double
+                          | int_
                           | string_;
     parameter			= (string_ >> '=' > value)[_val = bind(makeParameter, _1, _2)];
     parameter_list		= parameter [push_back(phoenix::ref(_val), _1)] % ',' | eps;

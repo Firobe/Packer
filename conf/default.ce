@@ -2,3 +2,4 @@ HoleTransformer();
 DO 2 TIMES
         SimpleTransformer(rotate_step=30, criteria=box);
 ScanlineSolver();
+ProbaSolver(amplitude_proba=40., initial_placement=0);

@@ -8,9 +8,10 @@
 #include "Shape.hpp"
 #include "Log.hpp"
 #include "Layout.hpp"
+#include "Parser.hpp"
 
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 768
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 class CustomShape : public sf::Shape {
 private:
@@ -57,8 +58,10 @@ class Display {
     void updateShape(unsigned i);
     void render();
     static bool _enabled;
+    static double window_height;
     static Display& getInstance(const Layout& s = Layout()) {
-        static Display disp(WINDOW_WIDTH, WINDOW_HEIGHT, s);
+        window_height = WINDOW_WIDTH * Parser::getDims().y() / Parser::getDims().x();
+        static Display disp(WINDOW_WIDTH, window_height, s);
         return disp;
     }
     Display(int width, int height, const Layout& s) :
@@ -84,6 +87,7 @@ class Display {
     }
     unsigned byIdentifier(unsigned identifier);
     void reset();
+    void updateAll();
 public:
     static void Init(const Layout& s) {
         _enabled = true;
@@ -92,6 +96,10 @@ public:
     static void Update(unsigned id) {
         if (_enabled)
             getInstance().updateShape(getInstance().byIdentifier(id));
+    }
+    static void UpdateAll() {
+        if (_enabled)
+            getInstance().updateAll();
     }
     static void Reset() {
         if (_enabled)
@@ -109,6 +117,7 @@ public:
 struct Display {
     static void Init(const std::vector<Shape>&) {}
     static void Update(unsigned) {}
+    static void UpdateAll() {}
     static void Reset() {}
     static void Text(const std::string&) {}
 };
