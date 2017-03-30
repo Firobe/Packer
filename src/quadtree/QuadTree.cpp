@@ -331,8 +331,6 @@ void QuadTree::restorePos() {
 }
 
 array<double, 6> QuadTree::getTransMatrix() const {
-	cerr << "QuadTree transformation matrix" << endl;
-
 	std::array<double, 6> result;
 	float angle = (2 * currentTree * pi) / quadsNumber;
 	float c = cos(angle);
