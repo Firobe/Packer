@@ -38,8 +38,18 @@ void Layout::generateQuadTrees(std::vector<Shape>* s) {
  * @param s New set of shapes
  */
 void Layout::replaceShapes(std::vector<Shape>* s) {
-    if (usingQuads)
+    if (usingQuads) {
+		vector<Matrix> mats;
+		mats.reserve(s->size());
+
+		for(auto&& sh : *s){
+			mats.emplace_back(sh.getTransMatrix());
+			sh.restore();
+		}
         generateQuadTrees(s);
+		for(unsigned i = 0 ; i < mats.size() ; ++i)
+			(*s)[i].applyMatrix(mats[i]);
+	}
     else {
         if (_s != nullptr)
             delete _s;

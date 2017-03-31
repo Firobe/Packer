@@ -55,9 +55,9 @@ public:
         copy(s);
         return *this;
     }
-    Shape(Shape&& s) = default;
+    Shape(Shape&&) = default;
     virtual ~Shape() {}
-    void copy(const Shape& s);
+    void copy(const Shape&);
 
     //Getters - Setters
     unsigned getID() const;

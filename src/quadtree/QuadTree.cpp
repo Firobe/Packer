@@ -336,8 +336,8 @@ array<double, 6> QuadTree::getTransMatrix() const {
 	float c = cos(angle);
 	float s = sin(angle);
 	result[0] = c;
-	result[1] = s;
-	result[2] = - s;
+	result[1] = -s;
+	result[2] = s;
 	result[3] = c;
 
 	float c2 = cos(-angle);

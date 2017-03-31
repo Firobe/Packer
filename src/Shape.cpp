@@ -71,8 +71,8 @@ array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1, Point
 	//Translate to origin, rotate, translate to new position
 	array<double, 6> result;
 	result[0] = c;
-	result[1] = s;
-	result[2] = -s;
+	result[1] = -s;
+	result[2] = s;
 	result[3] = c;
 	result[4] = - src1.x() * c + src1.y() * s + dst1.x();
 	result[5] = - src1.x() * s - src1.y() * c + dst1.y();

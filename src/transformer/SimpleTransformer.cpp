@@ -39,7 +39,7 @@ void applyTrans(Shape& a, Shape& b, double alpha, double beta, double offset, Bo
         -boxA.max_corner().y() -
         length *
         offset);
-}
+    }
 
 
 /**
@@ -64,13 +64,13 @@ double getClose(Shape& shapeA, Shape& shapeB, Box& boxA) {
         if (shapeA.intersectsWith(shapeB)) {
             x1 = mid;
             shapeB.translate(x2 - mid, 0.);
-        }
+            }
         else
             x2 = mid;
-    }
+        }
 
     return mid;
-}
+    }
 
 vector<vector<unsigned> > SimpleTransformer::transform() {
     LOG(info) << "Merging shapes";
@@ -92,58 +92,88 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
         unsigned bestJ = j;
         //Move shapes
         bool merged = false; //Check if a merge occured
-		#pragma omp parallel
-        {
-			Shape& shapeA(_shapes.newCopy());
-			Shape& shapeB(_shapes.newCopy());
+        #pragma omp parallel
+            {
+            Shape& shapeA(_shapes.newCopy());
+            Shape& shapeB(_shapes.newCopy());
 
-			_shapes.copyShape(shapeA, _shapes[i]);
-			_shapes.copyShape(shapeB, _shapes[j]);
+            _shapes.copyShape(shapeA, _shapes[i]);
+            _shapes.copyShape(shapeB, _shapes[j]);
 
-			#pragma omp for schedule(dynamic, 1) collapse(3)
+            Box boxA, boxB;
+            Matrix aM = shapeA.getTransMatrix();
+            Matrix bM = shapeB.getTransMatrix();
+
+            double locBestAlpha = 0., locBestBeta = 0., locBestMid = 0; //Best rotations
+            int locBestOffset = 0.; //Best translation
+            double locBestArea = 0.; //Best area of merged couples of shapes
+            unsigned locBestJ = j;
+
+            #pragma omp for schedule(dynamic, 1) collapse(3)
+
             for (int alpha = 0; alpha < 360; alpha += _rotateStep) { //Rotate first shape
                 for (int beta = 0.; beta < 360 ; beta += _rotateStep) { //Rotate second shape
                     for (int offset = 0; offset < _translateNb ; ++offset) { //Trying different offsets
-                        Box boxA, boxB;
-						shapeA.savePos();
-						shapeB.savePos();
+                        /*
+                        shapeA.savePos();
+                        shapeB.savePos();
+                        */
 
-						applyTrans(shapeA, shapeB, alpha, beta, static_cast<double>(offset) / _translateNb, boxA,
+                        applyTrans(shapeA, shapeB, alpha, beta, static_cast<double>(offset) / _translateNb, boxA,
                                    boxB, 0, true);
-						double mid = getClose(shapeA, shapeB, boxA);
-						double ratio = _criteria(shapeA, shapeB, _rentability);
+                        double mid = getClose(shapeA, shapeB, boxA);
+                        double ratio = _criteria(shapeA, shapeB, _rentability);
 
-						// Compute the bounding box of the merged shapes
-						shapeA.envelope(boxA);
-						shapeB.envelope(boxB);
-						Box boxMerged{{min(boxA.min_corner().x(), boxB.min_corner().x()),
-										min(boxA.min_corner().y(),boxB.min_corner().y())},
-									  {max(boxA.max_corner().x(), boxB.max_corner().x()),
-										max(boxA.max_corner().y(), boxB.max_corner().y())}};
-						bool withinBin = boxMerged.max_corner().x() - boxMerged.min_corner().x() <
-										 Parser::getDims().x() and boxMerged.max_corner().y() -
-										 boxMerged.min_corner().y() < Parser::getDims().y();
+                        // Compute the bounding box of the merged shapes
+                        shapeA.envelope(boxA);
+                        shapeB.envelope(boxB);
+                        Box boxMerged {{
+                                min(boxA.min_corner().x(), boxB.min_corner().x()),
+                                min(boxA.min_corner().y(), boxB.min_corner().y())
+                                },
+                                {
+                                max(boxA.max_corner().x(), boxB.max_corner().x()),
+                                max(boxA.max_corner().y(), boxB.max_corner().y())
+                                }};
 
-						shapeA.restorePos();
-						shapeB.restorePos();
+                        bool withinBin = boxMerged.max_corner().x() - boxMerged.min_corner().x() <
+                                         Parser::getDims().x() and boxMerged.max_corner().y() -
+                                         boxMerged.min_corner().y() < Parser::getDims().y();
+
+                        /*
+                        shapeA.restorePos();
+                        shapeB.restorePos();
+                        */
+                        shapeA.restore();
+                        shapeA.applyMatrix(aM);
+                        shapeB.restore();
+                        shapeB.applyMatrix(bM);
+
                         //Computes intersection efficiency
                         //Store the best candidate
                         if (ratio > bestArea and withinBin) {
-							cerr << boxMerged.max_corner().x() - boxMerged.min_corner().x() << "-" <<
-									Parser::getDims().x() << " " << boxMerged.max_corner().y() -
-									boxMerged.min_corner().y() << "-" << Parser::getDims().y() << endl;
                             merged = true;
-                            bestArea = ratio;
-                            bestAlpha = alpha;
-                            bestBeta = beta;
-                            bestOffset = offset;
-                            bestMid = mid;
-                            bestJ = j;
+                            locBestArea = ratio;
+                            locBestAlpha = alpha;
+                            locBestBeta = beta;
+                            locBestOffset = offset;
+                            locBestMid = mid;
+                            locBestJ = j;
+                            }
                         }
                     }
                 }
+
+            #pragma omp critical
+                if (locBestArea > bestArea) {
+                    bestArea = locBestArea;
+                    bestAlpha = locBestAlpha;
+                    bestBeta = locBestBeta;
+                    bestOffset = locBestOffset;
+                    bestMid = locBestMid;
+                    bestJ = locBestJ;
+                    }
             }
-        }
         string textBase = "SimpleTransformer (" + to_string(i + 1) +
                           "/" + to_string(_shapes.size() - 1) + ")";
         Box boxA, boxB;
@@ -161,17 +191,17 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
             Display::Update(_shapes[i].getID());
             Display::Update(_shapes[bestJ].getID());
             Display::Text(textBase + " : merged !");
-        }
+            }
         else {
             LOG(info) << ".";
             Display::Text(textBase + " : failed to merge !");
             ret.push_back({_shapes[i].getID()});
-        }
-    }//for i
+            }
+        }//for i
 
     LOG(info) << endl;
     return ret;
-}
+    }
 
 /**
  * Returns (if high enough) the area of the intersection between
@@ -186,7 +216,7 @@ double intersectionCriteria(const Shape& shapeA, const Shape& shapeB,
     bg::intersection(hullA, hullB, inter);
     double ratio = bg::area(inter);
     return (ratio >= rentability * (bg::area(hullA) + bg::area(hullB))) * ratio;
-}
+    }
 
 /**
  * Returns (idem) the area of the bouding box around shapeA and shapeB
@@ -201,4 +231,4 @@ double boxCriteria(const Shape& shapeA, const Shape& shapeB, double rentability)
                      bB.min_corner().y()));
     double ratio = (max_corner.x() - min_corner.x()) * (max_corner.y() - min_corner.y());
     return (ratio <= (1 - rentability) * (bg::area(bA) + bg::area(bB))) ? 1. / ratio : 0.;
-}
+    }
