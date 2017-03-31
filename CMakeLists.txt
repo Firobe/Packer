@@ -20,6 +20,39 @@ if (NOT (DEFINED target-os AND target-os STREQUAL "windows"))
     enable_testing()
 endif()
 
+# find SFML
+find_package(SFML 2.4 COMPONENTS system window graphics network)
+if(NOT SFML_FOUND)
+    # Then extract and compile the SFML
+    message(STATUS "You have no version of SFML installed. Will locally install one.")
+    
+    if(NOT EXISTS ${CMAKE_SOURCE_DIR}/third_party/SFML)
+        message(STATUS "Unpacking SFML ...")
+        execute_process(COMMAND unzip SFML.zip
+    		        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
+        execute_process(COMMAND mv SFML-2.4.2 SFML
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party)
+        message(STATUS "done")
+    else()
+        message(STATUS "SFML directory found")
+    endif()
+
+    message(STATUS "building libs")
+    execute_process(COMMAND mkdir build
+		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/SFML)
+    execute_process(COMMAND mkdir install
+		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/SFML)
+    execute_process(COMMAND cmake -DCMAKE_INSTALL_PREFIX=../install ..
+		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/SFML/build)
+    execute_process(COMMAND make
+		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/SFML/build)
+    execute_process(COMMAND make install
+		    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/SFML/build)
+    find_package(SFML 2.4 REQUIRED system window graphics network)
+endif()
+
+include_directories(${SFML_INCLUDE_DIR})
+
 # SFML Enabling
 if(${DISPLAY})
 	message(STATUS "Will build with display support")

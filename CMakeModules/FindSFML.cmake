@@ -71,7 +71,8 @@ set(FIND_SFML_PATHS
     /sw
     /opt/local
     /opt/csw
-    /opt)
+    /opt
+    ${CMAKE_SOURCE_DIR}/third_party/SFML/install)
 
 # find the SFML include directory
 find_path(SFML_INCLUDE_DIR SFML/Config.hpp
@@ -363,3 +364,4 @@ endif()
 if(SFML_FOUND AND NOT SFML_FIND_QUIETLY)
     message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH} in ${SFML_INCLUDE_DIR}")
 endif()
+
