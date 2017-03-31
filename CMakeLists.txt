@@ -144,7 +144,7 @@ endif ()
 # Add other targets
 add_subdirectory(doc)
 add_subdirectory(src)
-#add_subdirectory(test)
+add_subdirectory(test)
 add_executable(packer src/main.cpp)
 
 target_link_libraries(packer packer_lib)

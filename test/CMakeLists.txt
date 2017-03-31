@@ -22,6 +22,9 @@ add_executable(quadtree quadtreeTest.cpp)
 target_link_libraries(quadtree packer_lib)
 add_test(quadTreeTest quadtree)
 
+add_executable(rotate rotTest.cpp)
+target_link_libraries(rotate packer_lib)
+
 add_executable(interpolator interpolatorTest.cpp)
 target_link_libraries(interpolator packer_lib)
 add_test(InterpolatorTest interpolator)

@@ -112,16 +112,19 @@ QuadTree::~QuadTree() {
  * @param precision is the precision of the quadtree constructed, it mean that any shape form larger
    than precision can be detected by the quadtree
  */
-QuadTree::QuadTree(Shape& s, float precision) :
-	QuadTree(s._multiP, precision, s._id) {
+QuadTree::QuadTree(Shape& s, float precision)
+	: trees(nullptr), precision(precision) {
+	Shape::copy(s);
+	Matrix m = Shape::getTransMatrix();
+	Shape::restore(false);
+	construct(precision, s._multiP);
+	applyMatrix(m);
+	//LOG(info) << "POUET POUET ============" << Matrix(getTransMatrix()) << endl;
 }
 
 
 void QuadTree::construct(float precision, MultiPolygon& mult)
 {
-	Matrix m = Shape::getTransMatrix();
-	Shape::restore(false);
-
 	_area =  bg::area(mult);
 	float rotationAngle = 360.f / quadsNumber;
 	float currentAngle = 0.f;
@@ -182,7 +185,6 @@ void QuadTree::construct(float precision, MultiPolygon& mult)
 									 bmap, 0, 0, size, 0);
 
 	}
-	applyMatrix(m);
 }
 
 /**
@@ -341,8 +343,8 @@ array<double, 6> QuadTree::getTransMatrix() const {
 	float c = cos(angle);
 	float s = sin(angle);
 	result[0] = c;
-	result[1] = -s;
-	result[2] = s;
+	result[1] = s;
+	result[2] = -s;
 	result[3] = c;
 
 	float c2 = cos(-angle);

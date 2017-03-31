@@ -40,6 +40,18 @@ void Merger::merge(vector<vector<unsigned> > shapesToMerge) {
  * reset() is supposed to be called after merge()
  */
 void Merger::reset() {
+	/*
+	LOG(info) << "**********************************************" << endl;
+	for(Shape& s : _shapes){
+		Box e;
+		s.envelope(e);
+		LOG(info) << bg::wkt(e) << endl;
+		s.envelope(e);
+		LOG(info) << bg::wkt(e) << endl;
+
+	}
+	LOG(info) << "**********************************************" << endl;
+	*/
 	_shapes.forceApply();
 
     sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
