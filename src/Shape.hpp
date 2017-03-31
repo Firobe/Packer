@@ -78,8 +78,8 @@ public:
 	//Algorithms
 	virtual void savePos();
 	virtual void restorePos();
-    void applyMatrix(Matrix& transM, bool = false);
-	void restore();
+    void applyMatrix(Matrix& transM, bool = false, bool = true);
+	void restore(bool = true);
     virtual void mergeWith(const Shape&);
     virtual void rotate(double degrees);
     virtual void translate(double Tx, double Ty);

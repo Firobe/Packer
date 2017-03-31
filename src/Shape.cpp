@@ -431,12 +431,12 @@ void Shape::restorePos() {
 	translate(transformMatrix[4], transformMatrix[5]);
 }
 
-void Shape::restore() {
-    Matrix m = getTransMatrix();
-    applyMatrix(m, true);
+void Shape::restore(bool virt) {
+    Matrix m = virt ? getTransMatrix() : Shape::getTransMatrix();
+    applyMatrix(m, true, virt);
 }
 
-void Shape::applyMatrix(Matrix& transM, bool inverse) {
+void Shape::applyMatrix(Matrix& transM, bool inverse, bool virt) {
     static const double pi = boost::math::constants::pi<double>();
     double theta = atan2(transM[1], transM[3]);
 
@@ -447,11 +447,23 @@ void Shape::applyMatrix(Matrix& transM, bool inverse) {
     }
     */
     if (inverse) {
-        translate(-transM[4], -transM[5]);
-        rotate(-theta * 180. / pi);
+		if(virt){
+			translate(-transM[4], -transM[5]);
+			rotate(-theta * 180. / pi);
+		}
+		else{
+			Shape::translate(-transM[4], -transM[5]);
+			Shape::rotate(-theta * 180. / pi);
+		}
     }
     else {
-        rotate(theta * 180. / pi);
-        translate(transM[4], transM[5]);
+		if(virt) {
+			rotate(theta * 180. / pi);
+			translate(transM[4], transM[5]);
+		}
+		else {
+			Shape::rotate(theta * 180. / pi);
+			Shape::translate(transM[4], transM[5]);
+		}
     }
 }

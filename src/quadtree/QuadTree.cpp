@@ -119,6 +119,9 @@ QuadTree::QuadTree(Shape& s, float precision) :
 
 void QuadTree::construct(float precision, MultiPolygon& mult)
 {
+	Matrix m = Shape::getTransMatrix();
+	Shape::restore(false);
+
 	_area =  bg::area(mult);
 	float rotationAngle = 360.f / quadsNumber;
 	float currentAngle = 0.f;
@@ -177,7 +180,9 @@ void QuadTree::construct(float precision, MultiPolygon& mult)
 									 envelop.max_corner().x(),
 									 envelop.max_corner().y(),
 									 bmap, 0, 0, size, 0);
+
 	}
+	applyMatrix(m);
 }
 
 /**
@@ -353,19 +358,9 @@ array<double, 6> QuadTree::getTransMatrix() const {
 }
 
 void applyTransMatrix(MultiPolygon &multiP, const array<double,6> &transformMatrix) {
-	double c = transformMatrix[0];
-	double angle;
-	errno = 0;
-	if (c >= 1.l)
-		angle = 0.l;
-	else if (c <= -1.l)
-		angle = 180.l;
-	else
-		angle = acos(c) * 180 / pi;
-	if(errno == EDOM)
-		throw string(strerror(errno));
+    double theta = atan2(transformMatrix[1], transformMatrix[3]);
 
-	::rotate<MultiPolygon>(multiP, angle);
+	::rotate<MultiPolygon>(multiP, theta * 180. / pi);
 	::translate<MultiPolygon>(multiP, transformMatrix[5], transformMatrix[6]);
 }
 

@@ -39,16 +39,19 @@ void Layout::generateQuadTrees(std::vector<Shape>* s) {
  */
 void Layout::replaceShapes(std::vector<Shape>* s) {
     if (usingQuads) {
+		/*
 		vector<Matrix> mats;
 		mats.reserve(s->size());
 
 		for(auto&& sh : *s){
 			mats.emplace_back(sh.getTransMatrix());
 			sh.restore();
-		}
+		}*/
         generateQuadTrees(s);
+		/*
 		for(unsigned i = 0 ; i < mats.size() ; ++i)
 			(*s)[i].applyMatrix(mats[i]);
+			*/
 	}
     else {
         if (_s != nullptr)
@@ -196,4 +199,14 @@ void Layout::copyShape(Shape& c, const Shape& tc) {
     if (usingQuads)
         c.operator = (dynamic_cast<const QuadTree&>(tc));
     else c.operator = (tc);
+}
+
+void Layout::forceApply(){
+	if(usingQuads){
+		for(Shape& s : *this) {
+			Matrix m = s.getTransMatrix();
+			s.restore(false);
+			s.applyMatrix(m, false, false);
+		}
+	}
 }
