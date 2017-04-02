@@ -1,6 +1,6 @@
-# GNU/Linux instructions
-
 This program is meant to read several generic shapes from a file in SVG format and execute a script in CE format, with the goal to move the shapes so that they take as less space as possible (bin packing problem), and outputs the result on the standard output.
+
+# GNU/Linux instructions
 
 #### Building
 
@@ -46,6 +46,7 @@ This program is meant to read several generic shapes from a file in SVG format a
  * The default behavior is to pack all shapes. If the user specifies IDs of shapes using `--id ID` (can be used multiple times), only those will be packed.
  * For the purpose of laser cutting, the `buffer X` can be used to force a minimal distance (in px) between the packed shapes.
  * If the project was built with graphical support, the flag `--display` can be used to enable a basic display of what is going on during the execution.
+ * The option `--q PRECISION` can be specified to use QuadTrees instead of plain shapes. This can improve the performance of most algorithms. The higher the precision, the higher the performance (but a low precision yields better solutions.
 
 #### Inkscape interface
 
@@ -62,7 +63,7 @@ CloseEnough is a very simple DSL to facilitate the combination of the differents
  * An instruction have the following pattern : function(param1=value1, param2=value2, ...);
  * Instructions must be followed by a semicolon
  * Multiple-instruction blocks are between a BEGIN and a END
- * Instruction blocks can be executed multiple times using DO X TIMES <block>
+ * Instruction blocks can be executed multiple times using DO X TIMES block
 
 #### Available algorithms
 
@@ -72,7 +73,7 @@ CloseEnough is a very simple DSL to facilitate the combination of the differents
  * `MultilineSolver` : places every shape on multiple lines.
  * `ScanlineSolver` : uses the first-fit algorithm to pack shapes. Very efficient on rectangular shapes.
  * `FreezeSolver` : uses a physics-like algorithm to pack one shape after the other with gravity.
- * `ProbaSolver` : a probabilist solver using random steps. The parameter `amplitudeProba` can be provided.
+ * `ProbaSolver` : a probabilist solver using random steps. The parameter `amplitudeProba` can be provided. It will specify the amplitude of the random movements (a higher number means smaller steps).
 
 # Features
 
