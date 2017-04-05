@@ -4,8 +4,6 @@
 #include <chrono>
 #include <iostream>
 
-#include <boost/geometry/algorithms/distance.hpp>
-
 #include "ProbaSolver.hpp"
 #include "Shape.hpp"
 #include "MultilineSolver.hpp"
@@ -41,7 +39,7 @@ void ProbaSolver::preSolve() {
 void ProbaSolver::solveBin() {
 	//Save the current state
     Solution current;
-    genSolution(current);
+    _shapes.genSolution(current);
     LOG(info) << "Doing random steps";
 
     for (int i = 0 ; i < _branchSteps ; ++i) {
@@ -51,12 +49,12 @@ void ProbaSolver::solveBin() {
 
 		//Evaluate the quality of the resulting solution
         Solution newS;
-        genSolution(newS);
+        _shapes.genSolution(newS);
 
         if (newS.quality >= current.quality) {
 			//Restore old state if not improving
             Display::Text("Iteration " + to_string(i) + " discarded");
-            applySolution(current);
+            _shapes.applySolution(current);
             LOG(info) << ".";
         }
         else {
@@ -131,46 +129,3 @@ void ProbaSolver::nextStep() {
     }
 }
 
-/**
- * @brief Evaluates the quality of a solution
- * Currently sums the squared distance of each shape
- * to the origin
- */
-double ProbaSolver::quality() const {
-    double sum = 0;
-
-    for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
-        Point orig(0, Parser::getDims().y() * SPACE_COEF * _binNbs[i]);
-        double d = bg::distance(orig, _centroids[i]);
-        sum += d * d;
-    }
-
-    return sum;
-}
-
-/**
- * @brief Creates a Solution from the current state
- * (generates every transformation Matrix)
- * @param s Where the solution will be generated
- */
-void ProbaSolver::genSolution(Solution& s) const {
-    s.mats.clear();
-    s.mats.reserve(_shapes.size());
-
-    for (Shape& sh : _shapes)
-        s.mats.push_back(sh.getTransMatrix());
-
-    s.quality = quality();
-}
-
-/**
- * @brief Apply a solution to the current state
- * (apply every transformation matrix)
- * @param s The solution to apply
- */
-void ProbaSolver::applySolution(Solution& s) {
-    for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
-        _shapes[i].restore();
-        _shapes[i].applyMatrix(s.mats[i]);
-    }
-}

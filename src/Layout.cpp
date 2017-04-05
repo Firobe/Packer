@@ -1,5 +1,9 @@
+#include <boost/geometry/algorithms/distance.hpp>
+
 #include "Layout.hpp"
 #include "Log.hpp"
+#include "Parser.hpp"
+#include "solver/Solver.hpp"
 
 using namespace std;
 
@@ -210,4 +214,52 @@ void Layout::forceApply(){
 			s.applyMatrix(m, false, false);
 		}
 	}
+}
+
+/**
+ * @brief Creates a Solution from the current state
+ * (generates every transformation Matrix)
+ * @param s Where the solution will be generated
+ */
+void Layout::genSolution(Solution& s) const {
+    s.mats.clear();
+    s.mats.reserve(size());
+
+    for (Shape& sh : *this)
+        s.mats.push_back(sh.getTransMatrix());
+
+    s.quality = quality();
+}
+
+/**
+ * @brief Apply a solution to the current state
+ * (apply every transformation matrix)
+ * @param s The solution to apply
+ */
+void Layout::applySolution(Solution& s) {
+    for (unsigned i = 0 ; i < size() ; ++i) {
+		operator[](i).restore();
+		operator[](i).applyMatrix(s.mats[i]);
+    }
+}
+
+/**
+ * @brief Evaluates the quality of a solution
+ * Currently sums the squared distance of each shape
+ * to the origin
+ */
+double Layout::quality() const {
+    double sum = 0;
+	Box e;
+
+    for (unsigned i = 0 ; i < size() ; ++i) {
+		Point c = operator[](i).centroid();
+		operator[](i).envelope(e);
+		int binNb = e.min_corner().y() / (Parser::getDims().y() * SPACE_COEF);
+        Point orig(0, Parser::getDims().y() * SPACE_COEF * binNb);
+        double d = bg::distance(orig, c);
+        sum += d * d;
+    }
+
+    return sum;
 }

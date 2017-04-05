@@ -5,6 +5,13 @@
 
 #include "Shape.hpp"
 #include "quadtree/QuadTree.hpp"
+#include "Matrix.hpp"
+
+struct Solution {
+    std::vector<Matrix> mats;
+    double quality;
+};
+
 
 using ShapeVec = std::vector<std::reference_wrapper<Shape>>;
 
@@ -25,6 +32,9 @@ class Layout : public ShapeVec {
     void generateQuadTrees(std::vector<Shape>* s);
     void copy(const Layout& o);
 public:
+    double quality() const;
+    void applySolution(Solution& s);
+    void genSolution(Solution& s) const;
     Layout() : _s(nullptr), _q(nullptr) {}
     Layout(std::vector<Shape>* s) : ShapeVec(), _s(s), _q(nullptr), usingQuads(false) {
         //Shapes will be used

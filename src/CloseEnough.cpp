@@ -17,6 +17,7 @@
 #include "solver/MultilineSolver.hpp"
 #include "solver/LineSolver.hpp"
 #include "solver/ProbaSolver.hpp"
+#include "solver/TaskSolver.hpp"
 
 using qi::double_;
 using qi::int_;
@@ -53,7 +54,8 @@ using SolverRegistry = Registry<Solver,
       MultilineSolver,
       LineSolver,
       FreezeSolver,
-      ProbaSolver
+      ProbaSolver,
+	  TaskSolver
       >::type>;
 
 /**
