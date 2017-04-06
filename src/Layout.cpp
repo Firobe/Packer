@@ -205,7 +205,6 @@ void Layout::forceApply(){
 	if(usingQuads){
 		for(Shape& s : *this) {
 			Matrix m = s.getTransMatrix();
-			LOG(info) << m << endl;
 			s.restore(false);
 			s.applyMatrix(m, false, false);
 		}

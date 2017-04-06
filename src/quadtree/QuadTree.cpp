@@ -18,6 +18,7 @@
 #include "common.hpp"
 #include "Log.hpp"
 #include "Shape.hpp"
+#include "Matrix.hpp"
 
 using namespace std;
 
@@ -75,7 +76,6 @@ QuadTree& QuadTree::operator=(const Shape& s) {
 QuadTree& QuadTree::operator=(Shape&& s) {
 	QuadTree&& q(dynamic_cast < QuadTree && >(s));
 
-	//LOG(info) << q.trees << endl;
 	if (this != &q) {
 		Shape::operator=(q);
 
@@ -114,31 +114,41 @@ QuadTree::~QuadTree() {
  */
 QuadTree::QuadTree(Shape& s, float precision)
 	: trees(nullptr), precision(precision) {
+	construct(precision, s);
+}
+
+void QuadTree::construct(float precision, Shape& s) {
+	trees = nullptr;
+	precision = precision;
 	Shape::copy(s);
 	Matrix m = Shape::getTransMatrix();
 	Shape::restore(false);
 	construct(precision, s._multiP);
 	applyMatrix(m);
-	//LOG(info) << "POUET POUET ============" << Matrix(getTransMatrix()) << endl;
 }
 
-
-void QuadTree::construct(float precision, MultiPolygon& mult)
+void QuadTree::construct(float precision, MultiPolygon mult)
 {
+	// mult IS A COPY AND NEEDS TO STAY ONE.
 	_area =  bg::area(mult);
 	float rotationAngle = 360.f / quadsNumber;
 	float currentAngle = 0.f;
 	trees = new InnerQuadTree*[quadsNumber];
+	treesOffset.clear();
+	_centroid.clear();
 	treesOffset.reserve(quadsNumber);
 	_centroid.reserve(quadsNumber);
+
 	// Put the shape at the (0,0) point
 	Box preEnvelop;
-	bg::envelope(_multiP, preEnvelop);
-	bg::correct(preEnvelop);
+	bg::envelope(mult, preEnvelop);
+	//bg::correct(preEnvelop);
 	Point preReference = preEnvelop.min_corner();
+
 	// Place the shape into the (0,0) point in order to create the quadTree
-	::translate<MultiPolygon>(_multiP, -preReference.x(), -preReference.y());
+	::translate<MultiPolygon>(mult, -preReference.x(), -preReference.y());
 	::translate<Box>(preEnvelop, -preReference.x(), -preReference.y());
+	currentTree = 0;
 	_oldX = _totalX = preReference.x();
 	_oldY = _totalY = preReference.y();
 
@@ -148,11 +158,11 @@ void QuadTree::construct(float precision, MultiPolygon& mult)
 		bg::strategy::transform::rotate_transformer<bg::degree, float, 2, 2> rotator(
 					currentAngle);
 		currentAngle += rotationAngle;
-		bg::transform(_multiP, newP, rotator);
+		bg::transform(mult, newP, rotator);
 		// Compute the shape Box envelop
 		Box envelop;
 		bg::envelope(newP, envelop);
-		bg::correct(envelop);
+		//bg::correct(envelop);
 		Point reference = envelop.min_corner();
 		// Place the shape into the (0,0) point in order to create the quadTree
 		::translate<MultiPolygon>(newP, -reference.x(), -reference.y());
@@ -176,7 +186,7 @@ void QuadTree::construct(float precision, MultiPolygon& mult)
 		// Create the bitmap that will be used in order to create the quadTree
 		_maxDepth = maxDepth;
 		int size = pow(2, maxDepth);
-		bitmap bmap(mult, size, size);
+		bitmap bmap(newP, size, size);
 		// QuadTree size is shape envelop size
 		trees[i] = new InnerQuadTree(envelop.min_corner().x(),
 									 envelop.min_corner().y(),
@@ -222,7 +232,11 @@ void QuadTree::rotate(double degrees) {
 	float angle = - static_cast<float>(degrees);
 	_totalX -= treesOffset[currentTree].x();
 	_totalY -= treesOffset[currentTree].y();
-	unsigned newQuad = (int) round((anglePrecision * currentTree - angle) / anglePrecision) %
+	float totalAngle = anglePrecision * currentTree - angle;
+	// need a positive angle
+	while (totalAngle < 0)
+		totalAngle +=360.;
+	unsigned newQuad = (int) round(totalAngle / anglePrecision) %
 			quadsNumber;
 	float newAngle = pi * angle / 180.f;
 	// Compute the tree position
@@ -281,37 +295,40 @@ std::ostream& operator <<(std::ostream& s, const QuadTree& q) {
  * @param depth
  */
 void QuadTree::saveTree(std::string filename, int depth) {
-	int size = pow(2, depth);
-	ofstream file;
-	file.open(filename + ".pgm");
-	file << "P2" << endl;
-	file << size << " " << size << endl;
-	file << "2" << endl;
+	for (unsigned k=0; k<quadsNumber; k++) {
 
-	for (int i = 0; i < size; i++) {
-		std::vector<color_enum> vec = trees[0]->getLine(i, depth);
+		int size = pow(2, depth);
+		ofstream file;
+		file.open(to_string(k) + filename + ".pgm");
+		file << "P2" << endl;
+		file << size << " " << size << endl;
+		file << "2" << endl;
 
-		//cout << vec.size() << " - " << size << endl;
-		for (color_enum color : vec) {
-			switch (color) {
-			case white:
-				file << "2 ";
-				break;
+		for (int i = 0; i < size; i++) {
+			std::vector<color_enum> vec = trees[k]->getLine(i, depth);
 
-			case grey:
-				file << "1 ";
-				break;
+			//cout << vec.size() << " - " << size << endl;
+			for (color_enum color : vec) {
+				switch (color) {
+				case white:
+					file << "2 ";
+					break;
 
-			default:
-				file << "0 ";
-				break;
+				case grey:
+					file << "1 ";
+					break;
+
+				default:
+					file << "0 ";
+					break;
+				}
 			}
+
+			file << endl;
 		}
 
-		file << endl;
+		file.close();
 	}
-
-	file.close();
 }
 
 /**
@@ -319,7 +336,6 @@ void QuadTree::saveTree(std::string filename, int depth) {
  * @param filename base name of the file, the full name will be : filename-depth.pbm
  */
 void QuadTree::saveTree(std::string filename) {
-	cout << _maxDepth << endl;
 
 	for (int i = 0; i <= _maxDepth; i++)
 		saveTree(filename + "-" + std::to_string(i), i);
@@ -360,10 +376,10 @@ array<double, 6> QuadTree::getTransMatrix() const {
 }
 
 void applyTransMatrix(MultiPolygon &multiP, const array<double,6> &transformMatrix) {
-    double theta = atan2(transformMatrix[1], transformMatrix[3]);
+	double theta = atan2(transformMatrix[1], transformMatrix[3]);
 
 	::rotate<MultiPolygon>(multiP, theta * 180. / pi);
-	::translate<MultiPolygon>(multiP, transformMatrix[5], transformMatrix[6]);
+	::translate<MultiPolygon>(multiP, transformMatrix[4], transformMatrix[5]);
 }
 
 void QuadTree::mergeWith(const Shape& s) {
@@ -381,7 +397,7 @@ void QuadTree::mergeWith(const Shape& s) {
 
 	mergeMultiP(_multiP, mult);
 	destroy();
-	construct(precision, _multiP);
+	construct(precision, *this);
 }
 
 bool QuadTree::intersectsWith(const Ring&r) const {

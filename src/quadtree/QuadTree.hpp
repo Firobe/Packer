@@ -63,7 +63,8 @@ public:
 
 private:
     void saveTree(std::string filename, int depth);
-	void construct(float precision, MultiPolygon& mult);
+	void construct(float precision, MultiPolygon mult);
+	void construct(float precision, Shape& s);
 
 public:
     void saveTree(std::string filename);

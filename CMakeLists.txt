@@ -63,7 +63,7 @@ endif ()
 
 # Debug enabling (use it with cmake -DDEBUG=1 ..)
 if(${DEBUG})
-        message(STATUS "Will build sebug configuration")
+        message(STATUS "Will build debug configuration")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
