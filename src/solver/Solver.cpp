@@ -29,4 +29,3 @@ void Solver::solve() {
     LOG(info) << "Successfully packed "
               << _shapes.size() << " shapes in " << _binNumber << " bins." << endl;
 }
-

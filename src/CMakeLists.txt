@@ -19,6 +19,7 @@ add_library(packer_lib STATIC
 	solver/MultilineSolver.cpp
 	solver/FreezeSolver.cpp
 	solver/ProbaSolver.cpp
+	solver/TaskSolver.cpp
 	solver/ScanlineSolver.cpp)
 
 if (${DISPLAY})

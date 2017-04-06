@@ -7,12 +7,6 @@
 
 #include "Solver.hpp"
 #include "CloseEnough.hpp"
-#include "Matrix.hpp"
-
-struct Solution {
-    std::vector<Matrix> mats;
-    double quality;
-};
 
 /**
  * @brief Solver exploiting random steps
@@ -35,9 +29,6 @@ private:
     void nextStep();
     double RNG() const;
     bool shapeInBin(unsigned, int = -1) const;
-    void applySolution(Solution& s);
-    void genSolution(Solution& s) const;
-    double quality() const;
 public:
     ProbaSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p) {
         if (!getParameter(p, "random_steps", _randomSteps))
