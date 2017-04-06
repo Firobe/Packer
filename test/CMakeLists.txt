@@ -33,4 +33,6 @@ add_executable(bitmap bitmapTest.cpp)
 target_link_libraries(bitmap packer_lib)
 add_test(bitmapTest bitmap)
 
-#add_executable(openmp openmp.cpp)
+add_executable(speedTest speedTest.cpp)
+target_link_libraries(speedTest packer_lib)
+add_test(speedTestTest speedTest)
