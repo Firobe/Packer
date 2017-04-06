@@ -1,8 +1,8 @@
 #ifndef PROBASOLVER__H
 #define PROBASOLVER__H
 
-#define DEFAULT_AMPLITUDE (10.)
-#define DEFAULT_RANDOM (50)
+#define DEFAULT_AMPLITUDE (45.)
+#define DEFAULT_RANDOM (20)
 #define DEFAULT_BRANCH (50)
 
 #include "Solver.hpp"
@@ -28,7 +28,7 @@ private:
 
     void nextStep();
     double RNG() const;
-    bool shapeInBin(unsigned, int = -1) const;
+    bool shapeInBin(unsigned, bool&, int = -1) const;
 public:
     ProbaSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p) {
         if (!getParameter(p, "random_steps", _randomSteps))

@@ -1,20 +1,22 @@
 #include "TaskSolver.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
 void TaskSolver::preSolve(){
 	_layouts.reserve(_taskNb);
-	_qualities.reserve(_taskNb);
-	for(int i = 0 ; i < _taskNb ; ++i)
+	_qualities.resize(_taskNb);
+	for(int i = 0 ; i < _taskNb ; ++i){
 		_layouts.emplace_back(_shapes);
+	}
 }
 
 void TaskSolver::solveBin(){
 	#pragma omp parallel for schedule(static)
 	for(int i = 0 ; i < _taskNb ; ++i){
-		#pragma omp task
+		#pragma omp task firstprivate(i)
 		{
-			ProbaSolver s(_layouts[i], {});
+			ProbaSolver s(_layouts[i], _params);
 			s.solve();
 			_qualities[i] = _layouts[i].quality();
 		}
@@ -25,4 +27,5 @@ void TaskSolver::solveBin(){
 	Solution finale;
 	_layouts[i].genSolution(finale);
 	_shapes.applySolution(finale);
+	_indices.clear();
 }

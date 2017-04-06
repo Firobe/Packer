@@ -157,8 +157,8 @@ void Layout::copy(const Layout& o) {
 /**
  * @brief Copy constructor
  */
-Layout::Layout(const Layout& o) : ShapeVec(o) {
-    LOG(debug) << "Copying the whole layout !!" << endl;
+Layout::Layout(const Layout& o) : ShapeVec() {
+    LOG(info) << "Copying the whole layout !!" << endl;
     copy(o);
 
     if (usingQuads) {
@@ -172,11 +172,12 @@ Layout::Layout(const Layout& o) : ShapeVec(o) {
         _s = new vector<Shape>;
         _q = nullptr;
 
-        for (auto && c : *o._s) {
+        for (Shape& c : *o._s) {
             Shape s(c);
             (*_s).push_back(move(s));
         }
     }
+	generateRefs();
 }
 
 /**
@@ -256,8 +257,8 @@ double Layout::quality() const {
     for (unsigned i = 0 ; i < size() ; ++i) {
 		Point c = operator[](i).centroid();
 		operator[](i).envelope(e);
-		int binNb = e.min_corner().y() / (Parser::getDims().y() * SPACE_COEF);
-        Point orig(0, Parser::getDims().y() * SPACE_COEF * binNb);
+		//int binNb = e.min_corner().y() / (Parser::getDims().y() * SPACE_COEF);
+        Point orig(0, 0);//Parser::getDims().y() * SPACE_COEF * binNb);
         double d = bg::distance(orig, c);
         sum += d * d;
     }

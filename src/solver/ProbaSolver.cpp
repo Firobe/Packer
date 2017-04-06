@@ -86,16 +86,18 @@ double ProbaSolver::RNG() const {
  * @param i
  * @param binNb
  */
-bool ProbaSolver::shapeInBin(unsigned i, int binNb) const {
+bool ProbaSolver::shapeInBin(unsigned i, bool& param, int binNb) const {
     if (binNb == -1)
         binNb = _binNbs[i];
 
     Box e;
     _shapes[i].envelope(e);
     double minHeight = Parser::getDims().y() * SPACE_COEF * binNb;
-    return e.min_corner().x() >= 0 and e.max_corner().x() <= Parser::getDims().x()
-           and e.min_corner().y() >= minHeight and
-           e.max_corner().y() <= minHeight + Parser::getDims().y();
+    bool misc = e.min_corner().x() >= 0 and e.max_corner().x() <= Parser::getDims().x()
+          and e.max_corner().y() <= minHeight + Parser::getDims().y();
+    bool okayHigh = e.min_corner().y() >= minHeight;
+	param = okayHigh;
+	return misc && okayHigh;
 }
 
 /**
@@ -105,13 +107,24 @@ bool ProbaSolver::shapeInBin(unsigned i, int binNb) const {
  */
 void ProbaSolver::nextStep() {
     for (unsigned i = 0 ; i < _shapes.size() ; ++i) {
+		bool okH;
         double angle = (1 - (rand() % 2) * 2) * RNG() * 100;
-        double tX = (0.9 - (rand() % 2) * 2) * RNG() * Parser::getDims().x() / 10,
-               tY = (0.9 - (rand() % 2) * 2) * RNG() * Parser::getDims().y() / 10;
+        double tX = (0.8 - (rand() % 2) * 2) * RNG() * Parser::getDims().x() / 10,
+               tY = (0.8 - (rand() % 2) * 2) * RNG() * Parser::getDims().y() / 10;
         _shapes[i].translate(-_centroids[i].x(), -_centroids[i].y());
         _shapes[i].rotate(angle);
         _shapes[i].translate(_centroids[i].x() + tX, _centroids[i].y() + tY);
-        bool invalid = !shapeInBin(i);
+        bool invalid = !shapeInBin(i, okH);
+		if(!okH && _binNbs[i] > 0){
+			//Offer a chance for the Shape to climb a bin
+			Box e; _shapes[i].envelope(e);
+			double dist = (e.max_corner().y() - Parser::getDims().y() * SPACE_COEF * _binNbs[i])
+				+ (SPACE_COEF - 1) * Parser::getDims().y() + 5;
+			_shapes[i].translate(0., -dist);
+			tY -= dist;
+			--_binNbs[i];
+			invalid = !shapeInBin(i, invalid);
+		} else okH = true;
 
         for (unsigned j = 0 ; !invalid and j < _shapes.size() ; ++j)
             if (i != j and _binNbs[i] == _binNbs[j] and _shapes[i].intersectsWith(_shapes[j]))
@@ -124,6 +137,9 @@ void ProbaSolver::nextStep() {
             _shapes[i].translate(-_centroids[i].x(), -_centroids[i].y());
             _shapes[i].rotate(-angle);
             _shapes[i].translate(_centroids[i].x() - tX, _centroids[i].y() - tY);
+			if(!okH){
+				++_binNbs[i];
+			}
         }
         //this_thread::sleep_for(chrono::milliseconds(2));
     }

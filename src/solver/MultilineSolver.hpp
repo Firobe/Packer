@@ -20,8 +20,9 @@ private:
 public:
     MultilineSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p),
         _boxes(v.size()) {
-        int tmpSort = true;
-        _sort = (tmpSort == true);
+        int tmpSort = 1;
+		getParameter(p, "sort", tmpSort);
+        _sort = (tmpSort == 1);
     }
 };
 
