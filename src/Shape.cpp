@@ -58,7 +58,8 @@ array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1, Point
 	n2 = bg::distance(dst1, dst2);
 
 	if (!floatEqual(n1, n2, 10e-6))
-		throw runtime_error("Point order was modified or the shape was scaled");
+		throw runtime_error("Point order was modified or the shape was scaled (" +
+				to_string(n1) + ", " + to_string(n2) + ")");
 
 	x1 = (src2.x() - src1.x()) / n1;
 	y1 = (src2.y() - src1.y()) / n1;
