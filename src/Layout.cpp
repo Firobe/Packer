@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <boost/geometry/algorithms/distance.hpp>
 
 #include "Layout.hpp"
