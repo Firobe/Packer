@@ -11,10 +11,9 @@
 using namespace std;
 
 void ScanlineSolver::preSolve() {
-	/*
     for (unsigned i = 0; i < _shapes.size(); ++i)
         rotateToBestAngle(_shapes[i]);
-		*/
+
 
     sort(_shapes.begin(), _shapes.end(), shapeHeightLess);
 
