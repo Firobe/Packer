@@ -45,20 +45,20 @@ void Layout::generateQuadTrees(std::vector<Shape>* s) {
  */
 void Layout::replaceShapes(std::vector<Shape>* s) {
     if (usingQuads) {
-		/*
-		vector<Matrix> mats;
-		mats.reserve(s->size());
+        /*
+        vector<Matrix> mats;
+        mats.reserve(s->size());
 
-		for(auto&& sh : *s){
-			mats.emplace_back(sh.getTransMatrix());
-			sh.restore();
-		}*/
+        for(auto&& sh : *s){
+        	mats.emplace_back(sh.getTransMatrix());
+        	sh.restore();
+        }*/
         generateQuadTrees(s);
-		/*
-		for(unsigned i = 0 ; i < mats.size() ; ++i)
-			(*s)[i].applyMatrix(mats[i]);
-			*/
-	}
+        /*
+        for(unsigned i = 0 ; i < mats.size() ; ++i)
+        	(*s)[i].applyMatrix(mats[i]);
+        	*/
+    }
     else {
         if (_s != nullptr)
             delete _s;
@@ -177,7 +177,8 @@ Layout::Layout(const Layout& o) : ShapeVec(o) {
             (*_s).push_back(move(s));
         }
     }
-	generateRefs();
+
+    generateRefs();
 }
 
 /**
@@ -208,14 +209,14 @@ void Layout::copyShape(Shape& c, const Shape& tc) {
     else c.operator = (tc);
 }
 
-void Layout::forceApply(){
-	if(usingQuads){
-		for(Shape& s : *this) {
-			Matrix m = s.getTransMatrix();
-			s.restore(false);
-			s.applyMatrix(m, false, false);
-		}
-	}
+void Layout::forceApply() {
+    if (usingQuads) {
+        for (Shape& s : *this) {
+            Matrix m = s.getTransMatrix();
+            s.restore(false);
+            s.applyMatrix(m, false, false);
+        }
+    }
 }
 
 /**
@@ -240,8 +241,8 @@ void Layout::genSolution(Solution& s) const {
  */
 void Layout::applySolution(Solution& s) {
     for (unsigned i = 0 ; i < size() ; ++i) {
-		operator[](i).restore();
-		operator[](i).applyMatrix(s.mats[i]);
+        operator[](i).restore();
+        operator[](i).applyMatrix(s.mats[i]);
     }
 }
 
@@ -252,12 +253,12 @@ void Layout::applySolution(Solution& s) {
  */
 double Layout::quality() const {
     double sum = 0;
-	Box e;
+    Box e;
 
     for (unsigned i = 0 ; i < size() ; ++i) {
-		Point c = operator[](i).centroid();
-		operator[](i).envelope(e);
-		//int binNb = e.min_corner().y() / (Parser::getDims().y() * SPACE_COEF);
+        Point c = operator[](i).centroid();
+        operator[](i).envelope(e);
+        //int binNb = e.min_corner().y() / (Parser::getDims().y() * SPACE_COEF);
         Point orig(0, 0);//Parser::getDims().y() * SPACE_COEF * binNb);
         double d = bg::distance(orig, c);
         sum += d * d;

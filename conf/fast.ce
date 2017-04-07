@@ -1,0 +1,3 @@
+HoleTransformer();
+ScanlineSolver();
+ProbaSolver(random_steps=20, branch_steps=20, amplitude_proba=60., initial_placement=0);

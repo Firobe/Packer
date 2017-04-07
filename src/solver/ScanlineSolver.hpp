@@ -5,6 +5,9 @@
 
 #include "Solver.hpp"
 
+/**
+ * @brief Solver using a grid of rectangular cells
+ */
 class ScanlineSolver : public Solver {
 private:
     std::vector<Box> _boxes;

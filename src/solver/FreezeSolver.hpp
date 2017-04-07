@@ -5,6 +5,10 @@
 
 #include "Solver.hpp"
 
+
+/**
+ * @brief Solver simulating gravity and random bounces on shape collision
+ */
 class FreezeSolver : public Solver {
 private:
     void preSolve() override;

@@ -21,8 +21,8 @@ private:
     bool _initialPlacement;
     std::vector<Point> _centroids;
     std::vector<unsigned> _binNbs;
-	int _randomSteps;
-	int _branchSteps;
+    int _randomSteps;
+    int _branchSteps;
     void preSolve() override;
     void solveBin() override;
 

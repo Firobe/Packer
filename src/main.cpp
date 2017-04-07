@@ -1,5 +1,7 @@
 #include <iostream>
+#include <csignal>
 #include <fstream>
+#include <stdexcept>
 
 #include <boost/program_options.hpp>
 
@@ -8,8 +10,9 @@
 #include "Parser.hpp"
 #include "Display.hpp"
 #include "CloseEnough.hpp"
-#include "quadtree/QuadTree.hpp"
 #include "Layout.hpp"
+#include "solver/Solver.hpp"
+#include "transformer/Transformer.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -32,6 +35,7 @@ int main(int argc, char** argv) {
     srand(vm["seed"].as<unsigned>());
     LOG(info) << "Seed : " << vm["seed"].as<unsigned>() << endl;
     string toDo;
+    signal(SIGINT, signalHandler);
 
     if (vm.count("confString"))
         toDo = vm["confString"].as<string>();
@@ -149,5 +153,11 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
 }
 
 void signalHandler(int) {
-    cout << "User interruption received. Will stop as soon as possible" << endl;
+    if (!Solver::generalStop) {
+        LOG(warning) << endl << "User interruption received. Will stop as soon as possible" <<
+                     endl;
+        Solver::generalStop = true;
+        Transformer::generalStop = true;
+    }
+    else throw runtime_error("FORCED INTERRUPTION");
 }

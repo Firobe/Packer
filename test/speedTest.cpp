@@ -122,7 +122,6 @@ int main() {
 	cout << "Ratio : " << celapsed2/celapsed1 << endl;
 
 
-
 	//Translation time
 	cstart = Clock::now();
 	for (unsigned i=0; i<REPEAT;i++) {
@@ -254,4 +253,6 @@ int main() {
 	cout << "Polygon merge time : " << celapsed2 << " us for " << repeat_nb << " execution" << endl <<
 			"                        " << celapsed2/repeat_nb << " us for a single execution" << endl;
 	cout << "Ratio : " << celapsed2/(float) celapsed1 << endl;
+
+	return 0;
 }

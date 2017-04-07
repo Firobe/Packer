@@ -54,8 +54,8 @@ using SolverRegistry = Registry<Solver,
       MultilineSolver,
       LineSolver,
       FreezeSolver,
-	  ProbaSolver,
-	  TaskSolver
+      ProbaSolver,
+      TaskSolver
       >::type>;
 
 /**

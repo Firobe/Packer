@@ -53,7 +53,7 @@ public:
     Layout& operator=(Layout&& o);
     ~Layout();
 
-	void forceApply();
+    void forceApply();
     void generateRefs();
     Shape& newCopy();
     void copyShape(Shape&, const Shape&);

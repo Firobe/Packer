@@ -51,33 +51,34 @@ void Shape::mergeMultiP(MultiPolygon& A, const MultiPolygon& B) {
         A.push_back(b);
 }
 
-array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1, Point dst2) const {
-	double c, s, x1, y1, x2, y2, n1, n2;
-	//Normalize vectors (x1, y1), (x2, y2)
-	n1 = bg::distance(src1, src2);
-	n2 = bg::distance(dst1, dst2);
+array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1,
+                                       Point dst2) const {
+    double c, s, x1, y1, x2, y2, n1, n2;
+    //Normalize vectors (x1, y1), (x2, y2)
+    n1 = bg::distance(src1, src2);
+    n2 = bg::distance(dst1, dst2);
 
-	if (!floatEqual(n1, n2, 10e-6))
-		throw runtime_error("Point order was modified or the shape was scaled (" +
-				to_string(n1) + ", " + to_string(n2) + ")");
+    if (!floatEqual(n1, n2, 10e-6))
+        throw runtime_error("Point order was modified or the shape was scaled (" +
+                            to_string(n1) + ", " + to_string(n2) + ")");
 
-	x1 = (src2.x() - src1.x()) / n1;
-	y1 = (src2.y() - src1.y()) / n1;
-	x2 = (dst2.x() - dst1.x()) / n2;
-	y2 = (dst2.y() - dst1.y()) / n2;
-	//Computing cos & sin with dot products
-	c = x1 * x2 + y1 * y2;
-	s = x1 * y2 - x2 * y1;
-	//Resulting matrix corresponding to the following operations:
-	//Translate to origin, rotate, translate to new position
-	array<double, 6> result;
-	result[0] = c;
-	result[1] = -s;
-	result[2] = s;
-	result[3] = c;
-	result[4] = - src1.x() * c + src1.y() * s + dst1.x();
-	result[5] = - src1.x() * s - src1.y() * c + dst1.y();
-	return result;
+    x1 = (src2.x() - src1.x()) / n1;
+    y1 = (src2.y() - src1.y()) / n1;
+    x2 = (dst2.x() - dst1.x()) / n2;
+    y2 = (dst2.y() - dst1.y()) / n2;
+    //Computing cos & sin with dot products
+    c = x1 * x2 + y1 * y2;
+    s = x1 * y2 - x2 * y1;
+    //Resulting matrix corresponding to the following operations:
+    //Translate to origin, rotate, translate to new position
+    array<double, 6> result;
+    result[0] = c;
+    result[1] = -s;
+    result[2] = s;
+    result[3] = c;
+    result[4] = - src1.x() * c + src1.y() * s + dst1.x();
+    result[5] = - src1.x() * s - src1.y() * c + dst1.y();
+    return result;
 }
 
 
@@ -90,7 +91,8 @@ array<double, 6> Shape::getTransMatrix(Point src1, Point src2, Point dst1, Point
  * starting position.
  */
 array<double, 6> Shape::getTransMatrix() const {
-	return getTransMatrix(_oldP1, _oldP2, _multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2]);
+    return getTransMatrix(_oldP1, _oldP2, _multiP[0].outer()[_indexP1],
+                          _multiP[0].outer()[_indexP2]);
 }
 
 /**
@@ -319,7 +321,7 @@ void rotateToBestAngle(Shape& object) {
     }
 
     object.rotate(bestAngle - currAngle);
-	object.envelope(currBox);
+    object.envelope(currBox);
 
     // To have height > width
     if (abs(currBox.max_corner().y() - currBox.min_corner().y()) < abs(
@@ -403,33 +405,35 @@ void Shape::copy(const Shape& s) {
     _indexP2 = s._indexP2;
     _id = s._id;
     _out = s._out;
-	_backupP1 = s._backupP1;
-	_backupP2 = s._backupP2;
+    _backupP1 = s._backupP1;
+    _backupP2 = s._backupP2;
 }
 
 void Shape::savePos() {
-	_backupP1 = _multiP[0].outer()[_indexP1];
-	_backupP2 = _multiP[0].outer()[_indexP2];
+    _backupP1 = _multiP[0].outer()[_indexP1];
+    _backupP2 = _multiP[0].outer()[_indexP2];
 }
 
 void Shape::restorePos() {
-	array<double, 6> transformMatrix;
-	transformMatrix = getTransMatrix(_multiP[0].outer()[_indexP1], _multiP[0].outer()[_indexP2], _backupP1, _backupP2);
-	double c = transformMatrix[0];
-	double angle;
+    array<double, 6> transformMatrix;
+    transformMatrix = getTransMatrix(_multiP[0].outer()[_indexP1],
+                                     _multiP[0].outer()[_indexP2], _backupP1, _backupP2);
+    double c = transformMatrix[0];
+    double angle;
+    errno = 0;
 
-	errno = 0;
-	if (c >= 1.l)
-		angle = 0.l;
-	else if (c <= -1.l)
-		angle = 180.l;
-	else
-		angle = acos(c) * 180 / pi;
-	if(errno == EDOM)
-		throw string(strerror(errno));
+    if (c >= 1.l)
+        angle = 0.l;
+    else if (c <= -1.l)
+        angle = 180.l;
+    else
+        angle = acos(c) * 180 / pi;
 
-	rotate(angle);
-	translate(transformMatrix[4], transformMatrix[5]);
+    if (errno == EDOM)
+        throw string(strerror(errno));
+
+    rotate(angle);
+    translate(transformMatrix[4], transformMatrix[5]);
 }
 
 void Shape::restore(bool virt) {
@@ -448,23 +452,23 @@ void Shape::applyMatrix(Matrix& transM, bool inverse, bool virt) {
     }
     */
     if (inverse) {
-		if(virt){
-			translate(-transM[4], -transM[5]);
-			rotate(-theta * 180. / pi);
-		}
-		else{
-			Shape::translate(-transM[4], -transM[5]);
-			Shape::rotate(-theta * 180. / pi);
-		}
+        if (virt) {
+            translate(-transM[4], -transM[5]);
+            rotate(-theta * 180. / pi);
+        }
+        else {
+            Shape::translate(-transM[4], -transM[5]);
+            Shape::rotate(-theta * 180. / pi);
+        }
     }
     else {
-		if(virt) {
-			rotate(theta * 180. / pi);
-			translate(transM[4], transM[5]);
-		}
-		else {
-			Shape::rotate(theta * 180. / pi);
-			Shape::translate(transM[4], transM[5]);
-		}
+        if (virt) {
+            rotate(theta * 180. / pi);
+            translate(transM[4], transM[5]);
+        }
+        else {
+            Shape::rotate(theta * 180. / pi);
+            Shape::translate(transM[4], transM[5]);
+        }
     }
 }
