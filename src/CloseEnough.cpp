@@ -151,14 +151,14 @@ void Call::operator()(Layout& shapes) {
     }
     else if (func.cat == FUNC_SOLVER) {
         Solver* s = SolverRegistry::instanciate(func.name, shapes, params);
-        string reset = "true";
+        string reset = "1";
 
-        if (!getParameter(params, "reset", reset))
-            reset = "true";
+        if (!getParameter(params, "0", reset))
+            reset = "1";
 
         s->solve();
 
-        if (reset == "true" and needReset) {
+        if (reset == "1" and needReset) {
             merge.reset();
             needReset = false;
         }

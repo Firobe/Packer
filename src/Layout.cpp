@@ -157,7 +157,7 @@ void Layout::copy(const Layout& o) {
 /**
  * @brief Copy constructor
  */
-Layout::Layout(const Layout& o) : ShapeVec() {
+Layout::Layout(const Layout& o) : ShapeVec(o) {
     LOG(info) << "Copying the whole layout !!" << endl;
     copy(o);
 

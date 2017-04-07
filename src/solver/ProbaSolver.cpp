@@ -15,6 +15,7 @@ void ProbaSolver::preSolve() {
 	//If the user did not prohibit it, use MultilineSolver to place the shapes
 	//such that they do not intersect
     if (_initialPlacement) {
+		LOG(info) << "Executing MultilineSolver for initial placement" << endl;
 		//Random initial order
         random_shuffle(_shapes.begin(), _shapes.end());
         MultilineSolver s(_shapes, {{"sort", 0}});

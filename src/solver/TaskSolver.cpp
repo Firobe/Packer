@@ -25,6 +25,12 @@ void TaskSolver::solveBin(){
 	//Do the flop
 	unsigned i = distance(_qualities.begin(), max_element(_qualities.begin(), _qualities.end()));
 	Solution finale;
+    sort(_shapes.begin(), _shapes.end(), [](const Shape & a, const Shape & b) {
+        return a.getID() < b.getID();
+    });
+    sort(_layouts[i].begin(), _layouts[i].end(), [](const Shape & a, const Shape & b) {
+        return a.getID() < b.getID();
+    });
 	_layouts[i].genSolution(finale);
 	_shapes.applySolution(finale);
 	_indices.clear();
