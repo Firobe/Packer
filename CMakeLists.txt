@@ -6,7 +6,7 @@ set(BOOST_REQUIRED_VERSION 1.62.0)
 set(EXE_NAME "packer")
 
 # Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors -std=c++11 -static -fopenmp")
 
 # Options
 option(FORCE_UNPACK "Boost unpack forcing") #Set to 1 to force local installation of Boost (ensure that it will take priority)
