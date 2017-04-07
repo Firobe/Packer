@@ -147,7 +147,9 @@ endif ()
 # Add other targets
 add_subdirectory(doc)
 add_subdirectory(src)
-add_subdirectory(test)
+if ((NOT (DEFINED target-os)) OR (DEFINED target-os AND (NOT (target-os STREQUAL "windows"))))
+    add_subdirectory(test)
+endif()
 add_executable(packer src/main.cpp)
 
 target_link_libraries(packer packer_lib)

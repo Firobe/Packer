@@ -24,7 +24,7 @@ This program is meant to read several generic shapes from a file in SVG format a
 
  * Require package `mingw-w64`.
  * Create a build directory and enter it `mkdir build-win && cd build-win`.
- * Configure Cmake project : `cmake -DCMAKE_TOOLCHAIN_FILE=../CMakeModules/Toolchain-mingw-w64.cmake -DCMAKE_INSTALL_PREFIX=/usr/x86_64-w64-mingw32/ -Dtarget-os="windows" ..`.
+ * Configure Cmake project : `cmake -DCMAKE_TOOLCHAIN_FILE=../CMakeModules/Toolchain-mingw-w64.cmake -DCMAKE_INSTALL_PREFIX=/usr/x86_64-w64-mingw32/ -Dtarget-os="windows" ..`. If your mingw package is located in a other path, you can specify the correct root directory of the toolchain in the CMAKE_INSTALL_PREFIX option.
  * Build it using `make`.
  * Executable name is `packer.exe`.
 
