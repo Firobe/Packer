@@ -47,6 +47,7 @@ This program is meant to read several generic shapes from a file in SVG format a
  * For the purpose of laser cutting, the `buffer X` can be used to force a minimal distance (in px) between the packed shapes.
  * If the project was built with graphical support, the flag `--display` can be used to enable a basic display of what is going on during the execution.
  * The option `--q PRECISION` can be specified to use QuadTrees instead of plain shapes. This can improve the performance of most algorithms. The higher the precision, the higher the performance (but a low precision yields better solutions.
+ * Interrupting the program with C-c doesn't instantly stops the packing. Doing it once will make it stop as soon as possible and output a valid solution. Using C-c twice will force the interruption of the program.
 
 #### Inkscape interface
 
@@ -74,6 +75,7 @@ CloseEnough is a very simple DSL to facilitate the combination of the differents
  * `ScanlineSolver` : uses the first-fit algorithm to pack shapes. Very efficient on rectangular shapes.
  * `FreezeSolver` : uses a physics-like algorithm to pack one shape after the other with gravity.
  * `ProbaSolver` : a probabilist solver using random steps. The parameter `amplitudeProba` can be provided. It will specify the amplitude of the random movements (a higher number means smaller steps).
+ * `TaskSolver` : uses multiple instances of ProbaSolver and keeps only the best solution.
 
 # Features
 
