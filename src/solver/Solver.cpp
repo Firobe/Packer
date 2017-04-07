@@ -6,6 +6,8 @@
 #include "Display.hpp"
 #include "Log.hpp"
 
+bool Solver::generalStop = false;
+
 using namespace std;
 
 void Solver::solve() {

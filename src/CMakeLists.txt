@@ -12,6 +12,7 @@ add_library(packer_lib STATIC
 	quadtree/QuadTree.cpp
     quadtree/InnerQuadTree.cpp
 	quadtree/bitmap.cpp
+	transformer/Transformer.cpp
     transformer/SimpleTransformer.cpp
     transformer/HoleTransformer.cpp
     solver/Solver.cpp

@@ -113,6 +113,7 @@ vector<vector<unsigned> > SimpleTransformer::transform() {
 			for (int alpha = 0; alpha < 360; alpha += _rotateStep) { //Rotate first shape
 				for (int beta = 0.; beta < 360 ; beta += _rotateStep) { //Rotate second shape
 					for (int offset = 0; offset < _translateNb ; ++offset) { //Trying different offsets
+						if(Transformer::generalStop) continue;
 						/*
 						shapeA.savePos();
 						shapeB.savePos();

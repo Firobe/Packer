@@ -21,6 +21,7 @@ void ProbaSolver::preSolve() {
         MultilineSolver s(_shapes, {{"sort", 0}});
         s.solve();
     }
+	else LOG(info) << "No initial placement : ensure there is no transformation matrix in the input" << endl;
 
     _centroids.reserve(_shapes.size());
 
@@ -43,9 +44,9 @@ void ProbaSolver::solveBin() {
     _shapes.genSolution(current);
     LOG(info) << "Doing random steps";
 
-    for (int i = 0 ; i < _branchSteps ; ++i) {
+    for (int i = 0 ; i < _branchSteps and !Solver::generalStop ; ++i) {
 		//Do random steps
-        for (int step = 0 ; step < _randomSteps ; ++step)
+        for (int step = 0 ; step < _randomSteps and !Solver::generalStop ; ++step)
             nextStep();
 
 		//Evaluate the quality of the resulting solution
@@ -76,7 +77,7 @@ void ProbaSolver::solveBin() {
  * Uses an exponential distribution
  */
 double ProbaSolver::RNG() const {
-    static default_random_engine generator;
+    static default_random_engine generator(rand());
     static exponential_distribution<double> distribution(_amplitudeProba);
     return distribution(generator);
 }
@@ -128,7 +129,7 @@ void ProbaSolver::nextStep() {
 		} else okH = true;
 
         for (unsigned j = 0 ; !invalid and j < _shapes.size() ; ++j)
-            if (i != j and _binNbs[i] == _binNbs[j] and _shapes[i].intersectsWith(_shapes[j]))
+            if (i != j and /*_binNbs[i] == _binNbs[j] and*/ _shapes[i].intersectsWith(_shapes[j]))
                 invalid = true;
 
         translate(_centroids[i], tX, tY);
