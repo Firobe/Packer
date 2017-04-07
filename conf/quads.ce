@@ -1,0 +1,4 @@
+HoleTransformer();
+DO 5 TIMES
+	SimpleTransformer(rotate_step=30, criteria=box, rentability=0.2);
+ScanlineSolver();

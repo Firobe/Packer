@@ -6,7 +6,7 @@ This program is meant to read several generic shapes from a file in SVG format a
 
  * No dependencies required, only a C++11 complying compiler with OpenMP support.
  * Create a build directory and enter it `mkdir build && cd build`.
- * Generate Makefiles using `cmake ..`.
+ * Generate Makefiles using `cmake ..` (to enable display, `-DDISPLAY=1` can be specified).
  * Build the project using `make` (multithreaded compilation using `-j <coreNb>` is advised).
  * Binary is named `packer`.
  * `make test` will run the tests.
@@ -68,14 +68,17 @@ CloseEnough is a very simple DSL to facilitate the combination of the differents
 
 #### Available algorithms
 
- * `SimpleTransformer` : use brute force on randoms pair of shapes to merge them as close as possible, very slow. The following parameters can be supplied : `rotate_step` (an integer defining the used angle step, the higher the faster), `translate_nb` (the number of positions tried for each angle configuration, the higher the slower), `rentability` (the treshold used to determine if the gain is sufficient to merge two shapes). The parameter `intersection` MUST be supplied and can have two values : `intersection` or `box`.
+ * `SimpleTransformer` : use brute force on randoms pair of shapes to merge them as close as possible, very slow. The following parameters can be supplied : `rotate_step` (an integer defining the used angle step, the higher the faster), `translate_nb` (the number of positions tried for each angle configuration, the higher the slower), `rentability` (the treshold used to determine if the gain is sufficient to merge two shapes). The parameter `intersection` *MUST* be supplied and can have two values : `intersection` or `box`.
  * `HoleTransformer` : a basic algorithm that tries for each known hole to fit another shape in it.
  * `LineSolver` : places every shape on a single line.
- * `MultilineSolver` : places every shape on multiple lines.
+ * `MultilineSolver` : places every shape on multiple lines. The parameter `sort=0` can be supplied to keep the current order the shapes before packing.
  * `ScanlineSolver` : uses the first-fit algorithm to pack shapes. Very efficient on rectangular shapes.
  * `FreezeSolver` : uses a physics-like algorithm to pack one shape after the other with gravity.
- * `ProbaSolver` : a probabilist solver using random steps. The parameter `amplitudeProba` can be provided. It will specify the amplitude of the random movements (a higher number means smaller steps).
- * `TaskSolver` : uses multiple instances of ProbaSolver and keeps only the best solution.
+ * `ProbaSolver` : a probabilist solver using random steps. The parameter `amplitudeProba`(float) can be provided. It will specify the amplitude of the random movements (a higher number means smaller steps). Furthermore, the following parameters can be supplied : `random_steps` and `branch_steps`, to specify respectively how many random steps to do between each improvement check and how many improvement checks to do. Lastly, `initial_placement=0` can be provided to keep the current shape layout before packing (the will not be moved before beginning random steps). In this case, you must ensure that shapes are *NOT* intersecting at this point of the program, and that their position is *NOT* due to transformation matrices in the original file.
+ * `TaskSolver` : uses multiple instances of ProbaSolver and keeps only the best solution. Every parameter will be forwarded to ProbaSolver, except `task_nb`, which can be used to specify how many instances of ProbaSolver will be called (if you specify more that the number of cores in your CPU, every task will not run in parallel).
+
+Every `Transformer` can receive the parameter `merge=0` to forbid the union of shapes (shapes will only be moved but not considered as a single entity after a transformer).
+Every `Solver` can receive the parameter `reset=0` to forbid the "reset" of the shapes (make previously merged shapes be distinct entities again). A reset is implicitly done after each solver if needed. The shapes *MUST* be in a reset state at the end of the program.
 
 # Features
 

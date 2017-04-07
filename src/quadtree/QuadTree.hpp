@@ -24,10 +24,10 @@ private:
     float precision;
     int _area;
 
-	float _oldX, _oldY;
+    float _oldX, _oldY;
 
-	float _backupX, _backupY;
-	unsigned _backupPos;
+    float _backupX, _backupY;
+    unsigned _backupPos;
 
 private:
     void copy(const QuadTree&);
@@ -47,24 +47,24 @@ public:
 
 public:
     // Overriden algorithms
-	void savePos(); // TODO : implement it
-	void restorePos(); // TODO : implement it
-	void mergeWith(const Shape&) override;
+    void savePos(); // TODO : implement it
+    void restorePos(); // TODO : implement it
+    void mergeWith(const Shape&) override;
     void rotate(double degrees) override;
     void translate(double Tx, double Ty) override;
     void envelope(Box&) const override;
     Point centroid() const override;
     int area() const override;
     bool intersectsWith(const Shape&) const override;
-	bool intersectsWith(const Ring&) const override;
-	void convexHull(Polygon&) const override;
-	void bufferize(double) override;
-	std::array<double, 6> getTransMatrix() const override;
+    bool intersectsWith(const Ring&) const override;
+    void convexHull(Polygon&) const override;
+    void bufferize(double) override;
+    std::array<double, 6> getTransMatrix() const override;
 
 private:
     void saveTree(std::string filename, int depth);
-	void construct(float precision, MultiPolygon mult);
-	void construct(float precision, Shape& s);
+    void construct(float precision, MultiPolygon mult);
+    void construct(float precision, Shape& s);
 
 public:
     void saveTree(std::string filename);

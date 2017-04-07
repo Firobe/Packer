@@ -30,9 +30,10 @@ protected:
     unsigned _id; //index in Parser::id()
     std::string _out;
 
-	Point _backupP1, _backupP2;
+    Point _backupP1, _backupP2;
 
-	std::array<double, 6> getTransMatrix(Point src1, Point src2, Point dst1, Point dst2) const;
+    std::array<double, 6> getTransMatrix(Point src1, Point src2, Point dst1,
+                                         Point dst2) const;
     void fillShape(std::vector<Ring>&); //Initializes a Shape from an array of rings
     void setOld();
     Shape(const Shape&) = default;
@@ -40,7 +41,7 @@ protected:
         copy(s);
         return *this;
     }
-	void mergeMultiP(MultiPolygon& A, const MultiPolygon& B);
+    void mergeMultiP(MultiPolygon& A, const MultiPolygon& B);
 public:
     Shape() {}
     Shape(std::vector<Ring>& r, unsigned id) : _id(id), _out() {
@@ -75,11 +76,11 @@ public:
     unsigned polyNumber() const;
     const Polygon& getNthPoly(unsigned i) const;
 
-	//Algorithms
-	virtual void savePos();
-	virtual void restorePos();
+    //Algorithms
+    virtual void savePos();
+    virtual void restorePos();
     void applyMatrix(Matrix& transM, bool = false, bool = true);
-	void restore(bool = true);
+    void restore(bool = true);
     virtual void mergeWith(const Shape&);
     virtual void rotate(double degrees);
     virtual void translate(double Tx, double Ty);

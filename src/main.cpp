@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     srand(vm["seed"].as<unsigned>());
     LOG(info) << "Seed : " << vm["seed"].as<unsigned>() << endl;
     string toDo;
-	signal(SIGINT, signalHandler);	
+    signal(SIGINT, signalHandler);
 
     if (vm.count("confString"))
         toDo = vm["confString"].as<string>();
@@ -153,10 +153,11 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
 }
 
 void signalHandler(int) {
-	if(!Solver::generalStop) {
-		LOG(warning) << endl << "User interruption received. Will stop as soon as possible" << endl;
-		Solver::generalStop = true;
-		Transformer::generalStop = true;
-	}
-	else throw runtime_error("FORCED INTERRUPTION");
+    if (!Solver::generalStop) {
+        LOG(warning) << endl << "User interruption received. Will stop as soon as possible" <<
+                     endl;
+        Solver::generalStop = true;
+        Transformer::generalStop = true;
+    }
+    else throw runtime_error("FORCED INTERRUPTION");
 }
