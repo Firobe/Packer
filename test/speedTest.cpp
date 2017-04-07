@@ -28,12 +28,11 @@ using namespace std;
 int main() {
 
 	srand(time(0));
+	volatile bool res = 0;
 
 	vector<string> toPack;
 	Layout vertebraeQuad(Parser::Parse("vertebrae.svg", toPack), 5);
 	Layout vertebraePoly(Parser::Parse("vertebrae.svg", toPack));
-
-	volatile bool res;
 
 	//intersection time (default position)
 	int repeat_nb = REPEAT2 * vertebraeQuad.size() * vertebraeQuad.size();
@@ -143,4 +142,5 @@ int main() {
 	cout << "Polygon translation time : " << celapsed2 << " us for " << repeat_nb << " execution" << endl <<
 			"                        " << celapsed2/repeat_nb << " us for a single execution" << endl;
 	cout << "Ratio : " << celapsed2/celapsed1 << endl;
+	(void) res;
 }

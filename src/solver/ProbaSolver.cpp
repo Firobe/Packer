@@ -44,9 +44,9 @@ void ProbaSolver::solveBin() {
     _shapes.genSolution(current);
     LOG(info) << "Doing random steps";
 
-    for (int i = 0 ; i < _branchSteps ; ++i) {
+    for (int i = 0 ; i < _branchSteps and !Solver::generalStop ; ++i) {
 		//Do random steps
-        for (int step = 0 ; step < _randomSteps ; ++step)
+        for (int step = 0 ; step < _randomSteps and !Solver::generalStop ; ++step)
             nextStep();
 
 		//Evaluate the quality of the resulting solution
