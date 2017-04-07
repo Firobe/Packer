@@ -55,7 +55,7 @@ int main() {
         testSolver<LineSolver>(s);
         testSolver<MultilineSolver>(s);
         testSolver<ScanlineSolver>(s);
-        //testSolver<FreezeSolver>(s);
+        testSolver<FreezeSolver>(s);
         testSolver<ProbaSolver>(s);
         }
     return EXIT_SUCCESS;
