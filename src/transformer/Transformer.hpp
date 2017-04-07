@@ -17,9 +17,10 @@ class Transformer {
 protected:
     Layout& _shapes; // Contains parsed shapes
 public:
-    Transformer(Layout& s, const std::vector<Parameter>&) : _shapes(s) {}
+	static bool generalStop;
+    Transformer(Layout& s, const std::vector<Parameter>&);
     virtual std::vector<std::vector<unsigned> > transform() = 0;
-    virtual ~Transformer() {}
+    virtual ~Transformer();
 };
 
 #endif

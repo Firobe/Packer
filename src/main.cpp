@@ -12,6 +12,7 @@
 #include "CloseEnough.hpp"
 #include "Layout.hpp"
 #include "solver/Solver.hpp"
+#include "transformer/Transformer.hpp"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -152,8 +153,10 @@ void parseCommandLine(int argc, char** argv, po::variables_map& vm) {
 }
 
 void signalHandler(int) {
-    LOG(warning) << endl << "User interruption received. Will stop as soon as possible" << endl;
-	if(!Solver::generalStop)
+	if(!Solver::generalStop) {
+		LOG(warning) << endl << "User interruption received. Will stop as soon as possible" << endl;
 		Solver::generalStop = true;
+		Transformer::generalStop = true;
+	}
 	else throw runtime_error("FORCED INTERRUPTION");
 }

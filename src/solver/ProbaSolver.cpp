@@ -129,7 +129,7 @@ void ProbaSolver::nextStep() {
 		} else okH = true;
 
         for (unsigned j = 0 ; !invalid and j < _shapes.size() ; ++j)
-            if (i != j and _binNbs[i] == _binNbs[j] and _shapes[i].intersectsWith(_shapes[j]))
+            if (i != j and /*_binNbs[i] == _binNbs[j] and*/ _shapes[i].intersectsWith(_shapes[j]))
                 invalid = true;
 
         translate(_centroids[i], tX, tY);
