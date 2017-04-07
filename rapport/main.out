@@ -7,10 +7,17 @@
 \BOOKMARK [2][-]{subsection.2.1}{M\351thode Kanban}{section.2}% 7
 \BOOKMARK [2][-]{subsection.2.2}{La m\351thode dans les faits}{section.2}% 8
 \BOOKMARK [2][-]{subsection.2.3}{Outils}{section.2}% 9
+<<<<<<< HEAD
 \BOOKMARK [2][-]{subsection.2.4}{Format des donn\351es Entr\351e/Sortie}{section.2}% 10
 \BOOKMARK [1][-]{section.3}{Architecture}{}% 11
 \BOOKMARK [2][-]{subsection.3.1}{Fonctionnement g\351n\351ral}{section.3}% 12
 \BOOKMARK [2][-]{subsection.3.2}{Concept de Shape}{section.3}% 13
+=======
+\BOOKMARK [2][-]{subsection.2.4}{Le format SVG}{section.2}% 10
+\BOOKMARK [1][-]{section.3}{Architecture}{}% 11
+\BOOKMARK [2][-]{subsection.3.1}{Fonctionnement g\351n\351ral}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.2}{Repr\351sentation interne \(Shape\)}{section.3}% 13
+>>>>>>> 51b2a2cef09123b58854295e55696380e0f90406
 \BOOKMARK [2][-]{subsection.3.3}{Pr\351paration des pi\350ces}{section.3}% 14
 \BOOKMARK [2][-]{subsection.3.4}{Choix concernant la sortie}{section.3}% 15
 \BOOKMARK [2][-]{subsection.3.5}{Fonctionnement interne des modules}{section.3}% 16

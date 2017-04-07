@@ -8,6 +8,7 @@
 \contentsline {subsection}{\numberline {2.1}M\IeC {\'e}thode Kanban}{6}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}La m\IeC {\'e}thode dans les faits}{8}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Outils}{9}{subsection.2.3}
+<<<<<<< HEAD
 \contentsline {subsection}{\numberline {2.4}Format des donn\IeC {\'e}es Entr\IeC {\'e}e/Sortie}{9}{subsection.2.4}
 \contentsline {section}{\numberline {3}Architecture}{10}{section.3}
 \contentsline {subsection}{\numberline {3.1}Fonctionnement g\IeC {\'e}n\IeC {\'e}ral}{10}{subsection.3.1}
@@ -20,15 +21,37 @@
 \contentsline {subsubsection}{\numberline {3.5.3}Algorithmes de packing}{15}{subsubsection.3.5.3}
 \contentsline {paragraph}{Transformers, Merger\\}{15}{section*.11}
 \contentsline {paragraph}{Solvers}{16}{section*.13}
+=======
+\contentsline {subsection}{\numberline {2.4}Le format SVG}{9}{subsection.2.4}
+\contentsline {section}{\numberline {3}Architecture}{11}{section.3}
+\contentsline {subsection}{\numberline {3.1}Fonctionnement g\IeC {\'e}n\IeC {\'e}ral}{11}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Repr\IeC {\'e}sentation interne (\texttt {Shape})}{11}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Pr\IeC {\'e}paration des pi\IeC {\`e}ces}{13}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Choix concernant la sortie}{14}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Fonctionnement interne des modules}{14}{subsection.3.5}
+\contentsline {subsubsection}{\numberline {3.5.1}Plug-In}{14}{subsubsection.3.5.1}
+\contentsline {subsubsection}{\numberline {3.5.2}Parser et SVG++}{14}{subsubsection.3.5.2}
+\contentsline {subsubsection}{\numberline {3.5.3}Algorithmes de packing}{16}{subsubsection.3.5.3}
+\contentsline {paragraph}{Transformers, Merger\\}{16}{section*.12}
+\contentsline {paragraph}{Solvers}{16}{section*.14}
+>>>>>>> 51b2a2cef09123b58854295e55696380e0f90406
 \contentsline {subsubsection}{\numberline {3.5.4}Outer}{16}{subsubsection.3.5.4}
 \contentsline {subsection}{\numberline {3.6}Langage de script}{17}{subsection.3.6}
 \contentsline {section}{\numberline {4}Algorithmes}{19}{section.4}
 \contentsline {subsection}{\numberline {4.1}Transformers}{19}{subsection.4.1}
+<<<<<<< HEAD
 \contentsline {subsubsection}{\numberline {4.1.1}Simple Transformer}{19}{subsubsection.4.1.1}
 \contentsline {subsubsection}{\numberline {4.1.2}Hole Transformer}{20}{subsubsection.4.1.2}
 \contentsline {subsection}{\numberline {4.2}Solvers}{21}{subsection.4.2}
 \contentsline {subsubsection}{\numberline {4.2.1}Algorithmes par \textit {bounding box}}{21}{subsubsection.4.2.1}
 \contentsline {subsubsection}{\numberline {4.2.2}Algorithmes non d\IeC {\'e}terministes}{25}{subsubsection.4.2.2}
+=======
+\contentsline {subsubsection}{\numberline {4.1.1}Simple Transformer}{20}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}Hole Transformer}{20}{subsubsection.4.1.2}
+\contentsline {subsection}{\numberline {4.2}Solvers}{21}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Algorithmes par \textit {bounding box}}{21}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Algorithmes non d\IeC {\'e}terministes}{26}{subsubsection.4.2.2}
+>>>>>>> 51b2a2cef09123b58854295e55696380e0f90406
 \contentsline {section}{\numberline {5}Optimisation}{29}{section.5}
 \contentsline {subsection}{\numberline {5.1}Quad-Tree}{29}{subsection.5.1}
 \contentsline {subsubsection}{\numberline {5.1.1}Principe g\IeC {\'e}n\IeC {\'e}ral}{29}{subsubsection.5.1.1}
@@ -39,4 +62,8 @@
 \contentsline {subsection}{\numberline {5.3}Interpolation am\IeC {\'e}lior\IeC {\'e}e}{32}{subsection.5.3}
 \contentsline {section}{\numberline {6}Liens}{36}{section.6}
 \contentsline {section}{\numberline {7}Annexe}{37}{section.7}
+<<<<<<< HEAD
 \contentsline {paragraph}{Close Enough Script Language\\}{37}{section*.33}
+=======
+\contentsline {paragraph}{Close Enough Script Language\\}{37}{section*.34}
+>>>>>>> 51b2a2cef09123b58854295e55696380e0f90406
