@@ -25,6 +25,97 @@
 \@writefile{lof}{\select@language{french}}
 \@writefile{lot}{\select@language{french}}
 \pgfsyspdfmark {pgfid1}{4884419}{50865199}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Contexte}{4}{section.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Le client}{4}{subsection.1.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Contexte}{3}{section.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Le client}{3}{subsection.1.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Description du besoin}{4}{subsection.1.2}}
+\newlabel{fig:lasermachine}{{1.2}{4}{Description de l'existant}{section*.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Exemple de packing attendu\relax }}{4}{figure.caption.5}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:before_after_pack}{{1}{4}{Exemple de packing attendu\relax }{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Sch\IeC {\'e}ma des \IeC {\'e}tapes du cas d'utilisation g\IeC {\'e}n\IeC {\'e}ral souhait\IeC {\'e} pour la d\IeC {\'e}coupe laser\relax }}{5}{figure.caption.6}}
+\newlabel{fig:schema_besoin}{{2}{5}{Schéma des étapes du cas d'utilisation général souhaité pour la découpe laser\relax }{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Le sujet}{5}{subsection.1.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.3.1}Le probl\IeC {\`e}me de Bin-Packing}{5}{subsubsection.1.3.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}M\IeC {\'e}thodologie et outils de programmation}{6}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}M\IeC {\'e}thode Kanban}{6}{subsection.2.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Aper\IeC {\c c}u de notre Kanboard\relax }}{7}{figure.caption.7}}
+\newlabel{fig:kanboard}{{3}{7}{Aperçu de notre Kanboard\relax }{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}La m\IeC {\'e}thode dans les faits}{8}{subsection.2.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Outils}{9}{subsection.2.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Format des donn\IeC {\'e}es Entr\IeC {\'e}e/Sortie}{9}{subsection.2.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Architecture}{10}{section.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Fonctionnement g\IeC {\'e}n\IeC {\'e}ral}{10}{subsection.3.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Diagramme de classe du programme principal\relax }}{11}{figure.caption.8}}
+\newlabel{fig:diagramme}{{4}{11}{Diagramme de classe du programme principal\relax }{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Concept de Shape}{12}{subsection.3.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Hi\IeC {\'e}rarchie \texttt  {MultiPolygon}/\texttt  {Polygon}/\texttt  {Ring} (vert : \texttt  {Ring} interne)\relax }}{12}{figure.caption.9}}
+\newlabel{fig:multipolygon}{{5}{12}{Hiérarchie \texttt {MultiPolygon}/\texttt {Polygon}/\texttt {Ring} (vert : \texttt {Ring} interne)\relax }{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Pr\IeC {\'e}paration des pi\IeC {\`e}ces}{13}{subsection.3.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Choix concernant la sortie}{13}{subsection.3.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Fonctionnement interne des modules}{13}{subsection.3.5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Plug-In}{13}{subsubsection.3.5.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Parser et SVG++}{13}{subsubsection.3.5.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces M\IeC {\'e}thodes \IeC {\`a} impl\IeC {\'e}menter dans la classe Context de SVG++\relax }}{14}{figure.caption.10}}
+\newlabel{fig:SVGPP}{{6}{14}{Méthodes à implémenter dans la classe Context de SVG++\relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Algorithmes de packing}{15}{subsubsection.3.5.3}}
+\@writefile{toc}{\contentsline {paragraph}{Transformers, Merger\\}{15}{section*.11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Fusion des groupes de \texttt  {Shapes}: \{<1,1,1,2,3,3>,<4>\}\relax }}{16}{figure.caption.12}}
+\newlabel{fig:schemamerger}{{7}{16}{Fusion des groupes de \texttt {Shapes}: \{<1,1,1,2,3,3>,<4>\}\relax }{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {paragraph}{Solvers}{16}{section*.13}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.4}Outer}{16}{subsubsection.3.5.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Langage de script}{17}{subsection.3.6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Un exemple de script\relax }}{18}{figure.caption.14}}
+\newlabel{fig:closeEnough}{{8}{18}{Un exemple de script\relax }{figure.caption.14}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Algorithmes}{19}{section.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Transformers}{19}{subsection.4.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Simple Transformer}{19}{subsubsection.4.1.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Illustration du proc\IeC {\'e}d\IeC {\'e} de \texttt  {SimpleTransformer}\relax }}{20}{figure.caption.15}}
+\newlabel{fig:simpletransformer}{{9}{20}{Illustration du procédé de \texttt {SimpleTransformer}\relax }{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Hole Transformer}{20}{subsubsection.4.1.2}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces - Hole Transformer\relax }}{21}{algorithm.1}}
+\newlabel{alg:hole}{{1}{21}{- Hole Transformer\relax }{algorithm.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Solvers}{21}{subsection.4.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}Algorithmes par \textit  {bounding box}}{21}{subsubsection.4.2.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Illustration du proc\IeC {\'e}d\IeC {\'e} des bounding boxes\relax }}{21}{figure.caption.16}}
+\newlabel{fig:boundingBox}{{10}{21}{Illustration du procédé des bounding boxes\relax }{figure.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Exemple d'une sortie du \texttt  {MultilineSolver}\relax }}{22}{figure.caption.17}}
+\newlabel{fig:multilineSolver}{{11}{22}{Exemple d'une sortie du \texttt {MultilineSolver}\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Jeu de pi\IeC {\`e}ces, affin\IeC {\'e}es \IeC {\`a} la meilleure bounding box, puis tri\IeC {\'e}es\relax }}{23}{figure.caption.18}}
+\newlabel{fig:ScanlineA}{{12}{23}{Jeu de pièces, affinées à la meilleure bounding box, puis triées\relax }{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces La plaque initiale est une grille \IeC {\`a} une seule cellule vide\relax }}{23}{figure.caption.19}}
+\newlabel{fig:ScanlineC1}{{13}{23}{La plaque initiale est une grille à une seule cellule vide\relax }{figure.caption.19}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces A chaque ajout de pi\IeC {\`e}ce, la grille est red\IeC {\'e}coup\IeC {\'e}e\relax }}{24}{figure.caption.20}}
+\newlabel{fig:ScanlineC2-3}{{14}{24}{A chaque ajout de pièce, la grille est redécoupée\relax }{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Une pi\IeC {\`e}ce s'ins\IeC {\`e}re le plus \IeC {\`a} gauche, puis le plus en haut possible\relax }}{24}{figure.caption.21}}
+\newlabel{fig:ScanlineC4-5}{{15}{24}{Une pièce s'insère le plus à gauche, puis le plus en haut possible\relax }{figure.caption.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces Sortie de l'algorithme \texttt  {ScanlineSolver}\relax }}{25}{figure.caption.22}}
+\newlabel{fig:ScanlineC6}{{16}{25}{Sortie de l'algorithme \texttt {ScanlineSolver}\relax }{figure.caption.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Une pi\IeC {\`e}ce trop large peut \IeC {\^e}tre ins\IeC {\'e}r\IeC {\'e}e apr\IeC {\`e}s rotation\relax }}{25}{figure.caption.23}}
+\newlabel{fig:ScanlineClounk}{{17}{25}{Une pièce trop large peut être insérée après rotation\relax }{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}Algorithmes non d\IeC {\'e}terministes}{25}{subsubsection.4.2.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Le \texttt  {FreezeSolver} s'apparente \IeC {\`a} un panier\relax }}{26}{figure.caption.24}}
+\newlabel{fig:FreezeAB}{{18}{26}{Le \texttt {FreezeSolver} s'apparente à un panier\relax }{figure.caption.24}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Lors d'une collision, la pi\IeC {\`e}ce est repouss\IeC {\'e}e \IeC {\`a} gauche ou \IeC {\`a} droite\relax }}{26}{figure.caption.25}}
+\newlabel{fig:FreezeCD}{{19}{26}{Lors d'une collision, la pièce est repoussée à gauche ou à droite\relax }{figure.caption.25}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Sortie de l'algorithme \texttt  {FreezeSolver}\relax }}{27}{figure.caption.26}}
+\newlabel{fig:FreezeSolver}{{20}{27}{Sortie de l'algorithme \texttt {FreezeSolver}\relax }{figure.caption.26}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Bonjour. Il semble que cette partie n'a pas encore \IeC {\'e}t\IeC {\'e} \IeC {\'e}crite.\relax }}{28}{figure.caption.27}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Optimisation}{29}{section.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Quad-Tree}{29}{subsection.5.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1}Principe g\IeC {\'e}n\IeC {\'e}ral}{29}{subsubsection.5.1.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Principe du quadtree, it\IeC {\'e}rations 0 \IeC {\`a} 3.\relax }}{30}{figure.caption.28}}
+\newlabel{fig:quadtreeprinciple}{{22}{30}{Principe du quadtree, itérations 0 à 3.\relax }{figure.caption.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.2}Repr\IeC {\'e}sentation}{30}{subsubsection.5.1.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Les InnerQuadTrees et leurs informations\relax }}{31}{figure.caption.29}}
+\newlabel{fig:innerquadtree}{{23}{31}{Les InnerQuadTrees et leurs informations\relax }{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Parall\IeC {\'e}lisme}{31}{subsection.5.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}Parall\IeC {\'e}lisation d'un algorithme}{31}{subsubsection.5.2.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.2}Parall\IeC {\'e}lisation de plusieurs algorithmes}{32}{subsubsection.5.2.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Interpolation am\IeC {\'e}lior\IeC {\'e}e}{32}{subsection.5.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Illustration de la recherche d'intersection\relax }}{33}{figure.caption.30}}
+\newlabel{fig:rotos}{{24}{33}{Illustration de la recherche d'intersection\relax }{figure.caption.30}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Approximation (exag\IeC {\'e}r\IeC {\'e}e) d'une forme\relax }}{34}{figure.caption.31}}
+\newlabel{fig:rotos2}{{25}{34}{Approximation (exagérée) d'une forme\relax }{figure.caption.31}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Liens}{36}{section.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Annexe}{37}{section.7}}
+\@writefile{toc}{\contentsline {paragraph}{Close Enough Script Language\\}{37}{section*.33}}

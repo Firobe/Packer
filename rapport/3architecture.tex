@@ -125,8 +125,18 @@ Les deux classes Transformer et Merger ont été séparées car l'exécution du 
 
 \paragraph{Solvers}
 
-La classe \texttt{Solver} est également abstraite, elle contient les méthodes virtuelles \texttt{preSolve} et \texttt{solveBin} qui permettent respectivement d'effectuer le traitement préliminaire nécessaire au bon fonctionnement du \texttt{Solver} et d'appliquer l'algorithme de résolution sur une seule plaque (en utilisant un sous-ensemble des \texttt{Shapes}).
-La méthode \texttt{solveBin} travaille sur une liste d'indices lui indiquant les formes qu'il reste à packer. Lorsqu'une forme est placée sur la plaque, son indice est retiré de la liste.
+La classe \texttt{Solver} est également abstraite, son rôle est d'appliquer un algorithme de résolution sur la totalité des formes.\\
+Elle contient les méthodes virtuelles \texttt{preSolve} et \texttt{solveBin}, qui permettent respectivement d'effectuer le traitement préliminaire nécessaire au bon fonctionnement du \texttt{Solver} et d'appliquer l'algorithme de résolution sur une seule plaque (en utilisant un sous-ensemble des \texttt{Shapes}).\\
+La méthode \texttt{solveBin} travaille sur une liste d'indices lui indiquant les formes qu'il reste à packer. Lorsqu'une forme est effectivement packée, son indice est retiré de la liste.\\
+\texttt{soveBin} est appelée tant que la liste d'indices restants est non vide. Travaillant à chaque fois sur une nouvelle plaque.  
+L'algorithme appliqué dépend du \texttt{Solver} choisi (Scanline, Proba, ...).\\
+
+Les tranformations faites par un \texttt{Solver} sont appliquées en place sur le \texttt{Layout} passé en paramètre à \texttt{Solver}, lequel est copié uniquement en cas d'exécution parallèle de plusieurs \texttt{Solvers} comme c'est le cas dans le \texttt{TaskSolver}.
+
+
+
+
+
 
 
 \subsubsection{Outer}
