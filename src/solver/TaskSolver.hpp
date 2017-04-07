@@ -3,6 +3,7 @@
 
 #include "Solver.hpp"
 #include "ProbaSolver.hpp"
+#include "Display.hpp"
 
 #define DEFAULT_TASK_NB (4)
 
@@ -17,6 +18,10 @@ public:
     TaskSolver(Layout& v, const std::vector<Parameter>& p) : Solver(v, p), _params(p) {
         if (!getParameter(p, "task_nb", _taskNb))
             _taskNb = DEFAULT_TASK_NB;
+		if(Display::_enabled){
+			LOG(warning) << "DISABLING DISPLAY (because the solver is multithreaded)" << std::endl;
+			Display::_enabled = false;
+		}
     }
 };
 

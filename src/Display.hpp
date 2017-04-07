@@ -57,7 +57,6 @@ class Display {
     void loop();
     void updateShape(unsigned i);
     void render();
-    static bool _enabled;
     static double window_height;
     static Display& getInstance(const Layout& s = Layout()) {
         window_height = WINDOW_WIDTH * Parser::getDims().y() / Parser::getDims().x();
@@ -89,6 +88,7 @@ class Display {
     void reset();
     void updateAll();
 public:
+    static bool _enabled;
     static void Init(const Layout& s) {
         _enabled = true;
         getInstance(s);
