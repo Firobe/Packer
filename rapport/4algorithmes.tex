@@ -162,7 +162,7 @@ Le solveur \texttt{ScanLine} utilise l'algorithme connu du \textit{first-fit}. I
 \indent Il se peut que la succession des insertions et la maximisation de la compacité laisse une cellule vide entre les pièces, les plus grandes ne pouvant pas s'y placer (figure~\ref{fig:ScanlineC4-5}). Toutefois les pièces sont triées par ordre décroissant de hauteur, aussi les pièces les plus petites combleront ces cellules vides pour améliorer davantage la compacité de la plaque finale.
 
 \newpage
-Enfin, une dernière optimisation est effectuée une fois que toutes les pièces ont tenté une insertion: ces pièces sont tournées de 90°, puis un nouvel essai est effectué quant à leur insertion. Cela conserve les propriétés rectangulaires dont le solver a besoin, et une pièce plus large que longue peut donc rentrer dans un ensemble de cellules jusque-là trop petit.
+Enfin, une dernière optimisation est effectuée une fois que toutes les pièces ont tenté une insertion: ces pièces sont tournées de 90°, puis un nouvel essai d'insertion. Cela conserve les propriétés rectangulaires dont le solver a besoin, et une pièce plus large que longue peut donc rentrer dans un ensemble de cellules jusque-là trop petit.
 
 \begin{figure}[!htb]
 \centering
@@ -176,6 +176,7 @@ Enfin, une dernière optimisation est effectuée une fois que toutes les pièces
 
 Les autres algorithmes implémentés insèrent les pièces de manière partiellement aléatoire sur la plaque.\\
 
+\paragraph{FreezeSolver}
 Le solver \texttt{FreezeSolver} assimile la plaque à un panier que l'on remplit, et fait tomber les pièces une à une dans la plaque grâce à de petites translations qui simulent la gravité pendant un certain nombre d'itérations.\\
 \indent La pièce tombe alors vers le bas de la plaque et en cas de collision avec les bords ou le fond, la pièce est repoussée vers l'intérieur. Après un certain temps de calcul, le solver vérifie que la position de la pièce est valide (c'est-à-dire entièrement dans la plaque, et sans collision générée par les dernières translations-rotations), la pièce se fige et la suivante est lâchée à partir du haut (figure~\ref{fig:FreezeAB}).\\
 
@@ -197,7 +198,7 @@ Le solver \texttt{FreezeSolver} assimile la plaque à un panier que l'on remplit
 \end{figure*}
 
 
-\indent Si une pièce entre entre collision avec une autre lors du calcul, alors elle est expulsée vers le haut, translatée aléatoirement à gauche ou à droite, et pivotée aléatoirement dans un sens ou dans l'autre avant de recommencer à tomber, ce qui simule un entassement des pièces dans la plaque (figure~\ref{fig:FreezeCD}).\\
+Si une pièce entre entre collision avec une autre lors du calcul, alors elle est expulsée vers le haut, translatée aléatoirement à gauche ou à droite, et pivotée aléatoirement dans un sens ou dans l'autre avant de recommencer à tomber, ce qui simule un entassement des pièces dans la plaque (figure~\ref{fig:FreezeCD}).\\
 
 \begin{figure*}[!htb]
     \centering
@@ -220,8 +221,7 @@ Le solver \texttt{FreezeSolver} assimile la plaque à un panier que l'on remplit
     \label{fig:FreezeCD}
 \end{figure*}
 
-\newpage
-\indent De plus, si le solver n'arrive pas à stabiliser la pièce, c'est-à-dire si elle est toujours en collision avec une autre après de multiples essais de corrections, celle-ci est envoyée vers une seconde plaque pour être packée. Cela se produit naturellement lorsque la plaque est déjà saturée et ''déborde''.
+De plus, si le solver n'arrive pas à stabiliser la pièce, c'est-à-dire si elle est toujours en collision avec une autre après de multiples essais de corrections, celle-ci est envoyée vers une seconde plaque pour être packée. Cela se produit naturellement lorsque la plaque est déjà saturée et ''déborde''.
 
 \begin{figure}[!htb]
 \centering
@@ -230,23 +230,14 @@ Le solver \texttt{FreezeSolver} assimile la plaque à un panier que l'on remplit
 \label{fig:FreezeSolver}
 \end{figure}
 
+\paragraph{ProbaSolver}
+Notre deuxième algorithme "non déterministe" est ce que nous avons appelé le \texttt{ProbaSolver}. Il s'agit cette fois-ci d'un solveur entièrement basé sur l'aléatoire. Le principe de base est le suivant : en partant d'une configuration sans intersection des pièces, on effectue pour chaque pièce une translation et une rotation aléatoire. L'amplitude de ces mouvements dépend d'une distribution exponentielle, de la forme $\lambda e^{-\lambda t}$, avec $\lambda$ passé en paramètre du solveur. Cette distribution permet d'obtenir la plupart du temps des mouvements de faible amplitude (d'autant plus que $\lambda$ est grand), sans pour autant exclure des mouvements importants permettant d'explorer plus de configurations.\\
 
+Pour chaque pièce, on vérifie une fois ce mouvement effectué qu'elle ne touche aucune autre pièce et ne sort pas de sa plaque, autrement le mouvement est inversé. Seule exception : si la pièce sort de la plaque par le haut, on lui offre une opportunité de gravir les échelons (monter d'une plaque).\\
 
+On effectue ces pas aléatoires pendant un nombre fixé d'itération, après quoi on s'arrête et on évalue la qualité de la solution. On sauvegarde cette solution et sa qualité (sous la forme d'un tableau de matrices de transformations), et on recommence le procédé entièrement. À la fin de celui-ci, on regarde si la solution obtenue est meilleure que la solution sauvegardée, auquel cas remplace la sauvegarde (sinon, on restaure l'ancienne solution).\\
 
-\newpage
-
-PROBASOLVER
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[scale=2]{img/Trombi.jpg}
-\caption{Bonjour. Il semble que cette partie n'a pas encore été écrite.}
-\end{figure}
-
-\newpage
-
-
-
+On répète encore ce procédé d'amélioration un certain nombre de fois, jusqu'à arriver à une solution normalement satisfaisante, avec de la chance.
 
 % Quelques chiffres:
 

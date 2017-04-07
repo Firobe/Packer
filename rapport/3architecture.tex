@@ -14,7 +14,7 @@ La partie la plus importante du projet est ce programme, dont nous allons par la
 \label{fig:diagramme}
 \end{figure}
 
-\subsection{Concept de Shape}
+\subsection{Représentation interne (\texttt{Shape})}
 
 Nous introduisons le concept de \texttt{Shape} (forme), que nous utiliserons par la suite. Il s'agit d'une classe représentant une forme interpolée. Elle peut représenter un ou plusieurs polygones non indépendants, potentiellement chacun composés de trous. En effet, cette classe contient un \texttt{MultiPolygon}, type de la librairie Boost, lequel contient plusieurs \texttt{Polygon}. Enfin ce dernier contient un \texttt{Ring} (polygone fermé) décrivant son contour, et potentiellement plusieurs autres décrivant ses trous. Nous verrons dans la partie sur le parseur \texttt{SVG} comment nous transformons le document en un ensemble de telles \texttt{Shapes}. Cette hiérarchie est illustrée en figure~\ref{fig:multipolygon}\\
 
@@ -165,7 +165,7 @@ et qu'on peut faire des blocs de telles instructions avec les mots-clés \texttt
 
 On peut ainsi voir un exemple de script en figure~\ref{fig:closeEnough}. Dans ce dernier, on commence par exécuter \texttt{HoleTransformer}, puis \texttt{SimpleTransformer} (auquel on passe un entier et une chaîne de caractères), le tout deux fois. On appelle ensuite \texttt{ScanlineSolver} et \texttt{ProbaSolver}, auquel on passe un flottant et un entier.\\
 
-À la manière de \texttt{yacc}, on associe à chaque règle un type et donc une valeur qui sera affectée à une instance de cette règle lors du parsing. On définit les actions grâce à une syntaxe spécifique à \texttt{Qi}. Nous avons choisi de stocker des informations basiques comme les noms, l'ordre, les paramètres des fonctions au fur et à mesure du parsing, et d'exécuter tout ce qui a été stocker à la fin de chaque \texttt{<big\_block>}.\\
+À la manière de \texttt{yacc}, on associe à chaque règle un type et donc une valeur qui sera affectée à une instance de cette règle lors du parsing. On définit les actions grâce à une syntaxe spécifique à \texttt{Qi}. Nous avons choisi de stocker des informations basiques comme les noms, l'ordre, les paramètres des fonctions au fur et à mesure du parsing, et d'exécuter tout ce qui a été stocké à la fin de chaque \texttt{<big\_block>}.\\
 
 Lors de l'exécution, il fallait associer à un nom de fonction dans le script une classe à instancier. Cela était au départ réalisé par une simple structure du type \texttt{if ... else if...}, mais quand le nombre d'algorithme a augmenté, nous avons voulu adopter une méthode plus générique.\\
 
