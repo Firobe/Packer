@@ -21,6 +21,7 @@ void ProbaSolver::preSolve() {
         MultilineSolver s(_shapes, {{"sort", 0}});
         s.solve();
     }
+	else LOG(info) << "No initial placement : ensure there is no transformation matrix in the input" << endl;
 
     _centroids.reserve(_shapes.size());
 
@@ -76,7 +77,7 @@ void ProbaSolver::solveBin() {
  * Uses an exponential distribution
  */
 double ProbaSolver::RNG() const {
-    static default_random_engine generator;
+    static default_random_engine generator(rand());
     static exponential_distribution<double> distribution(_amplitudeProba);
     return distribution(generator);
 }
