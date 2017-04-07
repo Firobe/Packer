@@ -104,18 +104,25 @@ Les outils utilisés pour la réalisation du produit sont :
 \vspace{1em}
 Il a été choisi de développer le produit sur Linux à l'aide de la collection de compilateurs GCC. Les plates-formes supportées sont Windows et Linux, les deux devant être compilées depuis Linux.
 
-\subsection{Format des données Entrée/Sortie}
+\subsection{Le format SVG}
 
 \indent Les données représentant les formes à packer sont décrites sous le format SVG qui est une spécialisation du format XML. Ce format représente une arborescence de données utilisant des balises.\\
 
 Un noeud est délimité par une balise ouvrante et une fermante, ou bien une balise seule. La balise peut contenir un ensemble d'attributs dépendant de son type. Si le noeud est sous la forme de balises ouvrantes/fermantes, il peut y avoir d'autres noeuds entre ces balises (ce sont alors des noeuds fils).\\
-Un ensemble particulier de noeuds et d'attributs est utilisé lors de notre programme.
+Un ensemble particulier de noeuds et d'attributs est utilisé lors de notre programme (un exemple de syntaxe SVG est visible en figure~\ref{fig:svg}.
 
 \begin{itemize}
-    \item{\textbf{Paths} : } Les \textit{paths}, et primitives de formes (\texttt{rectangle}, \texttt{circle}, ...). Ce sont les noeuds qui sont utilisés pour représenter un contour. Ils possèdent un attribut \texttt{d} qui contient l'ensemble des informations permettant de décrire ce contours, sous différentes formes : segments, courbes de Bézier, etc.
-    \item{\textbf{Matrices de transformations}} Ce sont des attributs qui sont appliqués au \textit{path} du noeud courant ainsi que tous ses fils. Elles permettent de déplacer un objet sans modifier explicitement les coordonnées de ses points. Elles doivent donc être prises en compte lors de la lecture du fichier. Nous les utilisons également pour appliquer les déplacement effectués par le programme dans le fichier de sortie.
-    \item{\textbf{Groupes}} Ils forment des ensembles d'objets qui peuvent se comporter comme une entité unique, et sont particulièrement utilisés pour la gestion des formes à trous ou lors de la génération du fichier de sortie (pour délimiter les différentes plaques).
-    \item{\textbf{Identifiants}} Les noeuds possèdent généralement un attribut \texttt{ID}. Ils permettent d'identifier rapidement un objet, chaque objet ayant une valeur unique pour cet attribut. Celui-ci peut être modifié lors de la génération du fichier de sortie en cas de duplication des objets.
-    \item{\texttt{Width}/\texttt{Height}/\texttt{Viewbox}}, ce sont des attributs propre au fichier. Ils sont utilisés pour déterminer les dimensions d'une plaque par défaut, ils peuvent être exprimés dans différentes unités, qu'il nous faut donc convertir au préalable dans une unité universelle utilisable par le programme.    
+    \item \textbf{Paths} : Les \textit{paths}, et primitives de formes (\texttt{rectangle}, \texttt{circle}, ...). Ce sont les noeuds qui sont utilisés pour représenter un contour. Ils possèdent un attribut \texttt{d} qui contient l'ensemble des informations permettant de décrire ce contours, sous différentes formes : segments, courbes de Bézier, etc.
+    \item \textbf{Matrices de transformations} Ce sont des attributs qui sont appliqués au \textit{path} du noeud courant ainsi que tous ses fils. Elles permettent de déplacer un objet sans modifier explicitement les coordonnées de ses points. Elles doivent donc être prises en compte lors de la lecture du fichier. Nous les utilisons également pour appliquer les déplacement effectués par le programme dans le fichier de sortie.
+    \item \textbf{Groupes} : Ils forment des ensembles d'objets qui peuvent se comporter comme une entité unique, et sont particulièrement utilisés pour la gestion des formes à trous ou lors de la génération du fichier de sortie (pour délimiter les différentes plaques).
+    \item \textbf{Identifiants} : Les noeuds possèdent généralement un attribut \texttt{ID}. Ils permettent d'identifier rapidement un objet, chaque objet ayant une valeur unique pour cet attribut. Celui-ci peut être modifié lors de la génération du fichier de sortie en cas de duplication des objets.
+    \item \textbf{Width}/\textbf{Height}/\textbf{Viewbox} : Ce sont des attributs propre au fichier. Ils sont utilisés pour déterminer les dimensions d'une plaque par défaut, ils peuvent être exprimés dans différentes unités, qu'il nous faut donc convertir au préalable dans une unité universelle utilisable par le programme.
 \end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{img/svg.png}
+\caption{Un morceau de fichier SVG}
+\label{fig:svg}
+\end{figure}
 
