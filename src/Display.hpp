@@ -114,7 +114,11 @@ public:
 };
 
 #else
+#include <vector>
+#include <string>
+class Shape;
 struct Display {
+    static bool _enabled;
     static void Init(const std::vector<Shape>&) {}
     static void Update(unsigned) {}
     static void UpdateAll() {}

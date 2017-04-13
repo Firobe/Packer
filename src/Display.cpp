@@ -1,15 +1,16 @@
+#include "Display.hpp"
+bool Display::_enabled = false; //Display is disabled until Init()
+
 #ifdef ENABLE_DISPLAY
 #include <SFML/Graphics.hpp>
 
 #include <stdexcept>
 
-#include "Display.hpp"
 #include "common.hpp"
 #include "Parser.hpp"
 #include "Log.hpp"
 
 #define FPS 60.
-bool Display::_enabled = false; //Display is disabled until Init()
 double Display::window_height = 600;
 
 using namespace std;

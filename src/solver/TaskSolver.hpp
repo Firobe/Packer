@@ -4,6 +4,7 @@
 #include "Solver.hpp"
 #include "ProbaSolver.hpp"
 #include "Display.hpp"
+#include "Log.hpp"
 
 #define DEFAULT_TASK_NB (4)
 
