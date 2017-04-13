@@ -232,6 +232,8 @@ void Parser::on_exit_element() {
 
     //If we are closing a group, ignore all the ids of its components
     if (_groupStack == 0) {
+		if(_idStack.empty())
+			throw runtime_error("Object in input file has no ID");
         for (unsigned i = 0 ; i < _rings.size() ; ++i)
             _idStack.pop();
     }
@@ -245,6 +247,8 @@ void Parser::on_exit_element() {
     _toApply = 0;
 
     if (_groupStack <= 0 && !_rings.empty()) {
+		if(_idStack.empty())
+			throw runtime_error("Object in input file has no ID");
         //Add the ring to _shapes only if the ID on top of the stack (its own ID)
         //is in the _ids vector (or if there is no ID specified by the user)
         if (_ids.empty() or vectorContains(_ids, _idStack.top())) {
