@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Packer</_name>
+    <id>com.nerdson.packer</id>
+    <dependency type="executable" location="extensions">packer.exe</dependency>
+    <param name="tab" type="notebook">
+    <page name = "size" _gui-text="Dimensions Plaque">
+    <param name="defWidth" type="boolean" gui-text="Utiliser la largeur du canvas">
+    </param>
+    <param name="width" type="string" gui-text="Largeur plaque (px, mm, cm, in, ...) : ">
+    </param>
+    <param name="defHeight" type="boolean" gui-text="Utiliser la longueur du canvas">
+    </param>
+    <param name="height" type="string" gui-text="Hauteur plaque (px, mm, cm, in, ...) : ">
+    </param>
+    <param name="dup" type="boolean" gui-text="Dupliquer en bas de la page">
+    </param>
+    <param name="buffer" type="int" min="0" max="99999" gui-text="Distance minimale entre les objets (px): ">
+    </param>
+    <param name="display" type="boolean" gui-text="Activation de l'affichage temps-réel (si disponible)">
+    </param>
+    </page>
+	<page name="conf" _gui-text="Configuration">
+	<param name="conf" type="string" gui-text="Fichier configuration CloseEnough">default.ce</param>
+	</page>
+    </param>
+
+    <effect>
+		<object-type>all</object-type>
+		<effects-menu>
+			<submenu _name="Packer"/>
+		</effects-menu>
+    </effect>
+    <script>
+        <command reldir="extensions" interpreter="python">packer.py</command>
+    </script>
+</inkscape-extension>

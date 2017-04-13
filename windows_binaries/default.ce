@@ -1,0 +1,5 @@
+HoleTransformer();
+DO 2 TIMES
+	SimpleTransformer(rotate_step=30, criteria=intersection);
+ScanlineSolver();
+TaskSolver(task_nb=8, random_steps=30, branch_steps=50, amplitude_proba=50., initial_placement=0);
